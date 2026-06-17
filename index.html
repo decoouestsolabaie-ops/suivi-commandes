@@ -10,43 +10,64 @@
     --bleu:#1565C0;--bleu-clair:#1976D2;--bleu-bg:#E3F2FD;
     --rouge:#D32F2F;--orange:#E65100;--jaune:#F9A825;
     --vert:#2E7D32;--vert-bg:#C8E6C9;--gris:#78909C;--gris-bg:#F5F7FA;
-    --blanc:#FFFFFF;--texte:#1A1A2E;--texte2:#546E7A;--bordure:#E0E7EF;--sidebar:180px;
+    --texte:#1A1A2E;--texte2:#546E7A;--bordure:#E0E7EF;--sidebar:180px;
   }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:'Inter',sans-serif;background:#F0F4F8;color:var(--texte);min-height:100vh;display:flex;}
+
+  /* SIDEBAR */
   .sidebar{width:var(--sidebar);background:var(--bleu);min-height:100vh;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;}
   .sidebar-logo{padding:24px 16px 20px;border-bottom:1px solid rgba(255,255,255,.15);}
-  .sidebar-logo span{display:block;font-size:18px;font-weight:700;color:#fff;letter-spacing:.5px;}
-  .sidebar-logo small{font-size:10px;color:#90CAF9;text-transform:uppercase;letter-spacing:1.5px;font-weight:500;}
+  .sidebar-logo span{display:block;font-size:18px;font-weight:700;color:#fff;}
+  .sidebar-logo small{font-size:10px;color:#90CAF9;text-transform:uppercase;letter-spacing:1.5px;}
   .nav{flex:1;padding:12px 0;}
   .nav-item{display:flex;align-items:center;gap:10px;padding:11px 18px;color:rgba(255,255,255,.7);cursor:pointer;font-size:13px;font-weight:500;transition:all .15s;border-left:3px solid transparent;}
   .nav-item:hover{color:#fff;background:rgba(255,255,255,.08);}
   .nav-item.active{color:#fff;background:rgba(255,255,255,.12);border-left-color:#90CAF9;}
   .nav-item .icon{font-size:16px;width:20px;text-align:center;}
   .sidebar-footer{padding:14px 16px;border-top:1px solid rgba(255,255,255,.1);font-size:11px;color:rgba(255,255,255,.4);}
+
+  /* MAIN */
   .main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh;}
   .topbar{background:#fff;border-bottom:1px solid var(--bordure);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
-  .topbar-title{font-size:16px;font-weight:600;color:var(--texte);}
-  .topbar-right{display:flex;align-items:center;gap:12px;}
+  .topbar-title{font-size:16px;font-weight:600;}
+  .topbar-right{display:flex;align-items:center;gap:10px;}
   .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:7px;border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;transition:all .15s;}
-  .btn-primary{background:var(--bleu);color:#fff;}
-  .btn-primary:hover{background:var(--bleu-clair);}
-  .btn-outline{background:#fff;color:var(--bleu);border:1.5px solid var(--bleu);}
-  .btn-outline:hover{background:var(--bleu-bg);}
+  .btn-primary{background:var(--bleu);color:#fff;} .btn-primary:hover{background:var(--bleu-clair);}
+  .btn-outline{background:#fff;color:var(--bleu);border:1.5px solid var(--bleu);} .btn-outline:hover{background:var(--bleu-bg);}
+  .btn-danger{background:var(--rouge);color:#fff;}
   .btn-sm{padding:5px 11px;font-size:12px;}
   .content{padding:24px 28px;flex:1;}
-  .view{display:none;}
-  .view.active{display:block;}
+  .view{display:none;} .view.active{display:block;}
+
+  /* LOADER */
+  .loader-bar{height:3px;background:var(--bleu-bg);margin-bottom:18px;border-radius:2px;overflow:hidden;display:none;}
+  .loader-bar.active{display:block;}
+  .loader-fill{height:100%;background:var(--bleu);border-radius:2px;animation:load 1.2s ease-in-out infinite;}
+  @keyframes load{0%{width:0%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0%;margin-left:100%}}
+  .sync-info{font-size:11px;color:var(--texte2);display:flex;align-items:center;gap:6px;}
+  .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--vert);display:inline-block;}
+  .sync-dot.loading{background:var(--orange);animation:pulse .8s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+  /* CONFIG BANNER */
+  .config-banner{background:#FFF3E0;border:1.5px solid var(--orange);border-radius:10px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:flex-start;gap:12px;}
+  .config-banner .icon{font-size:20px;}
+  .config-banner p{font-size:13px;color:var(--texte);line-height:1.6;}
+  .config-banner input{border:1.5px solid var(--bordure);border-radius:6px;padding:6px 10px;font-size:13px;font-family:inherit;width:100%;margin-top:6px;outline:none;}
+  .config-banner input:focus{border-color:var(--bleu);}
+
+  /* KPI */
   .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:24px;}
   .kpi-card{background:#fff;border-radius:10px;padding:18px 20px;border:1px solid var(--bordure);display:flex;flex-direction:column;gap:4px;cursor:pointer;transition:box-shadow .15s;}
   .kpi-card:hover{box-shadow:0 4px 14px rgba(0,0,0,.08);}
   .kpi-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--texte2);}
   .kpi-value{font-size:28px;font-weight:700;line-height:1;}
   .kpi-sub{font-size:11px;color:var(--texte2);}
-  .kpi-urgent .kpi-value{color:var(--rouge);}
-  .kpi-warn .kpi-value{color:var(--orange);}
-  .kpi-ok .kpi-value{color:var(--vert);}
-  .kpi-info .kpi-value{color:var(--bleu);}
+  .kpi-urgent .kpi-value{color:var(--rouge);} .kpi-warn .kpi-value{color:var(--orange);}
+  .kpi-ok .kpi-value{color:var(--vert);} .kpi-info .kpi-value{color:var(--bleu);}
+
+  /* FILTERS */
   .filters-bar{background:#fff;border-radius:10px;border:1px solid var(--bordure);padding:14px 18px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:18px;}
   .search-input{flex:1;min-width:180px;border:1.5px solid var(--bordure);border-radius:7px;padding:7px 12px;font-family:inherit;font-size:13px;outline:none;transition:border-color .15s;}
   .search-input:focus{border-color:var(--bleu);}
@@ -60,6 +81,8 @@
   .filter-badge.urgent.active{background:var(--rouge);color:#fff;}
   .filter-badge.warn.active{background:var(--orange);color:#fff;}
   .filter-badge.ok.active{background:var(--vert);color:#fff;}
+
+  /* TABLE */
   .table-wrap{background:#fff;border-radius:10px;border:1px solid var(--bordure);overflow-x:auto;}
   table{width:100%;border-collapse:collapse;font-size:13px;}
   thead tr{background:var(--gris-bg);}
@@ -68,9 +91,9 @@
   td{padding:10px 14px;border-bottom:1px solid var(--bordure);vertical-align:middle;}
   tr:last-child td{border-bottom:none;}
   tr:hover td{background:#F8FBFF;}
-  .col-client{font-weight:600;color:var(--texte);}
+  .col-client{font-weight:600;}
   .col-mono{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--texte2);}
-  .col-comment{font-style:italic;color:var(--texte2);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .col-comment{font-style:italic;color:var(--texte2);max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .badge{display:inline-block;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:600;white-space:nowrap;}
   .badge-ok{background:var(--vert-bg);color:var(--vert);}
   .badge-urgent{background:#FFEBEE;color:var(--rouge);}
@@ -78,25 +101,34 @@
   .badge-info{background:var(--bleu-bg);color:var(--bleu);}
   .badge-grey{background:#ECEFF1;color:var(--gris);}
   .alerte-text{font-size:11px;font-weight:600;}
-  .alerte-ok{color:var(--vert);}
-  .alerte-rouge{color:var(--rouge);}
-  .alerte-orange{color:var(--orange);}
-  .alerte-jaune{color:#B7860B;}
-  .alerte-gris{color:var(--gris);}
-  .action-btn{background:none;border:none;cursor:pointer;padding:4px 6px;border-radius:5px;font-size:14px;transition:background .12s;}
+  .alerte-ok{color:var(--vert);} .alerte-rouge{color:var(--rouge);}
+  .alerte-orange{color:var(--orange);} .alerte-jaune{color:#B7860B;}
+  .action-btn{background:none;border:none;cursor:pointer;padding:4px 6px;border-radius:5px;font-size:15px;transition:background .12s;}
   .action-btn:hover{background:var(--gris-bg);}
-  .empty-state{text-align:center;padding:48px 24px;color:var(--texte2);}
   .scroll-hint{font-size:11px;color:var(--texte2);padding:8px 14px;border-top:1px solid var(--bordure);}
-  /* LOADER */
-  .loader-bar{height:3px;background:var(--bleu-bg);margin-bottom:18px;border-radius:2px;overflow:hidden;display:none;}
-  .loader-bar.active{display:block;}
-  .loader-fill{height:100%;background:var(--bleu);border-radius:2px;animation:load 1.2s ease-in-out infinite;}
-  @keyframes load{0%{width:0%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0%;margin-left:100%}}
-  .sync-info{font-size:11px;color:var(--texte2);display:flex;align-items:center;gap:6px;}
-  .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--vert);display:inline-block;}
-  .sync-dot.loading{background:var(--orange);animation:pulse .8s infinite;}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-  /* ALERTES */
+  .empty-state{text-align:center;padding:48px 24px;color:var(--texte2);}
+
+  /* MODAL */
+  .overlay{display:none;position:fixed;inset:0;background:rgba(10,20,40,.45);z-index:200;align-items:center;justify-content:center;}
+  .overlay.open{display:flex;}
+  .modal{background:#fff;border-radius:14px;width:640px;max-width:96vw;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:fadeUp .2s ease;}
+  @keyframes fadeUp{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+  .modal-header{display:flex;align-items:center;justify-content:space-between;padding:22px 28px 16px;border-bottom:1px solid var(--bordure);}
+  .modal-header h3{font-size:17px;font-weight:700;}
+  .modal-close{width:30px;height:30px;border-radius:8px;border:none;background:var(--gris-bg);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
+  .modal-body{padding:22px 28px;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .form-group{display:flex;flex-direction:column;gap:5px;}
+  .form-group.full{grid-column:1/-1;}
+  label{font-size:11px;font-weight:600;color:var(--texte2);text-transform:uppercase;letter-spacing:.8px;}
+  input,select,textarea{border:1.5px solid var(--bordure);border-radius:7px;padding:8px 11px;font-family:inherit;font-size:13px;outline:none;transition:border-color .15s;color:var(--texte);}
+  input:focus,select:focus,textarea:focus{border-color:var(--bleu);}
+  textarea{resize:vertical;min-height:70px;}
+  .modal-footer{padding:16px 28px 22px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--bordure);}
+  .saving-indicator{font-size:12px;color:var(--texte2);display:none;}
+  .saving-indicator.active{display:block;}
+
+  /* ALERTES VIEW */
   .alert-section{margin-bottom:22px;}
   .alert-section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--texte2);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
   .alert-section-title .dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
@@ -106,7 +138,8 @@
   .alert-card-client{font-weight:700;font-size:14px;margin-bottom:3px;}
   .alert-card-detail{font-size:12px;color:var(--texte2);}
   .alert-card-comment{font-size:12px;color:var(--bleu);font-style:italic;margin-top:4px;}
-  .alert-pill{padding:4px 12px;border-radius:6px;font-size:11px;font-weight:700;white-space:nowrap;align-self:flex-start;margin-top:2px;}
+  .alert-pill{padding:4px 12px;border-radius:6px;font-size:11px;font-weight:700;white-space:nowrap;align-self:flex-start;}
+
   /* DASHBOARD */
   .dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
   .dash-card{background:#fff;border-radius:10px;border:1px solid var(--bordure);padding:20px;}
@@ -116,6 +149,7 @@
   .bar-track{flex:1;height:8px;background:var(--bordure);border-radius:4px;overflow:hidden;}
   .bar-fill{height:100%;border-radius:4px;transition:width .4s ease;}
   .bar-count{width:24px;text-align:right;color:var(--texte2);font-weight:600;}
+
   @media(max-width:900px){
     .sidebar{width:56px;}
     .sidebar .nav-item span,.sidebar-logo span,.sidebar-logo small,.sidebar-footer{display:none;}
@@ -123,6 +157,7 @@
     .sidebar-logo{padding:16px 10px;}
     .nav-item{padding:12px;justify-content:center;}
     .dash-grid{grid-template-columns:1fr;}
+    .form-grid{grid-template-columns:1fr;}
   }
 </style>
 </head>
@@ -137,17 +172,19 @@
     <div class="nav-item active" onclick="showView('suivi')"><span class="icon">📋</span><span>Commandes</span></div>
     <div class="nav-item" onclick="showView('alertes')"><span class="icon">🔔</span><span>Alertes</span></div>
     <div class="nav-item" onclick="showView('dashboard')"><span class="icon">📊</span><span>Dashboard</span></div>
+    <div class="nav-item" onclick="showView('config')"><span class="icon">⚙️</span><span>Config</span></div>
   </nav>
-  <div class="sidebar-footer">v7 · Live Sheets</div>
+  <div class="sidebar-footer">v8 · Web App</div>
 </aside>
 
 <div class="main">
   <div class="topbar">
     <span class="topbar-title" id="topbar-title">Suivi des commandes</span>
     <div class="topbar-right">
-      <span class="sync-info"><span class="sync-dot" id="sync-dot"></span><span id="sync-label">Chargement…</span></span>
-      <button class="btn btn-outline btn-sm" onclick="chargerDepuisSheets()">🔄 Actualiser</button>
+      <span class="sync-info"><span class="sync-dot" id="sync-dot"></span><span id="sync-label">—</span></span>
+      <button class="btn btn-outline btn-sm" onclick="charger()">🔄 Actualiser</button>
       <button class="btn btn-outline btn-sm" onclick="exportCSV()">⬇ CSV</button>
+      <button class="btn btn-primary btn-sm" onclick="openModal(-1)">＋ Nouvelle commande</button>
     </div>
   </div>
 
@@ -184,6 +221,7 @@
             <th>Statut pose</th>
             <th>Commentaire / Remarque</th>
             <th>Alerte</th>
+            <th></th>
           </tr></thead>
           <tbody id="table-body"></tbody>
         </table>
@@ -192,174 +230,255 @@
     </div>
 
     <!-- VUE ALERTES -->
-    <div id="view-alertes" class="view">
-      <div id="alertes-content"></div>
-    </div>
+    <div id="view-alertes" class="view"><div id="alertes-content"></div></div>
 
     <!-- VUE DASHBOARD -->
-    <div id="view-dashboard" class="view">
-      <div class="dash-grid" id="dash-content"></div>
+    <div id="view-dashboard" class="view"><div class="dash-grid" id="dash-content"></div></div>
+
+    <!-- VUE CONFIG -->
+    <div id="view-config" class="view">
+      <div style="max-width:540px;">
+        <div class="dash-card">
+          <h4 style="margin-bottom:18px;font-size:15px;color:var(--texte);">⚙️ Configuration Web App</h4>
+          <div class="form-group" style="margin-bottom:16px;">
+            <label>URL de votre Web App Apps Script</label>
+            <input type="text" id="config-url" placeholder="https://script.google.com/macros/s/XXXX/exec">
+            <small style="font-size:11px;color:var(--texte2);margin-top:4px;">Déployer > Déploiement Web App > Copier l'URL</small>
+          </div>
+          <button class="btn btn-primary" onclick="sauvegarderConfig()">💾 Enregistrer et connecter</button>
+        </div>
+        <div style="margin-top:18px;padding:16px 20px;background:#E8F5E9;border-radius:10px;border:1px solid #A5D6A7;">
+          <p style="font-size:13px;color:#1B5E20;font-weight:600;margin-bottom:8px;">📋 Étapes pour déployer la Web App :</p>
+          <ol style="font-size:12px;color:#2E7D32;line-height:2;padding-left:18px;">
+            <li>Dans Apps Script, ajoutez un nouveau fichier <strong>WebApp.gs</strong></li>
+            <li>Collez le contenu du fichier <strong>WebApp.gs</strong> fourni</li>
+            <li>Cliquez <strong>Déployer → Nouveau déploiement</strong></li>
+            <li>Type : <strong>Application Web</strong></li>
+            <li>Exécuter en tant que : <strong>Moi</strong></li>
+            <li>Accès : <strong>Tout le monde</strong></li>
+            <li>Copiez l'URL et collez-la ci-dessus</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FICHE COMMANDE -->
+<div class="overlay" id="overlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-title">Nouvelle commande</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Client *</label>
+          <input id="f-client" type="text" placeholder="Nom du client">
+        </div>
+        <div class="form-group">
+          <label>Fournisseur *</label>
+          <select id="f-fournisseur">
+            <option value="">— Choisir —</option>
+            <option>ATLANTEM</option><option>ATULAM</option><option>LALLEMANT</option>
+            <option>SOKO</option><option>ALUGLASS</option><option>FILTERSUN</option>
+            <option>DC PROD</option><option>KE FRANCE</option><option>SKYLUX</option>
+            <option>BVL SERRULAC</option><option>LEROY MERLIN</option><option>FOUSSIER</option><option>STOCK</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>N° Devis</label>
+          <input id="f-devis" type="text" placeholder="D-26/xx-xxxxx">
+        </div>
+        <div class="form-group">
+          <label>Devis TTC (€)</label>
+          <input id="f-devisTTC" type="number" placeholder="0.00">
+        </div>
+        <div class="form-group">
+          <label>Commande envoyée ?</label>
+          <select id="f-commande">
+            <option value="">—</option><option>OUI</option><option>NON</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>N° ARC</label>
+          <input id="f-arc" type="text" placeholder="Accusé Réception N°">
+        </div>
+        <div class="form-group">
+          <label>Validation ARC</label>
+          <select id="f-commentaireARC">
+            <option value="">—</option>
+            <option>Confirmer</option><option>Validé</option>
+            <option>En attente</option><option>ANNULER</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Prévision livraison</label>
+          <input id="f-prevLivraison" type="text" placeholder="S28 ou date">
+        </div>
+        <div class="form-group">
+          <label>Statut livraison</label>
+          <select id="f-statutLivraison">
+            <option value="">—</option>
+            <option>En cours</option><option>Livré</option><option>En attente</option><option>Bloqué</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Statut pose chantier</label>
+          <select id="f-statutPose">
+            <option value="">—</option>
+            <option>En cours</option><option>Posé</option><option>Terminé</option><option>SAV</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Commentaire / Remarques (col. N)</label>
+          <textarea id="f-commentaire" placeholder="Observations, SAV, informations importantes…"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div>
+        <button class="btn btn-danger btn-sm" id="btn-supprimer" onclick="supprimerCommande()" style="display:none;">🗑 Supprimer</button>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <span class="saving-indicator" id="saving-indicator">⏳ Enregistrement…</span>
+        <button class="btn btn-outline" onclick="closeModal()">Annuler</button>
+        <button class="btn btn-primary" onclick="sauvegarderCommande()">💾 Enregistrer dans Sheets</button>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-// ── CONFIG ──────────────────────────────────────────────
-const SHEET_ID  = '1TZonro-RRdrYbfx7Mz8R1ygDwYv5irkZkLztkCI_38U';
-const SHEET_NAME = 'SUIVI COMMANDES';
-const API_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
-
+// ── CONFIG ───────────────────────────────────────────────
 const FOURNISSEURS_COLORS = {
   'ATLANTEM':'#1565C0','ATULAM':'#6A1B9A','LALLEMANT':'#2E7D32',
   'SOKO':'#00695C','ALUGLASS':'#E65100','FILTERSUN':'#C62828',
   'DC PROD':'#37474F','KE FRANCE':'#0277BD','SKYLUX':'#558B2F',
-  'BVL SERRULAC':'#4527A0','LEROY MERLIN':'#1B5E20','FOUSSIER':'#6D4C41',
-  'STOCK':'#546E7A',
+  'BVL SERRULAC':'#4527A0','LEROY MERLIN':'#1B5E20','FOUSSIER':'#6D4C41','STOCK':'#546E7A',
 };
-
 const STATUTS_TERMINES = ['LIVRE','LIVRÉ','TERMINE','TERMINÉ','POSE','POSÉ','Livré','Terminé','Posé','Livre','Termine'];
 const ANNEES_SKIP = ['2025','2026'];
 
+let WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxk1zFKVsCDoiN5J4RAZYF-9nEYqGMIypS2lqBooqZWkxwMUGo8JVq5-iS9ZvZUGasa/exec';
 let commandes = [];
-let sortCol = '', sortAsc = true, alertFilter = 'all';
+let sortCol='', sortAsc=true, alertFilter='all', editLigne=-1;
 
-// ── CHARGEMENT GOOGLE SHEETS ────────────────────────────
-async function chargerDepuisSheets() {
+// ── CONFIG ───────────────────────────────────────────────
+function sauvegarderConfig() {
+  const url = document.getElementById('config-url').value.trim();
+  if (!url) { alert('Collez l\'URL de votre Web App.'); return; }
+  WEBAPP_URL = url;
+  localStorage.setItem('eco-webapp-url', url);
+  alert('✅ URL enregistrée ! Chargement des données…');
+  showView('suivi');
+  charger();
+}
+
+// ── API CALLS ────────────────────────────────────────────
+async function apiGet() {
+  const res = await fetch(WEBAPP_URL, { redirect: 'follow' });
+  return res.json();
+}
+
+async function apiPost(body) {
+  const res = await fetch(WEBAPP_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(body),
+    redirect: 'follow'
+  });
+  return res.json();
+}
+
+async function charger() {
+  if (!WEBAPP_URL) {
+    setSyncState('error', 'Non configuré');
+    document.getElementById('table-body').innerHTML = '<tr><td colspan="11"><div class="empty-state"><div class="icon">⚙️</div><p>Configurez l\'URL de la Web App dans <strong>Config</strong>.</p></div></td></tr>';
+    return;
+  }
   setLoader(true);
   setSyncState('loading', 'Chargement…');
   try {
-    const res  = await fetch(API_URL + '&t=' + Date.now());
-    const text = await res.text();
-    // La réponse commence par /*O_o*/\ngoogle.visualization.Query.setResponse(
-    const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
-    const rows = json.table.rows;
-
-    commandes = [];
-    rows.forEach(r => {
-      const v = (i) => { const c = r.c && r.c[i]; return c && c.v !== null && c.v !== undefined ? String(c.v).trim() : ''; };
-      const client = v(0);
-      if (!client || ANNEES_SKIP.includes(client)) return;
-      commandes.push({
-        client:         client,
-        metres:         v(1),
-        devis:          v(2),
-        devisTTC:       v(3),
-        fournisseur:    v(4),
-        commande:       v(5),
-        arc:            v(6),
-        totalAchats:    v(7),
-        commentaireARC: v(8),
-        prevLivraison:  v(9),
-        repositionnement: v(10),
-        statutLivraison: v(11),
-        statutPose:     v(12),
-        commentaire:    v(13),
-        alerte:         v(14),
-      });
-    });
-
+    const result = await apiGet();
+    if (!result.ok) throw new Error(result.error);
+    commandes = result.data;
     const now = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'});
     setSyncState('ok', 'Mis à jour ' + now);
     populateFournisseurFilter();
     renderAll();
   } catch(e) {
-    setSyncState('error', 'Erreur de connexion');
+    setSyncState('error', 'Erreur connexion');
     console.error(e);
-    document.getElementById('table-body').innerHTML =
-      '<tr><td colspan="10"><div class="empty-state"><div class="icon">⚠️</div><p>Impossible de charger les données.<br>Vérifiez que le Sheets est partagé en lecture publique.</p></div></td></tr>';
+    document.getElementById('table-body').innerHTML = '<tr><td colspan="11"><div class="empty-state"><div class="icon">⚠️</div><p>Impossible de joindre la Web App.<br>Vérifiez l\'URL dans Config.</p></div></td></tr>';
   }
   setLoader(false);
 }
 
-function setLoader(on) {
-  document.getElementById('loader').classList.toggle('active', on);
-}
-function setSyncState(state, label) {
+function setLoader(on){ document.getElementById('loader').classList.toggle('active',on); }
+function setSyncState(state, label){
   const dot = document.getElementById('sync-dot');
   document.getElementById('sync-label').textContent = label;
-  dot.className = 'sync-dot' + (state === 'loading' ? ' loading' : '');
-  if (state === 'error') dot.style.background = '#D32F2F';
-  else if (state === 'ok') dot.style.background = '#2E7D32';
-  else dot.style.background = '#E65100';
+  dot.className = 'sync-dot'+(state==='loading'?' loading':'');
+  dot.style.background = state==='ok'?'#2E7D32':state==='error'?'#D32F2F':'#E65100';
 }
 
-// ── CALCUL ALERTES ───────────────────────────────────────
+// ── ALERTES CALC ─────────────────────────────────────────
 function calcAlerte(c) {
   const estTermine = STATUTS_TERMINES.includes((c.statutLivraison||'').trim())
                   || STATUTS_TERMINES.includes((c.statutPose||'').trim());
   const estAnnule  = (c.commentaireARC||'').trim().toUpperCase() === 'ANNULER';
   if (estTermine)  return { text:'OK', niveau:0 };
   if (estAnnule)   return { text:'Annulée', niveau:-1 };
-
-  const msgs = []; let sev = 0;
-  if (!c.commande || c.commande.toUpperCase() === 'NON') { msgs.push('Commande non envoyée — URGENT'); sev = 3; }
-  if (!c.arc || !c.arc.trim())                           { msgs.push('ARC non reçu'); if(sev<2) sev=2; }
-  if (!c.commentaireARC || !c.commentaireARC.trim())     { msgs.push('Validation ARC manquante'); if(sev<2) sev=2; }
-  else if ((c.commentaireARC||'').toUpperCase().includes('EN ATTENTE')) { msgs.push('En attente ARC'); if(sev<2) sev=2; }
-  if (!c.prevLivraison || !c.prevLivraison.trim())        { msgs.push('Date livraison manquante'); if(sev<1) sev=1; }
-  if (msgs.length === 0) return { text:'OK', niveau:0 };
-  return { text: msgs.join(' | '), niveau: sev };
+  const msgs=[]; let sev=0;
+  if (!c.commande || c.commande.toUpperCase()==='NON') { msgs.push('Commande non envoyée — URGENT'); sev=3; }
+  if (!c.arc||!c.arc.trim())                            { msgs.push('ARC non reçu'); if(sev<2)sev=2; }
+  if (!c.commentaireARC||!c.commentaireARC.trim())      { msgs.push('Validation ARC manquante'); if(sev<2)sev=2; }
+  else if ((c.commentaireARC||'').toUpperCase().includes('EN ATTENTE')) { msgs.push('En attente ARC'); if(sev<2)sev=2; }
+  if (!c.prevLivraison||!c.prevLivraison.trim())         { msgs.push('Date livraison manquante'); if(sev<1)sev=1; }
+  if (msgs.length===0) return {text:'OK',niveau:0};
+  return {text:msgs.join(' | '),niveau:sev};
 }
+function alerteClass(n){ return n===0?'alerte-ok':n===1?'alerte-jaune':n===2?'alerte-orange':n===3?'alerte-rouge':''; }
 
-function alerteClass(n) {
-  if(n===0) return 'alerte-ok';
-  if(n===1) return 'alerte-jaune';
-  if(n===2) return 'alerte-orange';
-  if(n===3) return 'alerte-rouge';
-  return 'alerte-gris';
-}
-
-// ── KPI ─────────────────────────────────────────────────
-function renderKPI() {
-  const al = commandes.map(c => calcAlerte(c));
-  const total   = commandes.length;
-  const urgents = al.filter(a=>a.niveau===3).length;
-  const warns   = al.filter(a=>a.niveau>=1&&a.niveau<=2).length;
-  const ok      = al.filter(a=>a.niveau===0).length;
-  const enCours = commandes.filter(c=>!STATUTS_TERMINES.includes((c.statutLivraison||'').trim())).length;
-  document.getElementById('kpi-grid').innerHTML = `
-    <div class="kpi-card kpi-info" onclick="setAlertFilter('all')">
-      <span class="kpi-label">Total</span><span class="kpi-value">${total}</span><span class="kpi-sub">commandes</span>
-    </div>
-    <div class="kpi-card kpi-urgent" onclick="setAlertFilter('urgent')">
-      <span class="kpi-label">Urgentes</span><span class="kpi-value">${urgents}</span><span class="kpi-sub">action requise</span>
-    </div>
-    <div class="kpi-card kpi-warn" onclick="setAlertFilter('warn')">
-      <span class="kpi-label">Attention</span><span class="kpi-value">${warns}</span><span class="kpi-sub">à surveiller</span>
-    </div>
-    <div class="kpi-card kpi-ok" onclick="setAlertFilter('ok')">
-      <span class="kpi-label">OK</span><span class="kpi-value">${ok}</span><span class="kpi-sub">sans alerte</span>
-    </div>
-    <div class="kpi-card kpi-info">
-      <span class="kpi-label">En cours</span><span class="kpi-value">${enCours}</span><span class="kpi-sub">non livrées</span>
-    </div>`;
+// ── KPI ──────────────────────────────────────────────────
+function renderKPI(){
+  const al=commandes.map(c=>calcAlerte(c));
+  const total=commandes.length, urgents=al.filter(a=>a.niveau===3).length;
+  const warns=al.filter(a=>a.niveau>=1&&a.niveau<=2).length, ok=al.filter(a=>a.niveau===0).length;
+  const enCours=commandes.filter(c=>!STATUTS_TERMINES.includes((c.statutLivraison||'').trim())).length;
+  document.getElementById('kpi-grid').innerHTML=`
+    <div class="kpi-card kpi-info" onclick="setAlertFilter('all')"><span class="kpi-label">Total</span><span class="kpi-value">${total}</span><span class="kpi-sub">commandes</span></div>
+    <div class="kpi-card kpi-urgent" onclick="setAlertFilter('urgent')"><span class="kpi-label">Urgentes</span><span class="kpi-value">${urgents}</span><span class="kpi-sub">action requise</span></div>
+    <div class="kpi-card kpi-warn" onclick="setAlertFilter('warn')"><span class="kpi-label">Attention</span><span class="kpi-value">${warns}</span><span class="kpi-sub">à surveiller</span></div>
+    <div class="kpi-card kpi-ok" onclick="setAlertFilter('ok')"><span class="kpi-label">OK</span><span class="kpi-value">${ok}</span><span class="kpi-sub">sans alerte</span></div>
+    <div class="kpi-card kpi-info"><span class="kpi-label">En cours</span><span class="kpi-value">${enCours}</span><span class="kpi-sub">non livrées</span></div>`;
 }
 
 // ── TABLE ────────────────────────────────────────────────
-function escH(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-function renderTable() {
-  const q    = (document.getElementById('search').value||'').toLowerCase();
-  const fFou = document.getElementById('filter-fournisseur').value;
-  const fSta = document.getElementById('filter-statut').value;
+function renderTable(){
+  const q=(document.getElementById('search').value||'').toLowerCase();
+  const fFou=document.getElementById('filter-fournisseur').value;
+  const fSta=document.getElementById('filter-statut').value;
+  let rows=commandes.map((c,i)=>({...c,_i:i,_alerte:calcAlerte(c)}));
+  if(q) rows=rows.filter(c=>(c.client||'').toLowerCase().includes(q)||(c.devis||'').toLowerCase().includes(q)||(c.arc||'').toLowerCase().includes(q)||(c.fournisseur||'').toLowerCase().includes(q));
+  if(fFou) rows=rows.filter(c=>c.fournisseur===fFou);
+  if(fSta) rows=rows.filter(c=>(c.statutLivraison||'').includes(fSta)||(c.statutPose||'').includes(fSta));
+  if(alertFilter==='urgent') rows=rows.filter(c=>c._alerte.niveau===3);
+  if(alertFilter==='warn')   rows=rows.filter(c=>c._alerte.niveau>=1&&c._alerte.niveau<=2);
+  if(alertFilter==='ok')     rows=rows.filter(c=>c._alerte.niveau===0);
+  if(sortCol) rows.sort((a,b)=>{const va=(a[sortCol]||'').toString().toLowerCase(),vb=(b[sortCol]||'').toString().toLowerCase();return sortAsc?va.localeCompare(vb):vb.localeCompare(va);});
 
-  let rows = commandes.map((c,i)=>({...c,_i:i,_alerte:calcAlerte(c)}));
-  if (q)    rows = rows.filter(c=>(c.client||'').toLowerCase().includes(q)||(c.devis||'').toLowerCase().includes(q)||(c.arc||'').toLowerCase().includes(q)||(c.fournisseur||'').toLowerCase().includes(q));
-  if (fFou) rows = rows.filter(c=>c.fournisseur===fFou);
-  if (fSta) rows = rows.filter(c=>(c.statutLivraison||'').includes(fSta)||(c.statutPose||'').includes(fSta));
-  if (alertFilter==='urgent') rows = rows.filter(c=>c._alerte.niveau===3);
-  if (alertFilter==='warn')   rows = rows.filter(c=>c._alerte.niveau>=1&&c._alerte.niveau<=2);
-  if (alertFilter==='ok')     rows = rows.filter(c=>c._alerte.niveau===0);
-  if (sortCol) rows.sort((a,b)=>{const va=(a[sortCol]||'').toString().toLowerCase();const vb=(b[sortCol]||'').toString().toLowerCase();return sortAsc?va.localeCompare(vb):vb.localeCompare(va);});
+  const tbody=document.getElementById('table-body');
+  if(!rows.length){tbody.innerHTML='<tr><td colspan="11"><div class="empty-state"><div class="icon">🔍</div><p>Aucune commande trouvée.</p></div></td></tr>';document.getElementById('scroll-hint').textContent='';return;}
 
-  const tbody = document.getElementById('table-body');
-  if (rows.length===0){tbody.innerHTML='<tr><td colspan="10"><div class="empty-state"><div class="icon">🔍</div><p>Aucune commande trouvée.</p></div></td></tr>';document.getElementById('scroll-hint').textContent='';return;}
-
-  tbody.innerHTML = rows.map(c=>{
-    const a = c._alerte;
-    const fc = FOURNISSEURS_COLORS[c.fournisseur]||'#546E7A';
-    const statBadge = c.statutLivraison ? `<span class="badge ${c.statutLivraison==='Livré'?'badge-ok':c.statutLivraison==='SAV'?'badge-urgent':'badge-info'}">${escH(c.statutLivraison)}</span>` : '—';
-    const poseBadge = c.statutPose ? `<span class="badge ${c.statutPose==='Terminé'?'badge-ok':c.statutPose==='SAV'?'badge-urgent':'badge-info'}">${escH(c.statutPose)}</span>` : '—';
+  tbody.innerHTML=rows.map(c=>{
+    const a=c._alerte, fc=FOURNISSEURS_COLORS[c.fournisseur]||'#546E7A';
+    const statBadge=c.statutLivraison?`<span class="badge ${c.statutLivraison==='Livré'?'badge-ok':c.statutLivraison==='SAV'?'badge-urgent':'badge-info'}">${escH(c.statutLivraison)}</span>`:'—';
+    const poseBadge=c.statutPose?`<span class="badge ${c.statutPose==='Terminé'?'badge-ok':c.statutPose==='SAV'?'badge-urgent':'badge-info'}">${escH(c.statutPose)}</span>`:'—';
     return `<tr>
       <td class="col-client">${escH(c.client)}</td>
       <td><span style="background:${fc}18;color:${fc};padding:3px 8px;border-radius:5px;font-size:11px;font-weight:700;">${escH(c.fournisseur)||'—'}</span></td>
@@ -367,27 +486,78 @@ function renderTable() {
       <td>${c.commande==='OUI'?'<span class="badge badge-ok">OUI</span>':c.commande==='NON'?'<span class="badge badge-urgent">NON</span>':'—'}</td>
       <td class="col-mono">${escH(c.arc)||'—'}</td>
       <td style="font-size:12px;color:var(--texte2);">${escH(c.prevLivraison)||'—'}</td>
-      <td>${statBadge}</td>
-      <td>${poseBadge}</td>
+      <td>${statBadge}</td><td>${poseBadge}</td>
       <td class="col-comment" title="${escH(c.commentaire)}">${escH(c.commentaire)||'<span style="color:#ddd">—</span>'}</td>
-      <td style="max-width:200px;">
-        <span class="alerte-text ${alerteClass(a.niveau)}" title="${escH(a.text)}">${a.niveau===0?'✓ OK':'⚠ '+escH(a.text.split(' | ')[0])}</span>
-        ${a.text.includes(' | ')?`<br><span style="font-size:10px;color:var(--texte2);">+${a.text.split(' | ').length-1} autre(s)</span>`:''}
-      </td>
+      <td><span class="alerte-text ${alerteClass(a.niveau)}" title="${escH(a.text)}">${a.niveau===0?'✓ OK':'⚠ '+escH(a.text.split(' | ')[0])}</span>${a.text.includes(' | ')?`<br><span style="font-size:10px;color:var(--texte2);">+${a.text.split(' | ').length-1} autre(s)</span>`:''}</td>
+      <td><button class="action-btn" title="Modifier" onclick="openModal(${c._i})">✏️</button></td>
     </tr>`;
   }).join('');
-  document.getElementById('scroll-hint').textContent = `${rows.length} commande(s) affichée(s) sur ${commandes.length}`;
+  document.getElementById('scroll-hint').textContent=`${rows.length} commande(s) sur ${commandes.length}`;
 }
 
-function sortBy(col){ if(sortCol===col) sortAsc=!sortAsc; else{sortCol=col;sortAsc=true;} renderTable(); }
-function setAlertFilter(f){
-  alertFilter=f;
-  ['all','urgent','warn','ok'].forEach(k=>document.getElementById('fb-'+k).classList.toggle('active',k===f));
-  renderTable();
+function sortBy(col){if(sortCol===col)sortAsc=!sortAsc;else{sortCol=col;sortAsc=true;}renderTable();}
+function setAlertFilter(f){alertFilter=f;['all','urgent','warn','ok'].forEach(k=>document.getElementById('fb-'+k).classList.toggle('active',k===f));renderTable();}
+
+// ── MODAL ────────────────────────────────────────────────
+function openModal(idx) {
+  editLigne = -1;
+  const c = idx >= 0 ? commandes[idx] : {};
+  if (idx >= 0) editLigne = c.ligne;
+  document.getElementById('modal-title').textContent = idx >= 0 ? `Modifier — ${c.client}` : 'Nouvelle commande';
+  document.getElementById('btn-supprimer').style.display = idx >= 0 ? 'inline-flex' : 'none';
+  ['client','devis','devisTTC','fournisseur','commande','arc','commentaireARC','prevLivraison','statutLivraison','statutPose','commentaire']
+    .forEach(f => { const el=document.getElementById('f-'+f); if(el) el.value=c[f]||''; });
+  document.getElementById('overlay').classList.add('open');
+}
+function closeModal(){ document.getElementById('overlay').classList.remove('open'); }
+function closeModalOutside(e){ if(e.target.id==='overlay') closeModal(); }
+
+async function sauvegarderCommande() {
+  const c = {};
+  ['client','devis','devisTTC','fournisseur','commande','arc','commentaireARC','prevLivraison','statutLivraison','statutPose','commentaire']
+    .forEach(f=>{ const el=document.getElementById('f-'+f); if(el) c[f]=el.value.trim(); });
+  if (!c.client) { alert('Le champ Client est obligatoire.'); return; }
+
+  document.getElementById('saving-indicator').classList.add('active');
+  try {
+    let result;
+    if (editLigne > 0) {
+      // Modifier : on envoie les champs par numéro de colonne
+      const champs = {
+        1:c.client, 2:c.metres||'', 3:c.devis, 4:c.devisTTC,
+        5:c.fournisseur, 6:c.commande, 7:c.arc, 9:c.commentaireARC,
+        10:c.prevLivraison, 12:c.statutLivraison, 13:c.statutPose, 14:c.commentaire
+      };
+      result = await apiPost({ action:'modifier', ligne:editLigne, champs });
+    } else {
+      result = await apiPost({ action:'ajouter', commande:c });
+    }
+    if (!result.ok) throw new Error(result.error);
+    closeModal();
+    await charger();
+  } catch(e) {
+    alert('Erreur lors de l\'enregistrement : ' + e.message);
+  }
+  document.getElementById('saving-indicator').classList.remove('active');
+}
+
+async function supprimerCommande() {
+  const c = commandes.find(x => x.ligne === editLigne);
+  if (!confirm(`Supprimer la commande "${c ? c.client : ''}" du Sheets ?`)) return;
+  document.getElementById('saving-indicator').classList.add('active');
+  try {
+    const result = await apiPost({ action:'supprimer', ligne:editLigne });
+    if (!result.ok) throw new Error(result.error);
+    closeModal();
+    await charger();
+  } catch(e) {
+    alert('Erreur lors de la suppression : ' + e.message);
+  }
+  document.getElementById('saving-indicator').classList.remove('active');
 }
 
 // ── ALERTES VIEW ─────────────────────────────────────────
-function renderAlertes() {
+function renderAlertes(){
   const groups={3:[],2:[],1:[],0:[]};
   commandes.forEach((c,i)=>{const a=calcAlerte(c);if(a.niveau>=0)groups[a.niveau].push({c,i,a});});
   const sections=[
@@ -400,15 +570,18 @@ function renderAlertes() {
     const items=groups[s.niveau];
     if(!items.length) return;
     html+=`<div class="alert-section"><div class="alert-section-title"><span class="dot" style="background:${s.dot}"></span>${s.label} (${items.length})</div>`;
-    items.forEach(({c,a})=>{
+    items.forEach(({c,i,a})=>{
       const msgs=a.text.split(' | ');
       html+=`<div class="alert-card">
         <div class="alert-card-left">
           <div class="alert-card-client">${escH(c.client)} <span style="font-size:11px;font-weight:400;color:var(--texte2);">${c.fournisseur?'· '+c.fournisseur:''}</span></div>
-          <div class="alert-card-detail">${msgs.map(m=>'• '+escH(m)).join(' &nbsp; ')}</div>
+          <div class="alert-card-detail">${msgs.map(m=>'• '+escH(m)).join(' &nbsp;')}</div>
           ${c.commentaire?`<div class="alert-card-comment">💬 ${escH(c.commentaire)}</div>`:''}
         </div>
-        <span class="alert-pill" style="background:${s.pillBg};color:${s.pillColor};">${msgs.length} alerte(s)</span>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+          <span class="alert-pill" style="background:${s.pillBg};color:${s.pillColor};">${msgs.length} alerte(s)</span>
+          <button class="btn btn-outline btn-sm" onclick="openModal(${i})">✏️ Modifier</button>
+        </div>
       </div>`;
     });
     html+='</div>';
@@ -418,76 +591,64 @@ function renderAlertes() {
 }
 
 // ── DASHBOARD ────────────────────────────────────────────
-function renderDashboard() {
-  const byFou={};
-  commandes.forEach(c=>{if(c.fournisseur) byFou[c.fournisseur]=(byFou[c.fournisseur]||0)+1;});
-  const fouSorted=Object.entries(byFou).sort((a,b)=>b[1]-a[1]);
-  const fouMax=fouSorted[0]?.[1]||1;
-  const byStatut={};
-  commandes.forEach(c=>{const s=c.statutLivraison||'Non défini';byStatut[s]=(byStatut[s]||0)+1;});
-  const stSorted=Object.entries(byStatut).sort((a,b)=>b[1]-a[1]);
-  const stMax=stSorted[0]?.[1]||1;
+function renderDashboard(){
+  const byFou={};commandes.forEach(c=>{if(c.fournisseur)byFou[c.fournisseur]=(byFou[c.fournisseur]||0)+1;});
+  const fouSorted=Object.entries(byFou).sort((a,b)=>b[1]-a[1]),fouMax=fouSorted[0]?.[1]||1;
+  const byStatut={};commandes.forEach(c=>{const s=c.statutLivraison||'Non défini';byStatut[s]=(byStatut[s]||0)+1;});
+  const stSorted=Object.entries(byStatut).sort((a,b)=>b[1]-a[1]),stMax=stSorted[0]?.[1]||1;
   const ac={urgent:0,warn:0,ok:0};
   commandes.forEach(c=>{const a=calcAlerte(c);if(a.niveau===3)ac.urgent++;else if(a.niveau>=1)ac.warn++;else if(a.niveau===0)ac.ok++;});
   document.getElementById('dash-content').innerHTML=`
-    <div class="dash-card"><h4>Par fournisseur</h4>
-      ${fouSorted.map(([f,n])=>`<div class="bar-row"><span class="bar-label" title="${f}">${f}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/fouMax*100)}%;background:${FOURNISSEURS_COLORS[f]||'#546E7A'};"></div></div><span class="bar-count">${n}</span></div>`).join('')}
-    </div>
-    <div class="dash-card"><h4>Répartition alertes</h4>
-      ${[['Urgentes',ac.urgent,'#D32F2F'],['Attention',ac.warn,'#E65100'],['OK',ac.ok,'#2E7D32']].map(([l,n,col])=>`<div class="bar-row"><span class="bar-label">${l}</span><div class="bar-track"><div class="bar-fill" style="width:${commandes.length?Math.round(n/commandes.length*100):0}%;background:${col};"></div></div><span class="bar-count">${n}</span></div>`).join('')}
-    </div>
-    <div class="dash-card"><h4>Statuts livraison</h4>
-      ${stSorted.map(([s,n])=>`<div class="bar-row"><span class="bar-label" title="${s}">${s||'—'}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/stMax*100)}%;background:var(--bleu);"></div></div><span class="bar-count">${n}</span></div>`).join('')}
-    </div>
-    <div class="dash-card"><h4>Résumé</h4>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px;">
-        <div style="text-align:center;padding:14px;background:var(--gris-bg);border-radius:8px;"><div style="font-size:28px;font-weight:700;color:var(--bleu);">${commandes.length}</div><div style="font-size:11px;color:var(--texte2);margin-top:4px;">Total commandes</div></div>
-        <div style="text-align:center;padding:14px;background:#FFEBEE;border-radius:8px;"><div style="font-size:28px;font-weight:700;color:var(--rouge);">${ac.urgent}</div><div style="font-size:11px;color:var(--texte2);margin-top:4px;">Urgences</div></div>
-        <div style="text-align:center;padding:14px;background:var(--vert-bg);border-radius:8px;"><div style="font-size:28px;font-weight:700;color:var(--vert);">${ac.ok}</div><div style="font-size:11px;color:var(--texte2);margin-top:4px;">Sans alerte</div></div>
-        <div style="text-align:center;padding:14px;background:#FFF3E0;border-radius:8px;"><div style="font-size:28px;font-weight:700;color:var(--orange);">${ac.warn}</div><div style="font-size:11px;color:var(--texte2);margin-top:4px;">Attention</div></div>
-      </div>
-    </div>`;
+    <div class="dash-card"><h4>Par fournisseur</h4>${fouSorted.map(([f,n])=>`<div class="bar-row"><span class="bar-label" title="${f}">${f}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/fouMax*100)}%;background:${FOURNISSEURS_COLORS[f]||'#546E7A'};"></div></div><span class="bar-count">${n}</span></div>`).join('')}</div>
+    <div class="dash-card"><h4>Répartition alertes</h4>${[['Urgentes',ac.urgent,'#D32F2F'],['Attention',ac.warn,'#E65100'],['OK',ac.ok,'#2E7D32']].map(([l,n,col])=>`<div class="bar-row"><span class="bar-label">${l}</span><div class="bar-track"><div class="bar-fill" style="width:${commandes.length?Math.round(n/commandes.length*100):0}%;background:${col};"></div></div><span class="bar-count">${n}</span></div>`).join('')}</div>
+    <div class="dash-card"><h4>Statuts livraison</h4>${stSorted.map(([s,n])=>`<div class="bar-row"><span class="bar-label" title="${s}">${s||'—'}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/stMax*100)}%;background:var(--bleu);"></div></div><span class="bar-count">${n}</span></div>`).join('')}</div>
+    <div class="dash-card"><h4>Résumé</h4><div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px;">
+      <div style="text-align:center;padding:14px;background:var(--gris-bg);border-radius:8px;"><div style="font-size:28px;font-weight:700;color:var(--bleu);">${commandes.length}</div><div style="font-size:11px;color:var(--texte2);margin-top:4px;">Total</div></div>
+      <div style="text-align:center;padding:14px;background:#FFEBEE;border-radius:8px;"><div style="font-size:28px;font-weight:700;color:var(--rouge);">${ac.urgent}</div><div style="font-size:11px;color:var(--texte2);margin-top:4px;">Urgences</div></div>
+      <div style="text-align:center;padding:14px;background:var(--vert-bg);border-radius:8px;"><div style="font-size:28px;font-weight:700;color:var(--vert);">${ac.ok}</div><div style="font-size:11px;color:var(--texte2);margin-top:4px;">Sans alerte</div></div>
+      <div style="text-align:center;padding:14px;background:#FFF3E0;border-radius:8px;"><div style="font-size:28px;font-weight:700;color:var(--orange);">${ac.warn}</div><div style="font-size:11px;color:var(--texte2);margin-top:4px;">Attention</div></div>
+    </div></div>`;
 }
 
 // ── NAVIGATION ───────────────────────────────────────────
-function showView(v) {
+function showView(v){
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
   document.getElementById('view-'+v).classList.add('active');
-  const map={suivi:0,alertes:1,dashboard:2};
+  const map={suivi:0,alertes:1,dashboard:2,config:3};
   document.querySelectorAll('.nav-item')[map[v]].classList.add('active');
-  document.getElementById('topbar-title').textContent={suivi:'Suivi des commandes',alertes:'Alertes actives',dashboard:'Tableau de bord'}[v];
+  document.getElementById('topbar-title').textContent={suivi:'Suivi des commandes',alertes:'Alertes actives',dashboard:'Tableau de bord',config:'Configuration'}[v];
   if(v==='alertes') renderAlertes();
   if(v==='dashboard') renderDashboard();
+  if(v==='config') document.getElementById('config-url').value=WEBAPP_URL||'';
 }
 
 // ── EXPORT CSV ───────────────────────────────────────────
-function exportCSV() {
+function exportCSV(){
   const cols=['client','devis','devisTTC','fournisseur','commande','arc','commentaireARC','prevLivraison','statutLivraison','statutPose','commentaire'];
-  const head=['Client','N° Devis','Devis TTC','Fournisseur','Commande','ARC','Validation ARC','Prév. Livraison','Statut Livraison','Statut Pose','Commentaire / Remarque','Alerte'];
+  const head=['Client','N° Devis','Devis TTC','Fournisseur','Commande','ARC','Validation ARC','Prév. Livraison','Statut Livraison','Statut Pose','Commentaire','Alerte'];
   const rows=commandes.map(c=>{const a=calcAlerte(c);return[...cols.map(f=>'"'+(c[f]||'').replace(/"/g,'""')+'"'),'"'+a.text.replace(/"/g,'""')+'"'];});
   const csv='\uFEFF'+[head.map(h=>'"'+h+'"').join(','),...rows.map(r=>r.join(','))].join('\n');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
-  a.download='eco-ouest-commandes-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.download='eco-ouest-'+new Date().toISOString().slice(0,10)+'.csv';
   a.click();
 }
 
 // ── FILTRES ──────────────────────────────────────────────
-function populateFournisseurFilter() {
+function populateFournisseurFilter(){
   const sel=document.getElementById('filter-fournisseur');
   sel.innerHTML='<option value="">Tous fournisseurs</option>';
   [...new Set(commandes.map(c=>c.fournisseur).filter(Boolean))].sort().forEach(f=>{
     const o=document.createElement('option');o.value=f;o.textContent=f;sel.appendChild(o);
   });
 }
-
 function renderAll(){ renderKPI(); renderTable(); }
 
 // ── INIT ─────────────────────────────────────────────────
-chargerDepuisSheets();
-// Actualisation automatique toutes les 5 minutes
-setInterval(chargerDepuisSheets, 5 * 60 * 1000);
+charger();
+
+setInterval(()=>{ if(WEBAPP_URL) charger(); }, 5*60*1000);
 </script>
 </body>
 </html>
