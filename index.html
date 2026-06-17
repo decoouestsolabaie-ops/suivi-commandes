@@ -29,7 +29,7 @@
 
   /* MAIN */
   .main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh;}
-  .topbar{background:#fff;border-bottom:1px solid var(--bordure);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+  .topbar{background:#fff;border-bottom:1px solid var(--bordure);padding:8px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
   .topbar-title{font-size:16px;font-weight:600;}
   .topbar-right{display:flex;align-items:center;gap:10px;}
   .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:7px;border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;transition:all .15s;}
@@ -37,7 +37,7 @@
   .btn-outline{background:#fff;color:var(--bleu);border:1.5px solid var(--bleu);} .btn-outline:hover{background:var(--bleu-bg);}
   .btn-danger{background:var(--rouge);color:#fff;}
   .btn-sm{padding:5px 11px;font-size:12px;}
-  .content{padding:24px 28px;flex:1;}
+  .content{padding:12px 28px;flex:1;}
   .view{display:none;} .view.active{display:block;}
 
   /* LOADER */
@@ -58,17 +58,17 @@
   .config-banner input:focus{border-color:var(--bleu);}
 
   /* KPI */
-  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:24px;}
-  .kpi-card{background:#fff;border-radius:10px;padding:18px 20px;border:1px solid var(--bordure);display:flex;flex-direction:column;gap:4px;cursor:pointer;transition:box-shadow .15s;}
+  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px;}
+  .kpi-card{background:#fff;border-radius:10px;padding:10px 16px;border:1px solid var(--bordure);display:flex;flex-direction:column;gap:4px;cursor:pointer;transition:box-shadow .15s;}
   .kpi-card:hover{box-shadow:0 4px 14px rgba(0,0,0,.08);}
   .kpi-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--texte2);}
-  .kpi-value{font-size:28px;font-weight:700;line-height:1;}
+  .kpi-value{font-size:22px;font-weight:700;line-height:1;}
   .kpi-sub{font-size:11px;color:var(--texte2);}
   .kpi-urgent .kpi-value{color:var(--rouge);} .kpi-warn .kpi-value{color:var(--orange);}
   .kpi-ok .kpi-value{color:var(--vert);} .kpi-info .kpi-value{color:var(--bleu);}
 
   /* FILTERS */
-  .filters-bar{background:#fff;border-radius:10px;border:1px solid var(--bordure);padding:14px 18px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:18px;}
+  .filters-bar{background:#fff;border-radius:10px;border:1px solid var(--bordure);padding:8px 14px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px;}
   .search-input{flex:1;min-width:180px;border:1.5px solid var(--bordure);border-radius:7px;padding:7px 12px;font-family:inherit;font-size:13px;outline:none;transition:border-color .15s;}
   .search-input:focus{border-color:var(--bleu);}
   .select-filter{border:1.5px solid var(--bordure);border-radius:7px;padding:7px 10px;font-family:inherit;font-size:13px;outline:none;background:#fff;cursor:pointer;}
@@ -83,7 +83,7 @@
   .filter-badge.ok.active{background:var(--vert);color:#fff;}
 
   /* TABLE */
-  .table-wrap{background:#fff;border-radius:10px;border:1px solid var(--bordure);overflow:auto;max-height:calc(100vh - 280px);position:relative;}
+  .table-wrap{background:#fff;border-radius:10px;border:1px solid var(--bordure);overflow:auto;max-height:calc(100vh - 220px);position:relative;}
   table{width:100%;border-collapse:collapse;font-size:13px;}
   thead tr{background:var(--gris-bg);}  thead th{position:sticky;top:0;z-index:10;background:var(--gris-bg);box-shadow:0 2px 0 var(--bordure);}
   th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;color:var(--texte2);text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid var(--bordure);white-space:nowrap;cursor:pointer;user-select:none;}
