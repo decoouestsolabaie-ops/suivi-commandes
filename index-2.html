@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECO OUEST — Suivi Commandes</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bleu:       #1565C0;
+    --bleu-clair: #1976D2;
+    --bleu-bg:    #E3F2FD;
+    --rouge:      #D32F2F;
+    --orange:     #E65100;
+    --jaune:      #F9A825;
+    --vert:       #2E7D32;
+    --vert-bg:    #C8E6C9;
+    --gris:       #78909C;
+    --gris-bg:    #F5F7FA;
+    --blanc:      #FFFFFF;
+    --texte:      #1A1A2E;
+    --texte2:     #546E7A;
+    --bordure:    #E0E7EF;
+    --sidebar:    180px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #F0F4F8;
+    color: var(--texte);
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar);
+    background: var(--bleu);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+  }
+  .sidebar-logo {
+    padding: 24px 16px 20px;
+    border-bottom: 1px solid rgba(255,255,255,.15);
+  }
+  .sidebar-logo span {
+    display: block;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: .5px;
+  }
+  .sidebar-logo small {
+    font-size: 10px;
+    color: #90CAF9;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 500;
+  }
+  .nav { flex: 1; padding: 12px 0; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 18px;
+    color: rgba(255,255,255,.7);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all .15s;
+    border-left: 3px solid transparent;
+  }
+  .nav-item:hover { color: #fff; background: rgba(255,255,255,.08); }
+  .nav-item.active { color: #fff; background: rgba(255,255,255,.12); border-left-color: #90CAF9; }
+  .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+  .sidebar-footer {
+    padding: 14px 16px;
+    border-top: 1px solid rgba(255,255,255,.1);
+    font-size: 11px;
+    color: rgba(255,255,255,.4);
+  }
+
+  /* ── MAIN ── */
+  .main { margin-left: var(--sidebar); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+  .topbar {
+    background: #fff;
+    border-bottom: 1px solid var(--bordure);
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .topbar-title { font-size: 16px; font-weight: 600; color: var(--texte); }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 7px; border: none; cursor: pointer;
+    font-family: inherit; font-size: 13px; font-weight: 600; transition: all .15s;
+  }
+  .btn-primary { background: var(--bleu); color: #fff; }
+  .btn-primary:hover { background: var(--bleu-clair); }
+  .btn-outline { background: #fff; color: var(--bleu); border: 1.5px solid var(--bleu); }
+  .btn-outline:hover { background: var(--bleu-bg); }
+  .btn-danger { background: var(--rouge); color: #fff; }
+  .btn-sm { padding: 5px 11px; font-size: 12px; }
+
+  .content { padding: 24px 28px; flex: 1; }
+
+  /* ── VIEWS ── */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── KPI CARDS ── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .kpi-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 18px 20px;
+    border: 1px solid var(--bordure);
+    display: flex; flex-direction: column; gap: 4px;
+    cursor: pointer; transition: box-shadow .15s;
+  }
+  .kpi-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,.08); }
+  .kpi-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--texte2); }
+  .kpi-value { font-size: 28px; font-weight: 700; line-height: 1; }
+  .kpi-sub { font-size: 11px; color: var(--texte2); }
+  .kpi-urgent .kpi-value { color: var(--rouge); }
+  .kpi-warn .kpi-value   { color: var(--orange); }
+  .kpi-ok .kpi-value     { color: var(--vert); }
+  .kpi-info .kpi-value   { color: var(--bleu); }
+
+  /* ── FILTERS BAR ── */
+  .filters-bar {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid var(--bordure);
+    padding: 14px 18px;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+    margin-bottom: 18px;
+  }
+  .search-input {
+    flex: 1; min-width: 180px;
+    border: 1.5px solid var(--bordure); border-radius: 7px;
+    padding: 7px 12px; font-family: inherit; font-size: 13px;
+    outline: none; transition: border-color .15s;
+  }
+  .search-input:focus { border-color: var(--bleu); }
+  .select-filter {
+    border: 1.5px solid var(--bordure); border-radius: 7px;
+    padding: 7px 10px; font-family: inherit; font-size: 13px;
+    outline: none; background: #fff; cursor: pointer;
+  }
+  .filter-badge {
+    padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    cursor: pointer; border: 1.5px solid transparent; transition: all .15s;
+  }
+  .filter-badge.all       { border-color: var(--bleu);   color: var(--bleu);   background: var(--bleu-bg); }
+  .filter-badge.urgent    { border-color: var(--rouge);  color: var(--rouge);  }
+  .filter-badge.warn      { border-color: var(--orange); color: var(--orange); }
+  .filter-badge.ok        { border-color: var(--vert);   color: var(--vert);   }
+  .filter-badge.active, .filter-badge:hover { opacity: .85; filter: brightness(1.05); }
+  .filter-badge.all.active    { background: var(--bleu);   color: #fff; }
+  .filter-badge.urgent.active { background: var(--rouge);  color: #fff; }
+  .filter-badge.warn.active   { background: var(--orange); color: #fff; }
+  .filter-badge.ok.active     { background: var(--vert);   color: #fff; }
+
+  /* ── TABLE ── */
+  .table-wrap {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid var(--bordure);
+    overflow-x: auto;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead tr { background: var(--gris-bg); }
+  th {
+    text-align: left; padding: 10px 14px;
+    font-size: 11px; font-weight: 600; color: var(--texte2);
+    text-transform: uppercase; letter-spacing: .8px;
+    border-bottom: 2px solid var(--bordure);
+    white-space: nowrap; cursor: pointer; user-select: none;
+  }
+  th:hover { color: var(--bleu); }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--bordure); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #F8FBFF; }
+  .col-client { font-weight: 600; color: var(--texte); }
+  .col-mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--texte2); }
+  .col-comment { font-style: italic; color: var(--texte2); max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* badges */
+  .badge {
+    display: inline-block; padding: 3px 9px; border-radius: 5px;
+    font-size: 11px; font-weight: 600; white-space: nowrap;
+  }
+  .badge-ok      { background: var(--vert-bg);  color: var(--vert); }
+  .badge-urgent  { background: #FFEBEE; color: var(--rouge); }
+  .badge-warn    { background: #FFF3E0; color: var(--orange); }
+  .badge-info    { background: var(--bleu-bg);  color: var(--bleu); }
+  .badge-grey    { background: #ECEFF1; color: var(--gris); }
+
+  .alerte-cell { max-width: 220px; }
+  .alerte-text { font-size: 11px; font-weight: 600; }
+  .alerte-ok    { color: var(--vert); }
+  .alerte-rouge { color: var(--rouge); }
+  .alerte-orange{ color: var(--orange); }
+  .alerte-jaune { color: #B7860B; }
+  .alerte-gris  { color: var(--gris); }
+
+  .action-btn {
+    background: none; border: none; cursor: pointer; padding: 4px 6px;
+    border-radius: 5px; font-size: 14px; transition: background .12s;
+  }
+  .action-btn:hover { background: var(--gris-bg); }
+
+  .empty-state {
+    text-align: center; padding: 48px 24px; color: var(--texte2);
+  }
+  .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  /* ── MODAL (Fiche commande) ── */
+  .overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(10,20,40,.45); z-index: 200; align-items: center; justify-content: center;
+  }
+  .overlay.open { display: flex; }
+  .modal {
+    background: #fff; border-radius: 14px; width: 620px; max-width: 95vw;
+    max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,.2);
+    animation: fadeUp .2s ease;
+  }
+  @keyframes fadeUp { from { transform: translateY(16px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 28px 16px;
+    border-bottom: 1px solid var(--bordure);
+  }
+  .modal-header h3 { font-size: 17px; font-weight: 700; }
+  .modal-close {
+    width: 30px; height: 30px; border-radius: 8px; border: none;
+    background: var(--gris-bg); cursor: pointer; font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal-body { padding: 22px 28px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: 1 / -1; }
+  label { font-size: 11px; font-weight: 600; color: var(--texte2); text-transform: uppercase; letter-spacing: .8px; }
+  input, select, textarea {
+    border: 1.5px solid var(--bordure); border-radius: 7px;
+    padding: 8px 11px; font-family: inherit; font-size: 13px;
+    outline: none; transition: border-color .15s; color: var(--texte);
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--bleu); }
+  textarea { resize: vertical; min-height: 60px; }
+  .modal-footer {
+    padding: 16px 28px 22px;
+    display: flex; justify-content: flex-end; gap: 10px;
+    border-top: 1px solid var(--bordure);
+  }
+
+  /* ── ALERTES VIEW ── */
+  .alert-section { margin-bottom: 22px; }
+  .alert-section-title {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--texte2); margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .alert-section-title .dot {
+    width: 8px; height: 8px; border-radius: 50%; display: inline-block;
+  }
+  .alert-card {
+    background: #fff; border-radius: 9px; border: 1px solid var(--bordure);
+    padding: 14px 18px; margin-bottom: 8px;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+    transition: box-shadow .12s;
+  }
+  .alert-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,.07); }
+  .alert-card-left { flex: 1; }
+  .alert-card-client { font-weight: 700; font-size: 14px; margin-bottom: 3px; }
+  .alert-card-detail { font-size: 12px; color: var(--texte2); }
+  .alert-card-comment { font-size: 12px; color: var(--bleu); font-style: italic; margin-top: 4px; }
+  .alert-pill {
+    padding: 4px 12px; border-radius: 6px; font-size: 11px; font-weight: 700;
+    white-space: nowrap; align-self: flex-start; margin-top: 2px;
+  }
+
+  /* ── DASHBOARD VIEW ── */
+  .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .dash-card { background: #fff; border-radius: 10px; border: 1px solid var(--bordure); padding: 20px; }
+  .dash-card h4 { font-size: 13px; font-weight: 600; color: var(--texte2); margin-bottom: 14px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 12px; }
+  .bar-label { width: 100px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { flex: 1; height: 8px; background: var(--bordure); border-radius: 4px; overflow: hidden; }
+  .bar-fill  { height: 100%; border-radius: 4px; transition: width .4s ease; }
+  .bar-count { width: 24px; text-align: right; color: var(--texte2); font-weight: 600; }
+
+  /* scroll hint */
+  .scroll-hint { font-size: 11px; color: var(--texte2); padding: 8px 14px; border-top: 1px solid var(--bordure); }
+
+  @media (max-width: 900px) {
+    .sidebar { width: 56px; }
+    .sidebar .nav-item span, .sidebar-logo span, .sidebar-logo small, .sidebar-footer { display: none; }
+    .main { margin-left: 56px; }
+    .sidebar-logo { padding: 16px 10px; }
+    .nav-item { padding: 12px; justify-content: center; }
+    .dash-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .content { padding: 14px 12px; }
+    .topbar { padding: 12px 14px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <span>ECO OUEST</span>
+    <small>Suivi Commandes</small>
+  </div>
+  <nav class="nav">
+    <div class="nav-item active" onclick="showView('suivi')">
+      <span class="icon">📋</span><span>Commandes</span>
+    </div>
+    <div class="nav-item" onclick="showView('alertes')">
+      <span class="icon">🔔</span><span>Alertes</span>
+    </div>
+    <div class="nav-item" onclick="showView('dashboard')">
+      <span class="icon">📊</span><span>Tableau de bord</span>
+    </div>
+  </nav>
+  <div class="sidebar-footer">v7 · ECO OUEST</div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <span class="topbar-title" id="topbar-title">Suivi des commandes</span>
+    <div class="topbar-right">
+      <button class="btn btn-outline btn-sm" onclick="exportCSV()">⬇ Exporter CSV</button>
+      <button class="btn btn-primary btn-sm" onclick="openModal()">＋ Nouvelle commande</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══ VUE : SUIVI ══ -->
+    <div id="view-suivi" class="view active">
+      <div class="kpi-grid" id="kpi-grid"></div>
+      <div class="filters-bar">
+        <input type="text" class="search-input" id="search" placeholder="🔍 Rechercher client, devis, ARC…" oninput="renderTable()">
+        <select class="select-filter" id="filter-fournisseur" onchange="renderTable()">
+          <option value="">Tous fournisseurs</option>
+        </select>
+        <select class="select-filter" id="filter-statut" onchange="renderTable()">
+          <option value="">Tous statuts</option>
+          <option>Livré</option><option>En cours</option><option>SAV</option>
+          <option>Terminé</option><option>Posé</option>
+        </select>
+        <span class="filter-badge all active"  id="fb-all"    onclick="setAlertFilter('all')">Toutes</span>
+        <span class="filter-badge urgent"       id="fb-urgent" onclick="setAlertFilter('urgent')">🔴 Urgentes</span>
+        <span class="filter-badge warn"         id="fb-warn"   onclick="setAlertFilter('warn')">🟠 Attention</span>
+        <span class="filter-badge ok"           id="fb-ok"     onclick="setAlertFilter('ok')">🟢 OK</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th onclick="sortBy('client')">Client ↕</th>
+              <th onclick="sortBy('fournisseur')">Fournisseur ↕</th>
+              <th>N° Devis</th>
+              <th>Commande</th>
+              <th>ARC</th>
+              <th onclick="sortBy('prevLivraison')">Livraison ↕</th>
+              <th>Statut</th>
+              <th>Commentaire / Remarque</th>
+              <th>Alerte</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+        <div class="scroll-hint" id="scroll-hint"></div>
+      </div>
+    </div>
+
+    <!-- ══ VUE : ALERTES ══ -->
+    <div id="view-alertes" class="view">
+      <div id="alertes-content"></div>
+    </div>
+
+    <!-- ══ VUE : DASHBOARD ══ -->
+    <div id="view-dashboard" class="view">
+      <div class="dash-grid" id="dash-content"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL : fiche commande -->
+<div class="overlay" id="overlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-title">Nouvelle commande</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Client *</label>
+          <input id="f-client" type="text" placeholder="Nom du client">
+        </div>
+        <div class="form-group">
+          <label>Fournisseur *</label>
+          <select id="f-fournisseur">
+            <option value="">— Choisir —</option>
+            <option>ATLANTEM</option><option>ATULAM</option><option>LALLEMANT</option>
+            <option>SOKO</option><option>ALUGLASS</option><option>FILTERSUN</option>
+            <option>DC PROD</option><option>KE FRANCE</option><option>SKYLUX</option>
+            <option>BVL SERRULAC</option><option>LEROY MERLIN</option><option>FOUSSIER</option>
+            <option>STOCK</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>N° Devis</label>
+          <input id="f-devis" type="text" placeholder="D-25/xx-xxxxx">
+        </div>
+        <div class="form-group">
+          <label>Devis TTC (€)</label>
+          <input id="f-devisTTC" type="number" placeholder="0.00">
+        </div>
+        <div class="form-group">
+          <label>Commande envoyée ?</label>
+          <select id="f-commande">
+            <option value="">—</option>
+            <option>OUI</option><option>NON</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>N° ARC</label>
+          <input id="f-arc" type="text" placeholder="Accusé Réception N°">
+        </div>
+        <div class="form-group">
+          <label>Validation ARC</label>
+          <select id="f-commentaireARC">
+            <option value="">—</option>
+            <option>Confirmer</option><option>Validé</option>
+            <option>En attente</option><option>ANNULER</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Prévision livraison</label>
+          <input id="f-prevLivraison" type="text" placeholder="S28 ou date">
+        </div>
+        <div class="form-group">
+          <label>Statut livraison</label>
+          <select id="f-statutLivraison">
+            <option value="">—</option>
+            <option>En cours</option><option>Livré</option>
+            <option>En attente</option><option>Bloqué</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Statut pose chantier</label>
+          <select id="f-statutPose">
+            <option value="">—</option>
+            <option>En cours</option><option>Posé</option>
+            <option>Terminé</option><option>SAV</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Commentaire / Remarques (col. N)</label>
+          <textarea id="f-commentaire" placeholder="Observations, SAV, informations importantes…"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">Annuler</button>
+      <button class="btn btn-primary" onclick="saveCommande()">💾 Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DONNÉES ──────────────────────────────────────────────
+const FOURNISSEURS_COLORS = {
+  'ATLANTEM':'#1565C0','ATULAM':'#6A1B9A','LALLEMANT':'#2E7D32',
+  'SOKO':'#00695C','ALUGLASS':'#E65100','FILTERSUN':'#C62828',
+  'DC PROD':'#37474F','KE FRANCE':'#0277BD','SKYLUX':'#558B2F',
+  'BVL SERRULAC':'#4527A0','LEROY MERLIN':'#1B5E20','FOUSSIER':'#6D4C41',
+  'STOCK':'#546E7A',
+};
+
+let commandes = JSON.parse(localStorage.getItem('eco-commandes') || 'null') || getDefaultData();
+let sortCol = '', sortAsc = true;
+let alertFilter = 'all';
+let editIdx = -1;
+
+function getDefaultData() {
+  return [
+    { client:'RIAUTE', metres:'2025-09-09', devis:'D-25/09-07224', devisTTC:'', fournisseur:'ATLANTEM', commande:'OUI', arc:'2509080839', totalAchats:'', commentaireARC:'Confirmer', prevLivraison:'S49', repositionnement:'', statutLivraison:'Livré', statutPose:'Terminé', commentaire:'', alerte:'OK' },
+    { client:'GARRIGUE', metres:'', devis:'', devisTTC:'', fournisseur:'ATLANTEM', commande:'OUI', arc:'2510090332', totalAchats:'', commentaireARC:'Confirmer', prevLivraison:'S 43', repositionnement:'', statutLivraison:'Livré', statutPose:'SAV', commentaire:'SAV VOLET ROULANT, inversion sens enroulement et côté de sortie', alerte:'OK' },
+    { client:'TRIBUNAL VERSAILLES', metres:'', devis:'D-25/09-07225', devisTTC:'', fournisseur:'ATLANTEM', commande:'OUI', arc:'2509082846', totalAchats:'', commentaireARC:'Confirmer', prevLivraison:'S47', repositionnement:'', statutLivraison:'Livré', statutPose:'Terminé', commentaire:'', alerte:'OK' },
+    { client:'BO', metres:'', devis:'', devisTTC:'4947.41', fournisseur:'ATULAM', commande:'OUI', arc:'2506664', totalAchats:'', commentaireARC:'Confirmer', prevLivraison:'S05', repositionnement:'', statutLivraison:'Livré', statutPose:'Terminé', commentaire:'', alerte:'OK' },
+    { client:'VU', metres:'', devis:'', devisTTC:'', fournisseur:'ATLANTEM', commande:'OUI', arc:'2510089115PE', totalAchats:'', commentaireARC:'Confirmer', prevLivraison:'S50', repositionnement:'', statutLivraison:'Livré', statutPose:'Terminé', commentaire:'manque une paire de cache paumelle', alerte:'OK' },
+    { client:'BROUSSE', metres:'', devis:'', devisTTC:'', fournisseur:'ATLANTEM', commande:'OUI', arc:'2510090201', totalAchats:'', commentaireARC:'Confirmer', prevLivraison:'S50', repositionnement:'', statutLivraison:'Livré', statutPose:'Terminé', commentaire:'', alerte:'OK' },
+    { client:'SAV BELLE tablier', metres:'2026-05-20', devis:'', devisTTC:'', fournisseur:'ATLANTEM', commande:'NON', arc:'', totalAchats:'', commentaireARC:'', prevLivraison:'', repositionnement:'', statutLivraison:'', statutPose:'', commentaire:'VOLET bloqué depuis le 1er soir après pose; trouver une solution pérenne', alerte:'Commande non envoyee - URGENT' },
+    { client:'SAV BELLE porte garage', metres:'2026-05-29', devis:'', devisTTC:'', fournisseur:'ATLANTEM', commande:'OUI', arc:'2605047448', totalAchats:'', commentaireARC:'Confirmer', prevLivraison:'S24', repositionnement:'', statutLivraison:'', statutPose:'', commentaire:'', alerte:'Date livraison manquante' },
+    { client:'MARTIN', metres:'', devis:'D-26/01-12345', devisTTC:'3200', fournisseur:'KE FRANCE', commande:'OUI', arc:'', totalAchats:'', commentaireARC:'En attente', prevLivraison:'S28', repositionnement:'', statutLivraison:'En cours', statutPose:'', commentaire:'Menuiseries coulissantes — coordonner avec électricien', alerte:'ARC non recu' },
+    { client:'DUPONT RÉNOVATION', metres:'', devis:'D-26/02-11100', devisTTC:'8900', fournisseur:'SOKO', commande:'OUI', arc:'2601234', totalAchats:'', commentaireARC:'Confirmer', prevLivraison:'S22', repositionnement:'', statutLivraison:'En cours', statutPose:'', commentaire:'', alerte:'Livraison en retard depuis le 01/06/2026' },
+    { client:'LEFEVRE', metres:'', devis:'D-26/03-00778', devisTTC:'', fournisseur:'LALLEMANT', commande:'NON', arc:'', totalAchats:'', commentaireARC:'', prevLivraison:'', repositionnement:'', statutLivraison:'', statutPose:'', commentaire:'Attente accord client sur coloris', alerte:'Commande non envoyee - URGENT' },
+    { client:'ECOLE PRIMAIRE ST PAUL', metres:'2026-06-01', devis:'D-26/04-05560', devisTTC:'12400', fournisseur:'FILTERSUN', commande:'OUI', arc:'F2026-88', totalAchats:'', commentaireARC:'Validé', prevLivraison:'S26', repositionnement:'', statutLivraison:'En cours', statutPose:'', commentaire:'Installation pendant vacances scolaires impérative', alerte:'OK' },
+  ];
+}
+
+function save() {
+  localStorage.setItem('eco-commandes', JSON.stringify(commandes));
+}
+
+// ── ALERTES ──────────────────────────────────────────────
+const STATUTS_TERMINES = ['LIVRE','LIVRÉ','TERMINE','TERMINÉ','POSE','POSÉ','Livré','Terminé','Posé','Livre','Termine'];
+
+function calcAlerte(c) {
+  const estTermine = STATUTS_TERMINES.includes((c.statutLivraison||'').trim())
+                  || STATUTS_TERMINES.includes((c.statutPose||'').trim());
+  const estAnnule  = (c.commentaireARC||'').trim().toUpperCase() === 'ANNULER';
+  if (estTermine)  return { text: 'OK',       niveau: 0 };
+  if (estAnnule)   return { text: 'Annulée',  niveau: -1 };
+
+  const msgs = []; let sev = 0;
+  if (!c.commande || c.commande.toUpperCase() === 'NON') { msgs.push('Commande non envoyée — URGENT'); sev = 3; }
+  if (!c.arc || !c.arc.trim()) { msgs.push('ARC non reçu'); if (sev < 2) sev = 2; }
+  if (!c.commentaireARC || !c.commentaireARC.trim()) { msgs.push('Validation ARC manquante'); if (sev < 2) sev = 2; }
+  else if ((c.commentaireARC||'').toUpperCase().includes('EN ATTENTE')) { msgs.push('En attente ARC'); if (sev < 2) sev = 2; }
+  if (!c.prevLivraison || !c.prevLivraison.trim()) { msgs.push('Date livraison manquante'); if (sev < 1) sev = 1; }
+  if (c.metres && !isNaN(Date.parse(c.metres))) {
+    const d = new Date(c.metres); const now = new Date(); now.setHours(0,0,0,0);
+    if (d < now) { msgs.push('Livraison en retard depuis le '+d.toLocaleDateString('fr-FR')); sev = 3; }
+  }
+  if (msgs.length === 0) return { text: 'OK', niveau: 0 };
+  return { text: msgs.join(' | '), niveau: sev };
+}
+
+function alerteClass(niveau) {
+  if (niveau === 0)  return 'alerte-ok';
+  if (niveau === 1)  return 'alerte-jaune';
+  if (niveau === 2)  return 'alerte-orange';
+  if (niveau === 3)  return 'alerte-rouge';
+  return 'alerte-gris';
+}
+function badgeForNiveau(n) {
+  if (n === 0)  return 'badge-ok';
+  if (n === 1)  return 'badge-info';
+  if (n === 2)  return 'badge-warn';
+  if (n === 3)  return 'badge-urgent';
+  return 'badge-grey';
+}
+
+// ── KPI ──────────────────────────────────────────────────
+function renderKPI() {
+  const alertes = commandes.map(c => calcAlerte(c));
+  const total   = commandes.length;
+  const urgents = alertes.filter(a => a.niveau === 3).length;
+  const warns   = alertes.filter(a => a.niveau >= 1 && a.niveau <= 2).length;
+  const ok      = alertes.filter(a => a.niveau === 0).length;
+  const enCours = commandes.filter(c => !STATUTS_TERMINES.includes((c.statutLivraison||'').trim())).length;
+
+  document.getElementById('kpi-grid').innerHTML = `
+    <div class="kpi-card kpi-info" onclick="setAlertFilter('all')">
+      <span class="kpi-label">Total</span>
+      <span class="kpi-value">${total}</span>
+      <span class="kpi-sub">commandes</span>
+    </div>
+    <div class="kpi-card kpi-urgent" onclick="setAlertFilter('urgent')">
+      <span class="kpi-label">Urgentes</span>
+      <span class="kpi-value">${urgents}</span>
+      <span class="kpi-sub">action requise</span>
+    </div>
+    <div class="kpi-card kpi-warn" onclick="setAlertFilter('warn')">
+      <span class="kpi-label">Attention</span>
+      <span class="kpi-value">${warns}</span>
+      <span class="kpi-sub">à surveiller</span>
+    </div>
+    <div class="kpi-card kpi-ok" onclick="setAlertFilter('ok')">
+      <span class="kpi-label">OK</span>
+      <span class="kpi-value">${ok}</span>
+      <span class="kpi-sub">sans alerte</span>
+    </div>
+    <div class="kpi-card kpi-info">
+      <span class="kpi-label">En cours</span>
+      <span class="kpi-value">${enCours}</span>
+      <span class="kpi-sub">non livrées</span>
+    </div>
+  `;
+}
+
+// ── TABLE ──────────────────────────────────────────────────
+function renderTable() {
+  const q    = (document.getElementById('search').value||'').toLowerCase();
+  const fFou = document.getElementById('filter-fournisseur').value;
+  const fSta = document.getElementById('filter-statut').value;
+
+  let rows = commandes.map((c,i) => ({ ...c, _i: i, _alerte: calcAlerte(c) }));
+
+  if (q) rows = rows.filter(c =>
+    (c.client||'').toLowerCase().includes(q) ||
+    (c.devis||'').toLowerCase().includes(q) ||
+    (c.arc||'').toLowerCase().includes(q) ||
+    (c.fournisseur||'').toLowerCase().includes(q)
+  );
+  if (fFou) rows = rows.filter(c => c.fournisseur === fFou);
+  if (fSta) rows = rows.filter(c => (c.statutLivraison||'').includes(fSta) || (c.statutPose||'').includes(fSta));
+  if (alertFilter === 'urgent') rows = rows.filter(c => c._alerte.niveau === 3);
+  if (alertFilter === 'warn')   rows = rows.filter(c => c._alerte.niveau >= 1 && c._alerte.niveau <= 2);
+  if (alertFilter === 'ok')     rows = rows.filter(c => c._alerte.niveau === 0);
+
+  if (sortCol) {
+    rows.sort((a,b) => {
+      const va = (a[sortCol]||'').toString().toLowerCase();
+      const vb = (b[sortCol]||'').toString().toLowerCase();
+      return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+    });
+  }
+
+  const tbody = document.getElementById('table-body');
+  if (rows.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="10"><div class="empty-state"><div class="icon">🔍</div><p>Aucune commande trouvée.</p></div></td></tr>';
+    document.getElementById('scroll-hint').textContent = '';
+    return;
+  }
+
+  tbody.innerHTML = rows.map(c => {
+    const a = c._alerte;
+    const fou_color = FOURNISSEURS_COLORS[c.fournisseur] || '#546E7A';
+    const statBadge = c.statutLivraison
+      ? `<span class="badge ${c.statutLivraison==='Livré'?'badge-ok':c.statutLivraison==='SAV'?'badge-urgent':'badge-info'}">${c.statutLivraison}</span>`
+      : '';
+    return `<tr>
+      <td class="col-client">${escH(c.client)}</td>
+      <td><span style="background:${fou_color}18;color:${fou_color};padding:3px 8px;border-radius:5px;font-size:11px;font-weight:700;">${escH(c.fournisseur)}</span></td>
+      <td class="col-mono">${escH(c.devis) || '<span style="color:#ccc">—</span>'}</td>
+      <td>${c.commande==='OUI'?'<span class="badge badge-ok">OUI</span>':c.commande==='NON'?'<span class="badge badge-urgent">NON</span>':'<span style="color:#ccc">—</span>'}</td>
+      <td class="col-mono">${escH(c.arc) || '<span style="color:#ccc">—</span>'}</td>
+      <td style="font-size:12px;color:var(--texte2);">${escH(c.prevLivraison) || '—'}</td>
+      <td>${statBadge}</td>
+      <td class="col-comment" title="${escH(c.commentaire)}">${escH(c.commentaire) || '<span style="color:#ddd">—</span>'}</td>
+      <td class="alerte-cell">
+        <span class="alerte-text ${alerteClass(a.niveau)}" title="${escH(a.text)}">${a.niveau === 0 ? '✓ OK' : '⚠ ' + escH(a.text.split(' | ')[0])}</span>
+        ${a.text.includes(' | ') ? `<br><span style="font-size:10px;color:var(--texte2);">+${a.text.split(' | ').length - 1} autre(s)</span>` : ''}
+      </td>
+      <td>
+        <button class="action-btn" title="Modifier" onclick="openModal(${c._i})">✏️</button>
+        <button class="action-btn" title="Supprimer" onclick="deleteCommande(${c._i})">🗑️</button>
+      </td>
+    </tr>`;
+  }).join('');
+  document.getElementById('scroll-hint').textContent = `${rows.length} commande(s) affichée(s) sur ${commandes.length}`;
+}
+
+function escH(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function sortBy(col) {
+  if (sortCol === col) sortAsc = !sortAsc; else { sortCol = col; sortAsc = true; }
+  renderTable();
+}
+
+function setAlertFilter(f) {
+  alertFilter = f;
+  ['all','urgent','warn','ok'].forEach(k => document.getElementById('fb-'+k).classList.toggle('active', k===f));
+  renderTable();
+}
+
+// ── ALERTES VIEW ──────────────────────────────────────────
+function renderAlertes() {
+  const groups = { 3:[], 2:[], 1:[], 0:[] };
+  commandes.forEach((c,i) => {
+    const a = calcAlerte(c);
+    if (a.niveau >= 0) groups[a.niveau].push({ c, i, a });
+  });
+
+  const sections = [
+    { niveau:3, label:'Urgentes — Action immédiate', color:'#D32F2F', dot:'#D32F2F', pillBg:'#FFEBEE', pillColor:'#D32F2F' },
+    { niveau:2, label:'Attention — À traiter rapidement', color:'#E65100', dot:'#E65100', pillBg:'#FFF3E0', pillColor:'#E65100' },
+    { niveau:1, label:'Information — À surveiller', color:'#F9A825', dot:'#F9A825', pillBg:'#FFFDE7', pillColor:'#B7860B' },
+  ];
+
+  let html = '';
+  sections.forEach(s => {
+    const items = groups[s.niveau];
+    if (items.length === 0) return;
+    html += `<div class="alert-section">
+      <div class="alert-section-title">
+        <span class="dot" style="background:${s.dot}"></span>
+        ${s.label} (${items.length})
+      </div>`;
+    items.forEach(({ c, i, a }) => {
+      const msgs = a.text.split(' | ');
+      html += `<div class="alert-card">
+        <div class="alert-card-left">
+          <div class="alert-card-client">${escH(c.client)} <span style="font-size:11px;font-weight:400;color:var(--texte2);">${c.fournisseur ? '· '+c.fournisseur : ''}</span></div>
+          <div class="alert-card-detail">${msgs.map(m=>'• '+escH(m)).join(' &nbsp; ')}</div>
+          ${c.commentaire ? `<div class="alert-card-comment">💬 ${escH(c.commentaire)}</div>` : ''}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+          <span class="alert-pill" style="background:${s.pillBg};color:${s.pillColor};">${msgs.length} alerte(s)</span>
+          <button class="btn btn-outline btn-sm" onclick="openModal(${i});showView('suivi')">Modifier</button>
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+
+  if (html === '') html = '<div class="empty-state"><div class="icon">✅</div><p>Aucune alerte active. Toutes les commandes sont à jour.</p></div>';
+  document.getElementById('alertes-content').innerHTML = html;
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────
+function renderDashboard() {
+  // Par fournisseur
+  const byFou = {};
+  commandes.forEach(c => { if (c.fournisseur) byFou[c.fournisseur] = (byFou[c.fournisseur]||0)+1; });
+  const fouSorted = Object.entries(byFou).sort((a,b)=>b[1]-a[1]);
+  const fouMax = fouSorted[0]?.[1] || 1;
+
+  // Par statut
+  const byStatut = {};
+  commandes.forEach(c => { const s = c.statutLivraison||'Non défini'; byStatut[s] = (byStatut[s]||0)+1; });
+  const stSorted = Object.entries(byStatut).sort((a,b)=>b[1]-a[1]);
+  const stMax = stSorted[0]?.[1] || 1;
+
+  // Alertes par type
+  const alertCount = { urgent:0, warn:0, ok:0, annule:0 };
+  commandes.forEach(c => {
+    const a = calcAlerte(c);
+    if (a.niveau === 3)  alertCount.urgent++;
+    else if (a.niveau >= 1) alertCount.warn++;
+    else if (a.niveau === 0) alertCount.ok++;
+    else alertCount.annule++;
+  });
+
+  document.getElementById('dash-content').innerHTML = `
+    <div class="dash-card">
+      <h4>Commandes par fournisseur</h4>
+      ${fouSorted.map(([f,n])=>`
+        <div class="bar-row">
+          <span class="bar-label" title="${f}">${f}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/fouMax*100)}%;background:${FOURNISSEURS_COLORS[f]||'#546E7A'};"></div></div>
+          <span class="bar-count">${n}</span>
+        </div>`).join('')}
+    </div>
+    <div class="dash-card">
+      <h4>Répartition des alertes</h4>
+      ${[
+        ['Urgentes',  alertCount.urgent,  '#D32F2F'],
+        ['Attention', alertCount.warn,    '#E65100'],
+        ['OK',        alertCount.ok,      '#2E7D32'],
+        ['Annulées',  alertCount.annule,  '#9E9E9E'],
+      ].map(([l,n,col])=>`
+        <div class="bar-row">
+          <span class="bar-label">${l}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/commandes.length*100)}%;background:${col};"></div></div>
+          <span class="bar-count">${n}</span>
+        </div>`).join('')}
+    </div>
+    <div class="dash-card">
+      <h4>Statuts de livraison</h4>
+      ${stSorted.map(([s,n])=>`
+        <div class="bar-row">
+          <span class="bar-label" title="${s}">${s||'—'}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/stMax*100)}%;background:var(--bleu);"></div></div>
+          <span class="bar-count">${n}</span>
+        </div>`).join('')}
+    </div>
+    <div class="dash-card">
+      <h4>Résumé</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px;">
+        <div style="text-align:center;padding:14px;background:var(--gris-bg);border-radius:8px;">
+          <div style="font-size:28px;font-weight:700;color:var(--bleu);">${commandes.length}</div>
+          <div style="font-size:11px;color:var(--texte2);margin-top:4px;">Total commandes</div>
+        </div>
+        <div style="text-align:center;padding:14px;background:#FFEBEE;border-radius:8px;">
+          <div style="font-size:28px;font-weight:700;color:var(--rouge);">${alertCount.urgent}</div>
+          <div style="font-size:11px;color:var(--texte2);margin-top:4px;">Urgences</div>
+        </div>
+        <div style="text-align:center;padding:14px;background:var(--vert-bg);border-radius:8px;">
+          <div style="font-size:28px;font-weight:700;color:var(--vert);">${alertCount.ok}</div>
+          <div style="font-size:11px;color:var(--texte2);margin-top:4px;">Sans alerte</div>
+        </div>
+        <div style="text-align:center;padding:14px;background:#FFF3E0;border-radius:8px;">
+          <div style="font-size:28px;font-weight:700;color:var(--orange);">${alertCount.warn}</div>
+          <div style="font-size:11px;color:var(--texte2);margin-top:4px;">Attention</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ── NAVIGATION ────────────────────────────────────────────
+function showView(v) {
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  const nav = document.querySelectorAll('.nav-item');
+  const map = { suivi:0, alertes:1, dashboard:2 };
+  nav[map[v]].classList.add('active');
+  const titles = { suivi:'Suivi des commandes', alertes:'Alertes actives', dashboard:'Tableau de bord' };
+  document.getElementById('topbar-title').textContent = titles[v];
+  if (v === 'alertes')   renderAlertes();
+  if (v === 'dashboard') renderDashboard();
+}
+
+// ── MODAL ─────────────────────────────────────────────────
+function openModal(idx) {
+  editIdx = idx !== undefined ? idx : -1;
+  const c = editIdx >= 0 ? commandes[editIdx] : {};
+  document.getElementById('modal-title').textContent = editIdx >= 0 ? 'Modifier la commande' : 'Nouvelle commande';
+  ['client','devis','devisTTC','fournisseur','commande','arc','commentaireARC','prevLivraison','statutLivraison','statutPose','commentaire']
+    .forEach(f => { const el = document.getElementById('f-'+f); if(el) el.value = c[f] || ''; });
+  document.getElementById('overlay').classList.add('open');
+}
+
+function closeModal() { document.getElementById('overlay').classList.remove('open'); }
+function closeModalOutside(e) { if (e.target.id === 'overlay') closeModal(); }
+
+function saveCommande() {
+  const c = {};
+  ['client','devis','devisTTC','fournisseur','commande','arc','commentaireARC','prevLivraison','statutLivraison','statutPose','commentaire']
+    .forEach(f => { const el = document.getElementById('f-'+f); if(el) c[f] = el.value.trim(); });
+  c.metres = c.metres || '';
+  c.totalAchats = '';
+  c.repositionnement = '';
+  if (!c.client) { alert('Le champ Client est obligatoire.'); return; }
+  if (editIdx >= 0) commandes[editIdx] = { ...commandes[editIdx], ...c };
+  else commandes.push(c);
+  save(); closeModal(); renderAll();
+}
+
+function deleteCommande(i) {
+  if (!confirm('Supprimer la commande "' + commandes[i].client + '" ?')) return;
+  commandes.splice(i, 1);
+  save(); renderAll();
+}
+
+// ── EXPORT CSV ────────────────────────────────────────────
+function exportCSV() {
+  const cols = ['client','devis','devisTTC','fournisseur','commande','arc','commentaireARC','prevLivraison','statutLivraison','statutPose','commentaire'];
+  const head = ['Client','N° Devis','Devis TTC','Fournisseur','Commande','ARC','Validation ARC','Prev. Livraison','Statut Livraison','Statut Pose','Commentaire / Remarque','Alerte'];
+  const rows = commandes.map(c => {
+    const a = calcAlerte(c);
+    return [...cols.map(f => '"'+(c[f]||'').replace(/"/g,'""')+'"'), '"'+a.text.replace(/"/g,'""')+'"'];
+  });
+  const csv = '\uFEFF' + [head.map(h=>'"'+h+'"').join(','), ...rows.map(r=>r.join(','))].join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'}));
+  a.download = 'eco-ouest-commandes-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+
+// ── INIT ──────────────────────────────────────────────────
+function populateFournisseurFilter() {
+  const sel = document.getElementById('filter-fournisseur');
+  const fous = [...new Set(commandes.map(c=>c.fournisseur).filter(Boolean))].sort();
+  fous.forEach(f => { const o = document.createElement('option'); o.value = f; o.textContent = f; sel.appendChild(o); });
+}
+
+function renderAll() {
+  renderKPI(); renderTable();
+}
+
+populateFournisseurFilter();
+renderAll();
+</script>
+</body>
+</html>
