@@ -368,7 +368,18 @@
 
 
 // ── LOGIN ────────────────────────────────────────────────
-const MOT_DE_PASSE = 'ecoouest290';
+const MOT_DE_PASSE = 'ecoouest2026';
+
+// Event listener sur la touche Entrée
+document.addEventListener('DOMContentLoaded', function() {
+  var input = document.getElementById('login-pwd');
+  if (input) {
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') verifierMdp();
+    });
+    input.focus();
+  }
+});
 
 function verifierMdp() {
   const val = document.getElementById('login-pwd').value;
@@ -736,7 +747,7 @@ setInterval(()=>{ if(WEBAPP_URL) if (checkAuth()) { demanderPermissionNotif(); c
   <div class="login-box">
     <h2>ECO OUEST</h2>
     <p>Suivi Commandes — Accès sécurisé</p>
-    <input type="password" id="login-pwd" placeholder="Mot de passe" onkeydown="if(event.key==='Enter') verifierMdp()">
+    <input type="password" id="login-pwd" placeholder="Mot de passe">
     <button onclick="verifierMdp()">Accéder →</button>
     <div class="login-error" id="login-error">Mot de passe incorrect.</div>
   </div>
