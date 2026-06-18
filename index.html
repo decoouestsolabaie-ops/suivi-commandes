@@ -208,10 +208,10 @@
           <option value="">Tous statuts</option>
           <option>Livré</option><option>En cours</option><option>SAV</option><option>Terminé</option><option>Posé</option>
         </select>
-        <span class="filter-badge all active" id="fb-all" onclick="setAlertFilter('all')">Toutes</span>
-        <span class="filter-badge urgent" id="fb-urgent" onclick="setAlertFilter('urgent')">🔴 Urgentes</span>
-        <span class="filter-badge warn" id="fb-warn" onclick="setAlertFilter('warn')">🟠 Attention</span>
-        <span class="filter-badge ok" id="fb-ok" onclick="setAlertFilter('ok')">🟢 OK</span>
+        <span class="filter-badge all active" id="fb-all" onclick="setAlertFilter(&quot;all&quot;)">Toutes</span>
+        <span class="filter-badge urgent" id="fb-urgent" onclick="setAlertFilter(&quot;urgent&quot;)">🔴 Urgentes</span>
+        <span class="filter-badge warn" id="fb-warn" onclick="setAlertFilter(&quot;warn&quot;)">🟠 Attention</span>
+        <span class="filter-badge ok" id="fb-ok" onclick="setAlertFilter(&quot;ok&quot;)">🟢 OK</span>
       </div>
       <div class="table-wrap">
         <table>
@@ -292,7 +292,7 @@
 
 <script>
 const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxk1zFKVsCDoiN5J4RAZYF-9nEYqGMIypS2lqBooqZWkxwMUGo8JVq5-iS9ZvZUGasa/exec';
-const MOT_DE_PASSE = 'ecoouest290';
+const MOT_DE_PASSE = 'ecoouest2026';
 const FOURNISSEURS_COLORS = {
   'ATLANTEM':'#1565C0','ATULAM':'#6A1B9A','LALLEMANT':'#2E7D32',
   'SOKO':'#00695C','ALUGLASS':'#E65100','FILTERSUN':'#C62828',
@@ -420,10 +420,10 @@ function renderKPI() {
   al.forEach(function(a){if(a.niveau===3)urgents++;else if(a.niveau>=1)warns++;else if(a.niveau===0)ok++;});
   commandes.forEach(function(c){if(STATUTS_TERMINES.indexOf((c.statutLivraison||'').trim())===-1)enCours++;});
   document.getElementById('kpi-grid').innerHTML =
-    '<div class="kpi-card kpi-info" onclick="setAlertFilter('all')"><span class="kpi-label">Total</span><span class="kpi-value">'+total+'</span><span class="kpi-sub">commandes</span></div>'+
-    '<div class="kpi-card kpi-urgent" onclick="setAlertFilter('urgent')"><span class="kpi-label">Urgentes</span><span class="kpi-value">'+urgents+'</span><span class="kpi-sub">action requise</span></div>'+
-    '<div class="kpi-card kpi-warn" onclick="setAlertFilter('warn')"><span class="kpi-label">Attention</span><span class="kpi-value">'+warns+'</span><span class="kpi-sub">à surveiller</span></div>'+
-    '<div class="kpi-card kpi-ok" onclick="setAlertFilter('ok')"><span class="kpi-label">OK</span><span class="kpi-value">'+ok+'</span><span class="kpi-sub">sans alerte</span></div>'+
+    '<div class="kpi-card kpi-info" onclick="setAlertFilter(&quot;all&quot;)"><span class="kpi-label">Total</span><span class="kpi-value">'+total+'</span><span class="kpi-sub">commandes</span></div>'+
+    '<div class="kpi-card kpi-urgent" onclick="setAlertFilter(&quot;urgent&quot;)"><span class="kpi-label">Urgentes</span><span class="kpi-value">'+urgents+'</span><span class="kpi-sub">action requise</span></div>'+
+    '<div class="kpi-card kpi-warn" onclick="setAlertFilter(&quot;warn&quot;)"><span class="kpi-label">Attention</span><span class="kpi-value">'+warns+'</span><span class="kpi-sub">à surveiller</span></div>'+
+    '<div class="kpi-card kpi-ok" onclick="setAlertFilter(&quot;ok&quot;)"><span class="kpi-label">OK</span><span class="kpi-value">'+ok+'</span><span class="kpi-sub">sans alerte</span></div>'+
     '<div class="kpi-card kpi-info"><span class="kpi-label">En cours</span><span class="kpi-value">'+enCours+'</span><span class="kpi-sub">non livrées</span></div>';
 }
 
