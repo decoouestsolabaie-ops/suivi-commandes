@@ -13,21 +13,11 @@
     --texte:#1A1A2E;--texte2:#546E7A;--bordure:#E0E7EF;--sidebar:180px;
   }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:"Inter",sans-serif;background:#F0F4F8;color:var(--texte);min-height:100vh;display:flex;}
-  /* LOGIN */
-  .login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#1565C0,#1976D2);display:flex;align-items:center;justify-content:center;z-index:999;}
-  .login-screen.hidden{display:none;}
-  .login-box{background:#fff;border-radius:16px;padding:40px 36px;width:360px;max-width:92vw;box-shadow:0 20px 60px rgba(0,0,0,.25);text-align:center;}
-  .login-box h2{font-size:22px;font-weight:700;color:var(--texte);margin-bottom:4px;}
-  .login-box p{font-size:13px;color:var(--texte2);margin-bottom:28px;}
-  .login-box input{width:100%;border:1.5px solid var(--bordure);border-radius:8px;padding:11px 14px;font-size:15px;font-family:inherit;outline:none;text-align:center;letter-spacing:3px;margin-bottom:14px;}
-  .login-box input:focus{border-color:var(--bleu);}
-  .login-box button{width:100%;padding:12px;background:var(--bleu);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;}
-  .login-box button:hover{background:var(--bleu-clair);}
-  .login-error{color:var(--rouge);font-size:12px;margin-top:8px;min-height:18px;}
+  body{font-family:'Inter',sans-serif;background:#F0F4F8;color:var(--texte);min-height:100vh;display:flex;}
+
   /* SIDEBAR */
   .sidebar{width:var(--sidebar);background:var(--bleu);min-height:100vh;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;}
-  .sidebar-logo{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.15);}
+  .sidebar-logo{padding:24px 16px 20px;border-bottom:1px solid rgba(255,255,255,.15);}
   .sidebar-logo span{display:block;font-size:18px;font-weight:700;color:#fff;}
   .sidebar-logo small{font-size:10px;color:#90CAF9;text-transform:uppercase;letter-spacing:1.5px;}
   .nav{flex:1;padding:12px 0;}
@@ -36,6 +26,7 @@
   .nav-item.active{color:#fff;background:rgba(255,255,255,.12);border-left-color:#90CAF9;}
   .nav-item .icon{font-size:16px;width:20px;text-align:center;}
   .sidebar-footer{padding:14px 16px;border-top:1px solid rgba(255,255,255,.1);font-size:11px;color:rgba(255,255,255,.4);}
+
   /* MAIN */
   .main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh;}
   .topbar{background:#fff;border-bottom:1px solid var(--bordure);padding:8px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
@@ -48,8 +39,9 @@
   .btn-sm{padding:5px 11px;font-size:12px;}
   .content{padding:12px 28px;flex:1;}
   .view{display:none;} .view.active{display:block;}
+
   /* LOADER */
-  .loader-bar{height:3px;background:var(--bleu-bg);margin-bottom:12px;border-radius:2px;overflow:hidden;display:none;}
+  .loader-bar{height:3px;background:var(--bleu-bg);margin-bottom:18px;border-radius:2px;overflow:hidden;display:none;}
   .loader-bar.active{display:block;}
   .loader-fill{height:100%;background:var(--bleu);border-radius:2px;animation:load 1.2s ease-in-out infinite;}
   @keyframes load{0%{width:0%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0%;margin-left:100%}}
@@ -57,6 +49,14 @@
   .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--vert);display:inline-block;}
   .sync-dot.loading{background:var(--orange);animation:pulse .8s infinite;}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+  /* CONFIG BANNER */
+  .config-banner{background:#FFF3E0;border:1.5px solid var(--orange);border-radius:10px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:flex-start;gap:12px;}
+  .config-banner .icon{font-size:20px;}
+  .config-banner p{font-size:13px;color:var(--texte);line-height:1.6;}
+  .config-banner input{border:1.5px solid var(--bordure);border-radius:6px;padding:6px 10px;font-size:13px;font-family:inherit;width:100%;margin-top:6px;outline:none;}
+  .config-banner input:focus{border-color:var(--bleu);}
+
   /* KPI */
   .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px;}
   .kpi-card{background:#fff;border-radius:10px;padding:10px 16px;border:1px solid var(--bordure);display:flex;flex-direction:column;gap:4px;cursor:pointer;transition:box-shadow .15s;}
@@ -66,9 +66,10 @@
   .kpi-sub{font-size:11px;color:var(--texte2);}
   .kpi-urgent .kpi-value{color:var(--rouge);} .kpi-warn .kpi-value{color:var(--orange);}
   .kpi-ok .kpi-value{color:var(--vert);} .kpi-info .kpi-value{color:var(--bleu);}
+
   /* FILTERS */
   .filters-bar{background:#fff;border-radius:10px;border:1px solid var(--bordure);padding:8px 14px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px;}
-  .search-input{flex:1;min-width:180px;border:1.5px solid var(--bordure);border-radius:7px;padding:7px 12px;font-family:inherit;font-size:13px;outline:none;}
+  .search-input{flex:1;min-width:180px;border:1.5px solid var(--bordure);border-radius:7px;padding:7px 12px;font-family:inherit;font-size:13px;outline:none;transition:border-color .15s;}
   .search-input:focus{border-color:var(--bleu);}
   .select-filter{border:1.5px solid var(--bordure);border-radius:7px;padding:7px 10px;font-family:inherit;font-size:13px;outline:none;background:#fff;cursor:pointer;}
   .filter-badge{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid transparent;transition:all .15s;}
@@ -80,18 +81,18 @@
   .filter-badge.urgent.active{background:var(--rouge);color:#fff;}
   .filter-badge.warn.active{background:var(--orange);color:#fff;}
   .filter-badge.ok.active{background:var(--vert);color:#fff;}
+
   /* TABLE */
   .table-wrap{background:#fff;border-radius:10px;border:1px solid var(--bordure);overflow:auto;max-height:calc(100vh - 220px);position:relative;}
   table{width:100%;border-collapse:collapse;font-size:13px;}
-  thead tr{background:var(--gris-bg);}
-  thead th{position:sticky;top:0;z-index:10;background:var(--gris-bg);box-shadow:0 2px 0 var(--bordure);}
-  th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;color:var(--texte2);text-transform:uppercase;letter-spacing:.8px;white-space:nowrap;cursor:pointer;user-select:none;}
+  thead tr{background:var(--gris-bg);}  thead th{position:sticky;top:0;z-index:10;background:var(--gris-bg);box-shadow:0 2px 0 var(--bordure);}
+  th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;color:var(--texte2);text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid var(--bordure);white-space:nowrap;cursor:pointer;user-select:none;}
   th:hover{color:var(--bleu);}
   td{padding:10px 14px;border-bottom:1px solid var(--bordure);vertical-align:middle;}
   tr:last-child td{border-bottom:none;}
   tr:hover td{background:#F8FBFF;}
   .col-client{font-weight:600;}
-  .col-mono{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--texte2);}
+  .col-mono{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--texte2);}
   .col-comment{font-style:italic;color:var(--texte2);max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .badge{display:inline-block;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:600;white-space:nowrap;}
   .badge-ok{background:var(--vert-bg);color:var(--vert);}
@@ -106,6 +107,7 @@
   .action-btn:hover{background:var(--gris-bg);}
   .scroll-hint{font-size:11px;color:var(--texte2);padding:8px 14px;border-top:1px solid var(--bordure);}
   .empty-state{text-align:center;padding:48px 24px;color:var(--texte2);}
+
   /* MODAL */
   .overlay{display:none;position:fixed;inset:0;background:rgba(10,20,40,.45);z-index:200;align-items:center;justify-content:center;}
   .overlay.open{display:flex;}
@@ -125,7 +127,8 @@
   .modal-footer{padding:16px 28px 22px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--bordure);}
   .saving-indicator{font-size:12px;color:var(--texte2);display:none;}
   .saving-indicator.active{display:block;}
-  /* ALERTES */
+
+  /* ALERTES VIEW */
   .alert-section{margin-bottom:22px;}
   .alert-section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--texte2);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
   .alert-section-title .dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
@@ -136,6 +139,7 @@
   .alert-card-detail{font-size:12px;color:var(--texte2);}
   .alert-card-comment{font-size:12px;color:var(--bleu);font-style:italic;margin-top:4px;}
   .alert-pill{padding:4px 12px;border-radius:6px;font-size:11px;font-weight:700;white-space:nowrap;align-self:flex-start;}
+
   /* DASHBOARD */
   .dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
   .dash-card{background:#fff;border-radius:10px;border:1px solid var(--bordure);padding:20px;}
@@ -145,6 +149,7 @@
   .bar-track{flex:1;height:8px;background:var(--bordure);border-radius:4px;overflow:hidden;}
   .bar-fill{height:100%;border-radius:4px;transition:width .4s ease;}
   .bar-count{width:24px;text-align:right;color:var(--texte2);font-weight:600;}
+
   @media(max-width:900px){
     .sidebar{width:56px;}
     .sidebar .nav-item span,.sidebar-logo span,.sidebar-logo small,.sidebar-footer{display:none;}
@@ -158,17 +163,6 @@
 </head>
 <body>
 
-<!-- LOGIN -->
-<div class="login-screen" id="login-screen">
-  <div class="login-box">
-    <h2>ECO OUEST</h2>
-    <p>Suivi Commandes — Acces securise</p>
-    <input type="password" id="login-pwd" placeholder="Mot de passe">
-    <button id="login-btn">Acceder</button>
-    <div class="login-error" id="login-error"></div>
-  </div>
-</div>
-
 <aside class="sidebar">
   <div class="sidebar-logo">
     <span>ECO OUEST</span>
@@ -178,8 +172,9 @@
     <div class="nav-item active" onclick="showView('suivi')"><span class="icon">📋</span><span>Commandes</span></div>
     <div class="nav-item" onclick="showView('alertes')"><span class="icon">🔔</span><span>Alertes</span></div>
     <div class="nav-item" onclick="showView('dashboard')"><span class="icon">📊</span><span>Dashboard</span></div>
+    <div class="nav-item" onclick="showView('config')"><span class="icon">⚙️</span><span>Config</span></div>
   </nav>
-  <div class="sidebar-footer">v8 · ECO OUEST</div>
+  <div class="sidebar-footer">v8 · Web App</div>
 </aside>
 
 <div class="main">
@@ -187,16 +182,16 @@
     <span class="topbar-title" id="topbar-title">Suivi des commandes</span>
     <div class="topbar-right">
       <span class="sync-info"><span class="sync-dot" id="sync-dot"></span><span id="sync-label">—</span></span>
-      <button class="btn btn-outline btn-sm" id="btn-notif" onclick="demanderPermissionNotif()">🔔 Notifs</button>
       <button class="btn btn-outline btn-sm" onclick="charger()">🔄 Actualiser</button>
       <button class="btn btn-outline btn-sm" onclick="exportCSV()">⬇ CSV</button>
-      <button class="btn btn-primary btn-sm" onclick="openModal(-1)">+ Nouvelle commande</button>
+      <button class="btn btn-primary btn-sm" onclick="openModal(-1)">＋ Nouvelle commande</button>
     </div>
   </div>
 
   <div class="content">
     <div class="loader-bar" id="loader"><div class="loader-fill"></div></div>
 
+    <!-- VUE SUIVI -->
     <div id="view-suivi" class="view active">
       <div class="kpi-grid" id="kpi-grid"></div>
       <div class="filters-bar">
@@ -208,10 +203,10 @@
           <option value="">Tous statuts</option>
           <option>Livré</option><option>En cours</option><option>SAV</option><option>Terminé</option><option>Posé</option>
         </select>
-        <span class="filter-badge all active" id="fb-all" onclick="setAlertFilter(&quot;all&quot;)">Toutes</span>
-        <span class="filter-badge urgent" id="fb-urgent" onclick="setAlertFilter(&quot;urgent&quot;)">🔴 Urgentes</span>
-        <span class="filter-badge warn" id="fb-warn" onclick="setAlertFilter(&quot;warn&quot;)">🟠 Attention</span>
-        <span class="filter-badge ok" id="fb-ok" onclick="setAlertFilter(&quot;ok&quot;)">🟢 OK</span>
+        <span class="filter-badge all active" id="fb-all" onclick="setAlertFilter('all')">Toutes</span>
+        <span class="filter-badge urgent" id="fb-urgent" onclick="setAlertFilter('urgent')">🔴 Urgentes</span>
+        <span class="filter-badge warn" id="fb-warn" onclick="setAlertFilter('warn')">🟠 Attention</span>
+        <span class="filter-badge ok" id="fb-ok" onclick="setAlertFilter('ok')">🟢 OK</span>
       </div>
       <div class="table-wrap">
         <table>
@@ -224,7 +219,7 @@
             <th onclick="sortBy('prevLivraison')">Livraison ↕</th>
             <th>Statut livraison</th>
             <th>Statut pose</th>
-            <th>Commentaire</th>
+            <th>Commentaire / Remarque</th>
             <th>Alerte</th>
             <th></th>
           </tr></thead>
@@ -234,12 +229,42 @@
       </div>
     </div>
 
+    <!-- VUE ALERTES -->
     <div id="view-alertes" class="view"><div id="alertes-content"></div></div>
+
+    <!-- VUE DASHBOARD -->
     <div id="view-dashboard" class="view"><div class="dash-grid" id="dash-content"></div></div>
+
+    <!-- VUE CONFIG -->
+    <div id="view-config" class="view">
+      <div style="max-width:540px;">
+        <div class="dash-card">
+          <h4 style="margin-bottom:18px;font-size:15px;color:var(--texte);">⚙️ Configuration Web App</h4>
+          <div class="form-group" style="margin-bottom:16px;">
+            <label>URL de votre Web App Apps Script</label>
+            <input type="text" id="config-url" placeholder="https://script.google.com/macros/s/XXXX/exec">
+            <small style="font-size:11px;color:var(--texte2);margin-top:4px;">Déployer > Déploiement Web App > Copier l'URL</small>
+          </div>
+          <button class="btn btn-primary" onclick="sauvegarderConfig()">💾 Enregistrer et connecter</button>
+        </div>
+        <div style="margin-top:18px;padding:16px 20px;background:#E8F5E9;border-radius:10px;border:1px solid #A5D6A7;">
+          <p style="font-size:13px;color:#1B5E20;font-weight:600;margin-bottom:8px;">📋 Étapes pour déployer la Web App :</p>
+          <ol style="font-size:12px;color:#2E7D32;line-height:2;padding-left:18px;">
+            <li>Dans Apps Script, ajoutez un nouveau fichier <strong>WebApp.gs</strong></li>
+            <li>Collez le contenu du fichier <strong>WebApp.gs</strong> fourni</li>
+            <li>Cliquez <strong>Déployer → Nouveau déploiement</strong></li>
+            <li>Type : <strong>Application Web</strong></li>
+            <li>Exécuter en tant que : <strong>Moi</strong></li>
+            <li>Accès : <strong>Tout le monde</strong></li>
+            <li>Copiez l'URL et collez-la ci-dessus</li>
+          </ol>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- MODAL -->
+<!-- MODAL FICHE COMMANDE -->
 <div class="overlay" id="overlay" onclick="closeModalOutside(event)">
   <div class="modal">
     <div class="modal-header">
@@ -248,8 +273,12 @@
     </div>
     <div class="modal-body">
       <div class="form-grid">
-        <div class="form-group"><label>Client *</label><input id="f-client" type="text" placeholder="Nom du client"></div>
-        <div class="form-group"><label>Fournisseur</label>
+        <div class="form-group">
+          <label>Client *</label>
+          <input id="f-client" type="text" placeholder="Nom du client">
+        </div>
+        <div class="form-group">
+          <label>Fournisseur *</label>
           <select id="f-fournisseur">
             <option value="">— Choisir —</option>
             <option>ATLANTEM</option><option>ATULAM</option><option>LALLEMANT</option>
@@ -258,367 +287,368 @@
             <option>BVL SERRULAC</option><option>LEROY MERLIN</option><option>FOUSSIER</option><option>STOCK</option>
           </select>
         </div>
-        <div class="form-group"><label>N° Devis</label><input id="f-devis" type="text" placeholder="D-26/xx-xxxxx"></div>
-        <div class="form-group"><label>Devis TTC (€)</label><input id="f-devisTTC" type="number" placeholder="0.00"></div>
-        <div class="form-group"><label>Commande envoyée ?</label>
-          <select id="f-commande"><option value="">—</option><option>OUI</option><option>NON</option></select>
+        <div class="form-group">
+          <label>N° Devis</label>
+          <input id="f-devis" type="text" placeholder="D-26/xx-xxxxx">
         </div>
-        <div class="form-group"><label>N° ARC</label><input id="f-arc" type="text" placeholder="N° Accusé Réception"></div>
-        <div class="form-group"><label>Validation ARC</label>
-          <select id="f-commentaireARC"><option value="">—</option><option>Confirmer</option><option>Validé</option><option>En attente</option><option>ANNULER</option></select>
+        <div class="form-group">
+          <label>Devis TTC (€)</label>
+          <input id="f-devisTTC" type="number" placeholder="0.00">
         </div>
-        <div class="form-group"><label>Prévision livraison</label><input id="f-prevLivraison" type="text" placeholder="S28 ou date"></div>
-        <div class="form-group"><label>Statut livraison</label>
-          <select id="f-statutLivraison"><option value="">—</option><option>En cours</option><option>Livré</option><option>En attente</option><option>Bloqué</option></select>
+        <div class="form-group">
+          <label>Commande envoyée ?</label>
+          <select id="f-commande">
+            <option value="">—</option><option>OUI</option><option>NON</option>
+          </select>
         </div>
-        <div class="form-group"><label>Statut pose</label>
-          <select id="f-statutPose"><option value="">—</option><option>En cours</option><option>Posé</option><option>Terminé</option><option>SAV</option></select>
+        <div class="form-group">
+          <label>N° ARC</label>
+          <input id="f-arc" type="text" placeholder="Accusé Réception N°">
         </div>
-        <div class="form-group full"><label>Commentaire / Remarques (col. N)</label>
+        <div class="form-group">
+          <label>Validation ARC</label>
+          <select id="f-commentaireARC">
+            <option value="">—</option>
+            <option>Confirmer</option><option>Validé</option>
+            <option>En attente</option><option>ANNULER</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Prévision livraison</label>
+          <input id="f-prevLivraison" type="text" placeholder="S28 ou date">
+        </div>
+        <div class="form-group">
+          <label>Statut livraison</label>
+          <select id="f-statutLivraison">
+            <option value="">—</option>
+            <option>En cours</option><option>Livré</option><option>En attente</option><option>Bloqué</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Statut pose chantier</label>
+          <select id="f-statutPose">
+            <option value="">—</option>
+            <option>En cours</option><option>Posé</option><option>Terminé</option><option>SAV</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Commentaire / Remarques (col. N)</label>
           <textarea id="f-commentaire" placeholder="Observations, SAV, informations importantes…"></textarea>
         </div>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-danger btn-sm" id="btn-supprimer" onclick="supprimerCommande()" style="display:none;">🗑 Supprimer</button>
+      <div>
+        <button class="btn btn-danger btn-sm" id="btn-supprimer" onclick="supprimerCommande()" style="display:none;">🗑 Supprimer</button>
+      </div>
       <div style="display:flex;gap:10px;align-items:center;">
         <span class="saving-indicator" id="saving-indicator">⏳ Enregistrement…</span>
         <button class="btn btn-outline" onclick="closeModal()">Annuler</button>
-        <button class="btn btn-primary" onclick="sauvegarderCommande()">💾 Enregistrer</button>
+        <button class="btn btn-primary" onclick="sauvegarderCommande()">💾 Enregistrer dans Sheets</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxk1zFKVsCDoiN5J4RAZYF-9nEYqGMIypS2lqBooqZWkxwMUGo8JVq5-iS9ZvZUGasa/exec';
-const MOT_DE_PASSE = 'ecoouest2026';
+// ── CONFIG ───────────────────────────────────────────────
 const FOURNISSEURS_COLORS = {
   'ATLANTEM':'#1565C0','ATULAM':'#6A1B9A','LALLEMANT':'#2E7D32',
   'SOKO':'#00695C','ALUGLASS':'#E65100','FILTERSUN':'#C62828',
   'DC PROD':'#37474F','KE FRANCE':'#0277BD','SKYLUX':'#558B2F',
-  'BVL SERRULAC':'#4527A0','LEROY MERLIN':'#1B5E20','FOUSSIER':'#6D4C41','STOCK':'#546E7A'
+  'BVL SERRULAC':'#4527A0','LEROY MERLIN':'#1B5E20','FOUSSIER':'#6D4C41','STOCK':'#546E7A',
 };
 const STATUTS_TERMINES = ['LIVRE','LIVRÉ','TERMINE','TERMINÉ','POSE','POSÉ','Livré','Terminé','Posé','Livre','Termine'];
+const ANNEES_SKIP = ['2025','2026'];
 
+let WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxk1zFKVsCDoiN5J4RAZYF-9nEYqGMIypS2lqBooqZWkxwMUGo8JVq5-iS9ZvZUGasa/exec';
 let commandes = [];
-let sortCol = 'ligne', sortAsc = false, alertFilter = 'all', editLigne = -1;
-let alertesPrecedentes = new Set();
+let sortCol='', sortAsc=true, alertFilter='all', editLigne=-1;
 
-// ── LOGIN ─────────────────────────────────────────────────
-document.getElementById('login-btn').addEventListener('click', verifierMdp);
-document.getElementById('login-pwd').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') verifierMdp();
-});
-
-function verifierMdp() {
-  var val = document.getElementById('login-pwd').value;
-  if (val === MOT_DE_PASSE) {
-    sessionStorage.setItem('eco-auth', '1');
-    document.getElementById('login-screen').classList.add('hidden');
-    demanderPermissionNotif();
-    charger();
-  } else {
-    document.getElementById('login-error').textContent = 'Mot de passe incorrect.';
-    document.getElementById('login-pwd').value = '';
-    document.getElementById('login-pwd').focus();
-  }
+// ── CONFIG ───────────────────────────────────────────────
+function sauvegarderConfig() {
+  const url = document.getElementById('config-url').value.trim();
+  if (!url) { alert('Collez l\'URL de votre Web App.'); return; }
+  WEBAPP_URL = url;
+  localStorage.setItem('eco-webapp-url', url);
+  alert('✅ URL enregistrée ! Chargement des données…');
+  showView('suivi');
+  charger();
 }
 
-window.addEventListener('load', function() {
-  if (sessionStorage.getItem('eco-auth') === '1') {
-    document.getElementById('login-screen').classList.add('hidden');
-    demanderPermissionNotif();
-    charger();
-  } else {
-    document.getElementById('login-pwd').focus();
-  }
-});
-
-// ── NOTIFICATIONS ─────────────────────────────────────────
-function demanderPermissionNotif() {
-  if ('Notification' in window && Notification.permission === 'default') {
-    Notification.requestPermission().then(function(p) {
-      if (p === 'granted') document.getElementById('btn-notif').textContent = '🔔 Notifs ON';
-    });
-  } else if (Notification.permission === 'granted') {
-    document.getElementById('btn-notif').textContent = '🔔 Notifs ON';
-  }
+// ── API CALLS ────────────────────────────────────────────
+async function apiGet() {
+  const res = await fetch(WEBAPP_URL, { redirect: 'follow' });
+  return res.json();
 }
 
-function envoyerNotif(titre, corps) {
-  if (!('Notification' in window) || Notification.permission !== 'granted') return;
-  var n = new Notification(titre, { body: corps, tag: 'eco-alerte' });
-  setTimeout(function() { n.close(); }, 8000);
-  n.onclick = function() { window.focus(); n.close(); };
+async function apiPost(body) {
+  const res = await fetch(WEBAPP_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(body),
+    redirect: 'follow'
+  });
+  return res.json();
 }
 
-function verifierNouvellesAlertes() {
-  var urgentes = commandes.filter(function(c) { return calcAlerte(c).niveau === 3; });
-  var nouvelles = urgentes.filter(function(c) { return !alertesPrecedentes.has(c.client + c.ligne); });
-  if (nouvelles.length > 0) {
-    envoyerNotif('⚠ ECO OUEST — ' + nouvelles.length + ' alerte(s) urgente(s)', nouvelles.map(function(c){return c.client;}).join(', '));
-  }
-  alertesPrecedentes = new Set(urgentes.map(function(c) { return c.client + c.ligne; }));
-}
-
-// ── API ───────────────────────────────────────────────────
 async function charger() {
-  setLoader(true); setSyncState('loading', 'Chargement…');
+  if (!WEBAPP_URL) {
+    setSyncState('error', 'Non configuré');
+    document.getElementById('table-body').innerHTML = '<tr><td colspan="11"><div class="empty-state"><div class="icon">⚙️</div><p>Configurez l\'URL de la Web App dans <strong>Config</strong>.</p></div></td></tr>';
+    return;
+  }
+  setLoader(true);
+  setSyncState('loading', 'Chargement…');
   try {
-    var res = await fetch(WEBAPP_URL, { redirect: 'follow' });
-    var result = await res.json();
+    const result = await apiGet();
     if (!result.ok) throw new Error(result.error);
     commandes = result.data;
-    var now = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+    const now = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'});
     setSyncState('ok', 'Mis à jour ' + now);
     populateFournisseurFilter();
     renderAll();
-    verifierNouvellesAlertes();
   } catch(e) {
     setSyncState('error', 'Erreur connexion');
-    document.getElementById('table-body').innerHTML = '<tr><td colspan="11"><div class="empty-state"><p>⚠️ Impossible de joindre la Web App.</p></div></td></tr>';
+    console.error(e);
+    document.getElementById('table-body').innerHTML = '<tr><td colspan="11"><div class="empty-state"><div class="icon">⚠️</div><p>Impossible de joindre la Web App.<br>Vérifiez l\'URL dans Config.</p></div></td></tr>';
   }
   setLoader(false);
 }
 
-async function apiPost(body) {
-  var res = await fetch(WEBAPP_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(body), redirect:'follow' });
-  return res.json();
-}
-
-function setLoader(on) { document.getElementById('loader').classList.toggle('active', on); }
-function setSyncState(state, label) {
+function setLoader(on){ document.getElementById('loader').classList.toggle('active',on); }
+function setSyncState(state, label){
+  const dot = document.getElementById('sync-dot');
   document.getElementById('sync-label').textContent = label;
-  var dot = document.getElementById('sync-dot');
-  dot.className = 'sync-dot' + (state === 'loading' ? ' loading' : '');
-  dot.style.background = state==='ok' ? '#2E7D32' : state==='error' ? '#D32F2F' : '#E65100';
+  dot.className = 'sync-dot'+(state==='loading'?' loading':'');
+  dot.style.background = state==='ok'?'#2E7D32':state==='error'?'#D32F2F':'#E65100';
 }
 
-// ── ALERTES CALC ──────────────────────────────────────────
+// ── ALERTES CALC ─────────────────────────────────────────
 function calcAlerte(c) {
-  var estTermine = STATUTS_TERMINES.indexOf((c.statutLivraison||'').trim()) !== -1
-                || STATUTS_TERMINES.indexOf((c.statutPose||'').trim()) !== -1;
-  var estAnnule  = (c.commentaireARC||'').trim().toUpperCase() === 'ANNULER';
-  if (estTermine) return { text:'OK', niveau:0 };
-  if (estAnnule)  return { text:'Annulée', niveau:-1 };
-  var msgs = [], sev = 0;
-  if (!c.commande || c.commande.toUpperCase() === 'NON') { msgs.push('Commande non envoyée — URGENT'); sev = 3; }
-  if (!c.arc || !c.arc.trim())                           { msgs.push('ARC non reçu'); if(sev<2)sev=2; }
-  if (!c.commentaireARC || !c.commentaireARC.trim())     { msgs.push('Validation ARC manquante'); if(sev<2)sev=2; }
-  else if ((c.commentaireARC||'').toUpperCase().indexOf('EN ATTENTE') !== -1) { msgs.push('En attente ARC'); if(sev<2)sev=2; }
-  if (!c.prevLivraison || !c.prevLivraison.trim())        { msgs.push('Date livraison manquante'); if(sev<1)sev=1; }
-  if (msgs.length === 0) return { text:'OK', niveau:0 };
-  return { text: msgs.join(' | '), niveau: sev };
+  const estTermine = STATUTS_TERMINES.includes((c.statutLivraison||'').trim())
+                  || STATUTS_TERMINES.includes((c.statutPose||'').trim());
+  const estAnnule  = (c.commentaireARC||'').trim().toUpperCase() === 'ANNULER';
+  if (estTermine)  return { text:'OK', niveau:0 };
+  if (estAnnule)   return { text:'Annulée', niveau:-1 };
+  const msgs=[]; let sev=0;
+  if (!c.commande || c.commande.toUpperCase()==='NON') { msgs.push('Commande non envoyée — URGENT'); sev=3; }
+  if (!c.arc||!c.arc.trim())                            { msgs.push('ARC non reçu'); if(sev<2)sev=2; }
+  if (!c.commentaireARC||!c.commentaireARC.trim())      { msgs.push('Validation ARC manquante'); if(sev<2)sev=2; }
+  else if ((c.commentaireARC||'').toUpperCase().includes('EN ATTENTE')) { msgs.push('En attente ARC'); if(sev<2)sev=2; }
+  if (!c.prevLivraison||!c.prevLivraison.trim())         { msgs.push('Date livraison manquante'); if(sev<1)sev=1; }
+  if (msgs.length===0) return {text:'OK',niveau:0};
+  return {text:msgs.join(' | '),niveau:sev};
 }
-function alerteClass(n) { return n===0?'alerte-ok':n===1?'alerte-jaune':n===2?'alerte-orange':n===3?'alerte-rouge':''; }
+function alerteClass(n){ return n===0?'alerte-ok':n===1?'alerte-jaune':n===2?'alerte-orange':n===3?'alerte-rouge':''; }
 
-// ── KPI ───────────────────────────────────────────────────
-function renderKPI() {
-  var al = commandes.map(function(c){return calcAlerte(c);});
-  var total=commandes.length, urgents=0, warns=0, ok=0, enCours=0;
-  al.forEach(function(a){if(a.niveau===3)urgents++;else if(a.niveau>=1)warns++;else if(a.niveau===0)ok++;});
-  commandes.forEach(function(c){if(STATUTS_TERMINES.indexOf((c.statutLivraison||'').trim())===-1)enCours++;});
-  var kpiEl = document.getElementById('kpi-grid');
-  kpiEl.innerHTML = '';
-  var kpis = [
-    {cls:'kpi-info',   filter:'all',    label:'Total',    val:total,   sub:'commandes'},
-    {cls:'kpi-urgent', filter:'urgent', label:'Urgentes', val:urgents, sub:'action requise'},
-    {cls:'kpi-warn',   filter:'warn',   label:'Attention',val:warns,   sub:'surveiller'},
-    {cls:'kpi-ok',     filter:'ok',     label:'OK',       val:ok,      sub:'sans alerte'},
-    {cls:'kpi-info',   filter:'',       label:'En cours', val:enCours, sub:'non livrees'},
-  ];
-  kpis.forEach(function(k) {
-    var d = document.createElement('div');
-    d.className = 'kpi-card ' + k.cls;
-    if (k.filter) d.onclick = function() { setAlertFilter(k.filter); };
-    d.innerHTML = '<span class="kpi-label">'+k.label+'</span><span class="kpi-value">'+k.val+'</span><span class="kpi-sub">'+k.sub+'</span>';
-    kpiEl.appendChild(d);
-  });
+// ── KPI ──────────────────────────────────────────────────
+function renderKPI(){
+  const al=commandes.map(c=>calcAlerte(c));
+  const total=commandes.length, urgents=al.filter(a=>a.niveau===3).length;
+  const warns=al.filter(a=>a.niveau>=1&&a.niveau<=2).length, ok=al.filter(a=>a.niveau===0).length;
+  const enCours=commandes.filter(c=>!STATUTS_TERMINES.includes((c.statutLivraison||'').trim())).length;
+  document.getElementById('kpi-grid').innerHTML=`
+    <div class="kpi-card kpi-info" onclick="setAlertFilter('all')"><span class="kpi-label">Total</span><span class="kpi-value">${total}</span><span class="kpi-sub">commandes</span></div>
+    <div class="kpi-card kpi-urgent" onclick="setAlertFilter('urgent')"><span class="kpi-label">Urgentes</span><span class="kpi-value">${urgents}</span><span class="kpi-sub">action requise</span></div>
+    <div class="kpi-card kpi-warn" onclick="setAlertFilter('warn')"><span class="kpi-label">Attention</span><span class="kpi-value">${warns}</span><span class="kpi-sub">à surveiller</span></div>
+    <div class="kpi-card kpi-ok" onclick="setAlertFilter('ok')"><span class="kpi-label">OK</span><span class="kpi-value">${ok}</span><span class="kpi-sub">sans alerte</span></div>
+    <div class="kpi-card kpi-info"><span class="kpi-label">En cours</span><span class="kpi-value">${enCours}</span><span class="kpi-sub">non livrées</span></div>`;
 }
 
-// ── TABLE ─────────────────────────────────────────────────
-function escH(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+// ── TABLE ────────────────────────────────────────────────
+function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-function renderTable() {
-  var q    = (document.getElementById('search').value||'').toLowerCase();
-  var fFou = document.getElementById('filter-fournisseur').value;
-  var fSta = document.getElementById('filter-statut').value;
-  var rows = commandes.map(function(c,i){return Object.assign({},c,{_i:i,_alerte:calcAlerte(c)});});
-  if (q) rows = rows.filter(function(c){return (c.client||'').toLowerCase().indexOf(q)!==-1||(c.devis||'').toLowerCase().indexOf(q)!==-1||(c.arc||'').toLowerCase().indexOf(q)!==-1||(c.fournisseur||'').toLowerCase().indexOf(q)!==-1;});
-  if (fFou) rows = rows.filter(function(c){return c.fournisseur===fFou;});
-  if (fSta) rows = rows.filter(function(c){return (c.statutLivraison||'').indexOf(fSta)!==-1||(c.statutPose||'').indexOf(fSta)!==-1;});
-  if (alertFilter==='urgent') rows=rows.filter(function(c){return c._alerte.niveau===3;});
-  if (alertFilter==='warn')   rows=rows.filter(function(c){return c._alerte.niveau>=1&&c._alerte.niveau<=2;});
-  if (alertFilter==='ok')     rows=rows.filter(function(c){return c._alerte.niveau===0;});
-  if (sortCol) rows.sort(function(a,b){var va=(a[sortCol]||'').toString().toLowerCase(),vb=(b[sortCol]||'').toString().toLowerCase();return sortAsc?va.localeCompare(vb):vb.localeCompare(va);});
+function renderTable(){
+  const q=(document.getElementById('search').value||'').toLowerCase();
+  const fFou=document.getElementById('filter-fournisseur').value;
+  const fSta=document.getElementById('filter-statut').value;
+  let rows=commandes.map((c,i)=>({...c,_i:i,_alerte:calcAlerte(c)}));
+  if(q) rows=rows.filter(c=>(c.client||'').toLowerCase().includes(q)||(c.devis||'').toLowerCase().includes(q)||(c.arc||'').toLowerCase().includes(q)||(c.fournisseur||'').toLowerCase().includes(q));
+  if(fFou) rows=rows.filter(c=>c.fournisseur===fFou);
+  if(fSta) rows=rows.filter(c=>(c.statutLivraison||'').includes(fSta)||(c.statutPose||'').includes(fSta));
+  if(alertFilter==='urgent') rows=rows.filter(c=>c._alerte.niveau===3);
+  if(alertFilter==='warn')   rows=rows.filter(c=>c._alerte.niveau>=1&&c._alerte.niveau<=2);
+  if(alertFilter==='ok')     rows=rows.filter(c=>c._alerte.niveau===0);
+  if(sortCol) rows.sort((a,b)=>{const va=(a[sortCol]||'').toString().toLowerCase(),vb=(b[sortCol]||'').toString().toLowerCase();return sortAsc?va.localeCompare(vb):vb.localeCompare(va);});
 
-  var tbody = document.getElementById('table-body');
-  if (!rows.length) { tbody.innerHTML='<tr><td colspan="11"><div class="empty-state"><p>Aucune commande trouvée.</p></div></td></tr>'; document.getElementById('scroll-hint').textContent=''; return; }
+  const tbody=document.getElementById('table-body');
+  if(!rows.length){tbody.innerHTML='<tr><td colspan="11"><div class="empty-state"><div class="icon">🔍</div><p>Aucune commande trouvée.</p></div></td></tr>';document.getElementById('scroll-hint').textContent='';return;}
 
-  tbody.innerHTML = rows.map(function(c) {
-    var a=c._alerte, fc=FOURNISSEURS_COLORS[c.fournisseur]||'#546E7A';
-    var statBadge=c.statutLivraison?'<span class="badge '+(c.statutLivraison==='Livré'?'badge-ok':c.statutLivraison==='SAV'?'badge-urgent':'badge-info')+'">'+escH(c.statutLivraison)+'</span>':'—';
-    var poseBadge=c.statutPose?'<span class="badge '+(c.statutPose==='Terminé'?'badge-ok':c.statutPose==='SAV'?'badge-urgent':'badge-info')+'">'+escH(c.statutPose)+'</span>':'—';
-    var alerteExtra=a.text.indexOf(' | ')!==-1?'<br><span style="font-size:10px;color:var(--texte2);">+'+(a.text.split(' | ').length-1)+' autre(s)</span>':'';
-    return '<tr>'+
-      '<td class="col-client">'+escH(c.client)+'</td>'+
-      '<td><span style="background:'+fc+'18;color:'+fc+';padding:3px 8px;border-radius:5px;font-size:11px;font-weight:700;">'+escH(c.fournisseur||'—')+'</span></td>'+
-      '<td class="col-mono">'+escH(c.devis||'—')+'</td>'+
-      '<td>'+(c.commande==='OUI'?'<span class="badge badge-ok">OUI</span>':c.commande==='NON'?'<span class="badge badge-urgent">NON</span>':'—')+'</td>'+
-      '<td class="col-mono">'+escH(c.arc||'—')+'</td>'+
-      '<td style="font-size:12px;color:var(--texte2);">'+escH(c.prevLivraison||'—')+'</td>'+
-      '<td>'+statBadge+'</td><td>'+poseBadge+'</td>'+
-      '<td class="col-comment" title="'+escH(c.commentaire)+'">'+escH(c.commentaire||'')+'</td>'+
-      '<td><span class="alerte-text '+alerteClass(a.niveau)+'" title="'+escH(a.text)+'">'+(a.niveau===0?'✓ OK':'⚠ '+escH(a.text.split(' | ')[0]))+'</span>'+alerteExtra+'</td>'+
-      '<td><button class="action-btn" onclick="openModal('+c._i+')">✏️</button></td>'+
-    '</tr>';
+  tbody.innerHTML=rows.map(c=>{
+    const a=c._alerte, fc=FOURNISSEURS_COLORS[c.fournisseur]||'#546E7A';
+    const statBadge=c.statutLivraison?`<span class="badge ${c.statutLivraison==='Livré'?'badge-ok':c.statutLivraison==='SAV'?'badge-urgent':'badge-info'}">${escH(c.statutLivraison)}</span>`:'—';
+    const poseBadge=c.statutPose?`<span class="badge ${c.statutPose==='Terminé'?'badge-ok':c.statutPose==='SAV'?'badge-urgent':'badge-info'}">${escH(c.statutPose)}</span>`:'—';
+    return `<tr>
+      <td class="col-client">${escH(c.client)}</td>
+      <td><span style="background:${fc}18;color:${fc};padding:3px 8px;border-radius:5px;font-size:11px;font-weight:700;">${escH(c.fournisseur)||'—'}</span></td>
+      <td class="col-mono">${escH(c.devis)||'—'}</td>
+      <td>${c.commande==='OUI'?'<span class="badge badge-ok">OUI</span>':c.commande==='NON'?'<span class="badge badge-urgent">NON</span>':'—'}</td>
+      <td class="col-mono">${escH(c.arc)||'—'}</td>
+      <td style="font-size:12px;color:var(--texte2);">${escH(c.prevLivraison)||'—'}</td>
+      <td>${statBadge}</td><td>${poseBadge}</td>
+      <td class="col-comment" title="${escH(c.commentaire)}">${escH(c.commentaire)||'<span style="color:#ddd">—</span>'}</td>
+      <td><span class="alerte-text ${alerteClass(a.niveau)}" title="${escH(a.text)}">${a.niveau===0?'✓ OK':'⚠ '+escH(a.text.split(' | ')[0])}</span>${a.text.includes(' | ')?`<br><span style="font-size:10px;color:var(--texte2);">+${a.text.split(' | ').length-1} autre(s)</span>`:''}</td>
+      <td><button class="action-btn" title="Modifier" onclick="openModal(${c._i})">✏️</button></td>
+    </tr>`;
   }).join('');
-  document.getElementById('scroll-hint').textContent = rows.length+' commande(s) sur '+commandes.length;
+  document.getElementById('scroll-hint').textContent=`${rows.length} commande(s) sur ${commandes.length}`;
 }
 
 function sortBy(col){if(sortCol===col)sortAsc=!sortAsc;else{sortCol=col;sortAsc=true;}renderTable();}
-function setAlertFilter(f){alertFilter=f;['all','urgent','warn','ok'].forEach(function(k){document.getElementById('fb-'+k).classList.toggle('active',k===f);});renderTable();}
+function setAlertFilter(f){alertFilter=f;['all','urgent','warn','ok'].forEach(k=>document.getElementById('fb-'+k).classList.toggle('active',k===f));renderTable();}
 
-// ── MODAL ─────────────────────────────────────────────────
+// ── MODAL ────────────────────────────────────────────────
 function openModal(idx) {
   editLigne = -1;
-  var c = idx >= 0 ? commandes[idx] : {};
+  const c = idx >= 0 ? commandes[idx] : {};
   if (idx >= 0) editLigne = c.ligne;
-  document.getElementById('modal-title').textContent = idx >= 0 ? 'Modifier — '+c.client : 'Nouvelle commande';
+  document.getElementById('modal-title').textContent = idx >= 0 ? `Modifier — ${c.client}` : 'Nouvelle commande';
   document.getElementById('btn-supprimer').style.display = idx >= 0 ? 'inline-flex' : 'none';
-  ['client','devis','devisTTC','fournisseur','commande','arc','commentaireARC','prevLivraison','statutLivraison','statutPose','commentaire'].forEach(function(f){
-    var el=document.getElementById('f-'+f); if(el) el.value=c[f]||'';
-  });
+  ['client','devis','devisTTC','fournisseur','commande','arc','commentaireARC','prevLivraison','statutLivraison','statutPose','commentaire']
+    .forEach(f => { const el=document.getElementById('f-'+f); if(el) el.value=c[f]||''; });
   document.getElementById('overlay').classList.add('open');
 }
 function closeModal(){ document.getElementById('overlay').classList.remove('open'); }
 function closeModalOutside(e){ if(e.target.id==='overlay') closeModal(); }
 
 async function sauvegarderCommande() {
-  var c = {};
-  ['client','devis','devisTTC','fournisseur','commande','arc','commentaireARC','prevLivraison','statutLivraison','statutPose','commentaire'].forEach(function(f){
-    var el=document.getElementById('f-'+f); if(el) c[f]=el.value.trim();
-  });
+  const c = {};
+  ['client','devis','devisTTC','fournisseur','commande','arc','commentaireARC','prevLivraison','statutLivraison','statutPose','commentaire']
+    .forEach(f=>{ const el=document.getElementById('f-'+f); if(el) c[f]=el.value.trim(); });
   if (!c.client) { alert('Le champ Client est obligatoire.'); return; }
+
   document.getElementById('saving-indicator').classList.add('active');
   try {
-    var result;
+    let result;
     if (editLigne > 0) {
-      result = await apiPost({ action:'modifier', ligne:editLigne, champs:{1:c.client,3:c.devis,4:c.devisTTC,5:c.fournisseur,6:c.commande,7:c.arc,9:c.commentaireARC,10:c.prevLivraison,12:c.statutLivraison,13:c.statutPose,14:c.commentaire} });
+      // Modifier : on envoie les champs par numéro de colonne
+      const champs = {
+        1:c.client, 2:c.metres||'', 3:c.devis, 4:c.devisTTC,
+        5:c.fournisseur, 6:c.commande, 7:c.arc, 9:c.commentaireARC,
+        10:c.prevLivraison, 12:c.statutLivraison, 13:c.statutPose, 14:c.commentaire
+      };
+      result = await apiPost({ action:'modifier', ligne:editLigne, champs });
     } else {
       result = await apiPost({ action:'ajouter', commande:c });
     }
     if (!result.ok) throw new Error(result.error);
     closeModal();
     await charger();
-  } catch(e) { alert('Erreur : '+e.message); }
+  } catch(e) {
+    alert('Erreur lors de l\'enregistrement : ' + e.message);
+  }
   document.getElementById('saving-indicator').classList.remove('active');
 }
 
 async function supprimerCommande() {
-  var c = commandes.find(function(x){return x.ligne===editLigne;});
-  if (!confirm('Supprimer "'+( c?c.client:'')+'" du Sheets ?')) return;
+  const c = commandes.find(x => x.ligne === editLigne);
+  if (!confirm(`Supprimer la commande "${c ? c.client : ''}" du Sheets ?`)) return;
   document.getElementById('saving-indicator').classList.add('active');
   try {
-    var result = await apiPost({ action:'supprimer', ligne:editLigne });
+    const result = await apiPost({ action:'supprimer', ligne:editLigne });
     if (!result.ok) throw new Error(result.error);
     closeModal();
     await charger();
-  } catch(e) { alert('Erreur : '+e.message); }
+  } catch(e) {
+    alert('Erreur lors de la suppression : ' + e.message);
+  }
   document.getElementById('saving-indicator').classList.remove('active');
 }
 
-// ── ALERTES VIEW ──────────────────────────────────────────
-function renderAlertes() {
-  var groups={3:[],2:[],1:[]};
-  commandes.forEach(function(c,i){var a=calcAlerte(c);if(a.niveau>=1)groups[a.niveau].push({c:c,i:i,a:a});});
-  var sections=[
-    {niveau:3,label:'Urgentes — Action immediate',dot:'#D32F2F',pillBg:'#FFEBEE',pillColor:'#D32F2F'},
-    {niveau:2,label:'Attention — A traiter rapidement',dot:'#E65100',pillBg:'#FFF3E0',pillColor:'#E65100'},
-    {niveau:1,label:'Information — A surveiller',dot:'#F9A825',pillBg:'#FFFDE7',pillColor:'#B7860B'},
+// ── ALERTES VIEW ─────────────────────────────────────────
+function renderAlertes(){
+  const groups={3:[],2:[],1:[],0:[]};
+  commandes.forEach((c,i)=>{const a=calcAlerte(c);if(a.niveau>=0)groups[a.niveau].push({c,i,a});});
+  const sections=[
+    {niveau:3,label:'Urgentes — Action immédiate',dot:'#D32F2F',pillBg:'#FFEBEE',pillColor:'#D32F2F'},
+    {niveau:2,label:'Attention — À traiter rapidement',dot:'#E65100',pillBg:'#FFF3E0',pillColor:'#E65100'},
+    {niveau:1,label:'Information — À surveiller',dot:'#F9A825',pillBg:'#FFFDE7',pillColor:'#B7860B'},
   ];
-  var html='';
-  sections.forEach(function(s){
-    var items=groups[s.niveau];
+  let html='';
+  sections.forEach(s=>{
+    const items=groups[s.niveau];
     if(!items.length) return;
-    html+='<div class="alert-section"><div class="alert-section-title"><span class="dot" style="background:'+s.dot+'"></span>'+s.label+' ('+items.length+')</div>';
-    items.forEach(function(item){
-      var msgs=item.a.text.split(' | ');
-      html+='<div class="alert-card"><div class="alert-card-left">'+
-        '<div class="alert-card-client">'+escH(item.c.client)+(item.c.fournisseur?' <span style="font-size:11px;font-weight:400;color:var(--texte2);">· '+item.c.fournisseur+'</span>':'')+'</div>'+
-        '<div class="alert-card-detail">'+msgs.map(function(m){return '• '+escH(m);}).join(' &nbsp;')+'</div>'+
-        (item.c.commentaire?'<div class="alert-card-comment">💬 '+escH(item.c.commentaire)+'</div>':'')+
-        '</div><div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">'+
-        '<span class="alert-pill" style="background:'+s.pillBg+';color:'+s.pillColor+';">'+msgs.length+' alerte(s)</span>'+
-        '<button class="btn btn-outline btn-sm" onclick="openModal('+item.i+')">✏️ Modifier</button>'+
-        '</div></div>';
+    html+=`<div class="alert-section"><div class="alert-section-title"><span class="dot" style="background:${s.dot}"></span>${s.label} (${items.length})</div>`;
+    items.forEach(({c,i,a})=>{
+      const msgs=a.text.split(' | ');
+      html+=`<div class="alert-card">
+        <div class="alert-card-left">
+          <div class="alert-card-client">${escH(c.client)} <span style="font-size:11px;font-weight:400;color:var(--texte2);">${c.fournisseur?'· '+c.fournisseur:''}</span></div>
+          <div class="alert-card-detail">${msgs.map(m=>'• '+escH(m)).join(' &nbsp;')}</div>
+          ${c.commentaire?`<div class="alert-card-comment">💬 ${escH(c.commentaire)}</div>`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+          <span class="alert-pill" style="background:${s.pillBg};color:${s.pillColor};">${msgs.length} alerte(s)</span>
+          <button class="btn btn-outline btn-sm" onclick="openModal(${i})">✏️ Modifier</button>
+        </div>
+      </div>`;
     });
     html+='</div>';
   });
-  if(!html) html='<div class="empty-state"><p>✅ Aucune alerte active.</p></div>';
+  if(!html) html='<div class="empty-state"><div class="icon">✅</div><p>Aucune alerte active.</p></div>';
   document.getElementById('alertes-content').innerHTML=html;
 }
 
-// ── DASHBOARD ─────────────────────────────────────────────
-function renderDashboard() {
-  var byFou={}, byStatut={}, ac={urgent:0,warn:0,ok:0};
-  commandes.forEach(function(c){
-    if(c.fournisseur) byFou[c.fournisseur]=(byFou[c.fournisseur]||0)+1;
-    var s=c.statutLivraison||'Non défini'; byStatut[s]=(byStatut[s]||0)+1;
-    var a=calcAlerte(c); if(a.niveau===3)ac.urgent++;else if(a.niveau>=1)ac.warn++;else if(a.niveau===0)ac.ok++;
-  });
-  var fouS=Object.entries(byFou).sort(function(a,b){return b[1]-a[1];}), fouMax=fouS[0]?fouS[0][1]:1;
-  var stS=Object.entries(byStatut).sort(function(a,b){return b[1]-a[1];}), stMax=stS[0]?stS[0][1]:1;
-  var n=commandes.length||1;
-  document.getElementById('dash-content').innerHTML=
-    '<div class="dash-card"><h4>Par fournisseur</h4>'+fouS.map(function(e){return '<div class="bar-row"><span class="bar-label" title="'+e[0]+'">'+e[0]+'</span><div class="bar-track"><div class="bar-fill" style="width:'+Math.round(e[1]/fouMax*100)+'%;background:'+(FOURNISSEURS_COLORS[e[0]]||'#546E7A')+'"></div></div><span class="bar-count">'+e[1]+'</span></div>';}).join('')+'</div>'+
-    '<div class="dash-card"><h4>Répartition alertes</h4>'+[['Urgentes',ac.urgent,'#D32F2F'],['Attention',ac.warn,'#E65100'],['OK',ac.ok,'#2E7D32']].map(function(x){return '<div class="bar-row"><span class="bar-label">'+x[0]+'</span><div class="bar-track"><div class="bar-fill" style="width:'+Math.round(x[1]/n*100)+'%;background:'+x[2]+'"></div></div><span class="bar-count">'+x[1]+'</span></div>';}).join('')+'</div>'+
-    '<div class="dash-card"><h4>Statuts livraison</h4>'+stS.map(function(e){return '<div class="bar-row"><span class="bar-label">'+escH(e[0])+'</span><div class="bar-track"><div class="bar-fill" style="width:'+Math.round(e[1]/stMax*100)+'%;background:var(--bleu)"></div></div><span class="bar-count">'+e[1]+'</span></div>';}).join('')+'</div>'+
-    '<div class="dash-card"><h4>Résumé</h4><div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px;">'+
-    '<div style="text-align:center;padding:14px;background:var(--gris-bg);border-radius:8px;"><div style="font-size:28px;font-weight:700;color:var(--bleu);">'+commandes.length+'</div><div style="font-size:11px;color:var(--texte2);margin-top:4px;">Total</div></div>'+
-    '<div style="text-align:center;padding:14px;background:#FFEBEE;border-radius:8px;"><div style="font-size:28px;font-weight:700;color:var(--rouge);">'+ac.urgent+'</div><div style="font-size:11px;color:var(--texte2);margin-top:4px;">Urgences</div></div>'+
-    '<div style="text-align:center;padding:14px;background:var(--vert-bg);border-radius:8px;"><div style="font-size:28px;font-weight:700;color:var(--vert);">'+ac.ok+'</div><div style="font-size:11px;color:var(--texte2);margin-top:4px;">Sans alerte</div></div>'+
-    '<div style="text-align:center;padding:14px;background:#FFF3E0;border-radius:8px;"><div style="font-size:28px;font-weight:700;color:var(--orange);">'+ac.warn+'</div><div style="font-size:11px;color:var(--texte2);margin-top:4px;">Attention</div></div>'+
-    '</div></div>';
+// ── DASHBOARD ────────────────────────────────────────────
+function renderDashboard(){
+  const byFou={};commandes.forEach(c=>{if(c.fournisseur)byFou[c.fournisseur]=(byFou[c.fournisseur]||0)+1;});
+  const fouSorted=Object.entries(byFou).sort((a,b)=>b[1]-a[1]),fouMax=fouSorted[0]?.[1]||1;
+  const byStatut={};commandes.forEach(c=>{const s=c.statutLivraison||'Non défini';byStatut[s]=(byStatut[s]||0)+1;});
+  const stSorted=Object.entries(byStatut).sort((a,b)=>b[1]-a[1]),stMax=stSorted[0]?.[1]||1;
+  const ac={urgent:0,warn:0,ok:0};
+  commandes.forEach(c=>{const a=calcAlerte(c);if(a.niveau===3)ac.urgent++;else if(a.niveau>=1)ac.warn++;else if(a.niveau===0)ac.ok++;});
+  document.getElementById('dash-content').innerHTML=`
+    <div class="dash-card"><h4>Par fournisseur</h4>${fouSorted.map(([f,n])=>`<div class="bar-row"><span class="bar-label" title="${f}">${f}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/fouMax*100)}%;background:${FOURNISSEURS_COLORS[f]||'#546E7A'};"></div></div><span class="bar-count">${n}</span></div>`).join('')}</div>
+    <div class="dash-card"><h4>Répartition alertes</h4>${[['Urgentes',ac.urgent,'#D32F2F'],['Attention',ac.warn,'#E65100'],['OK',ac.ok,'#2E7D32']].map(([l,n,col])=>`<div class="bar-row"><span class="bar-label">${l}</span><div class="bar-track"><div class="bar-fill" style="width:${commandes.length?Math.round(n/commandes.length*100):0}%;background:${col};"></div></div><span class="bar-count">${n}</span></div>`).join('')}</div>
+    <div class="dash-card"><h4>Statuts livraison</h4>${stSorted.map(([s,n])=>`<div class="bar-row"><span class="bar-label" title="${s}">${s||'—'}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/stMax*100)}%;background:var(--bleu);"></div></div><span class="bar-count">${n}</span></div>`).join('')}</div>
+    <div class="dash-card"><h4>Résumé</h4><div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px;">
+      <div style="text-align:center;padding:14px;background:var(--gris-bg);border-radius:8px;"><div style="font-size:28px;font-weight:700;color:var(--bleu);">${commandes.length}</div><div style="font-size:11px;color:var(--texte2);margin-top:4px;">Total</div></div>
+      <div style="text-align:center;padding:14px;background:#FFEBEE;border-radius:8px;"><div style="font-size:28px;font-weight:700;color:var(--rouge);">${ac.urgent}</div><div style="font-size:11px;color:var(--texte2);margin-top:4px;">Urgences</div></div>
+      <div style="text-align:center;padding:14px;background:var(--vert-bg);border-radius:8px;"><div style="font-size:28px;font-weight:700;color:var(--vert);">${ac.ok}</div><div style="font-size:11px;color:var(--texte2);margin-top:4px;">Sans alerte</div></div>
+      <div style="text-align:center;padding:14px;background:#FFF3E0;border-radius:8px;"><div style="font-size:28px;font-weight:700;color:var(--orange);">${ac.warn}</div><div style="font-size:11px;color:var(--texte2);margin-top:4px;">Attention</div></div>
+    </div></div>`;
 }
 
-// ── NAVIGATION ────────────────────────────────────────────
-function showView(v) {
-  document.querySelectorAll('.view').forEach(function(el){el.classList.remove('active');});
-  document.querySelectorAll('.nav-item').forEach(function(el){el.classList.remove('active');});
+// ── NAVIGATION ───────────────────────────────────────────
+function showView(v){
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
   document.getElementById('view-'+v).classList.add('active');
-  var map={suivi:0,alertes:1,dashboard:2};
+  const map={suivi:0,alertes:1,dashboard:2,config:3};
   document.querySelectorAll('.nav-item')[map[v]].classList.add('active');
-  document.getElementById('topbar-title').textContent={suivi:'Suivi des commandes',alertes:'Alertes actives',dashboard:'Tableau de bord'}[v];
+  document.getElementById('topbar-title').textContent={suivi:'Suivi des commandes',alertes:'Alertes actives',dashboard:'Tableau de bord',config:'Configuration'}[v];
   if(v==='alertes') renderAlertes();
   if(v==='dashboard') renderDashboard();
+  if(v==='config') document.getElementById('config-url').value=WEBAPP_URL||'';
 }
 
-// ── EXPORT CSV ────────────────────────────────────────────
-function exportCSV() {
-  var cols=['client','devis','devisTTC','fournisseur','commande','arc','commentaireARC','prevLivraison','statutLivraison','statutPose','commentaire'];
-  var head=['Client','N Devis','Devis TTC','Fournisseur','Commande','ARC','Validation ARC','Prev Livraison','Statut Livraison','Statut Pose','Commentaire','Alerte'];
-  var rows=commandes.map(function(c){var a=calcAlerte(c);return cols.map(function(f){return '"'+(c[f]||'').replace(/"/g,'""')+'"';}).concat(['"'+a.text.replace(/"/g,'""')+'"']);});
-  var csv='﻿'+[head.map(function(h){return '"'+h+'"';}).join(',')].concat(rows.map(function(r){return r.join(',');})).join('
-');
-  var a=document.createElement('a');
+// ── EXPORT CSV ───────────────────────────────────────────
+function exportCSV(){
+  const cols=['client','devis','devisTTC','fournisseur','commande','arc','commentaireARC','prevLivraison','statutLivraison','statutPose','commentaire'];
+  const head=['Client','N° Devis','Devis TTC','Fournisseur','Commande','ARC','Validation ARC','Prév. Livraison','Statut Livraison','Statut Pose','Commentaire','Alerte'];
+  const rows=commandes.map(c=>{const a=calcAlerte(c);return[...cols.map(f=>'"'+(c[f]||'').replace(/"/g,'""')+'"'),'"'+a.text.replace(/"/g,'""')+'"'];});
+  const csv='\uFEFF'+[head.map(h=>'"'+h+'"').join(','),...rows.map(r=>r.join(','))].join('\n');
+  const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
   a.download='eco-ouest-'+new Date().toISOString().slice(0,10)+'.csv';
   a.click();
 }
 
-function populateFournisseurFilter() {
-  var sel=document.getElementById('filter-fournisseur');
+// ── FILTRES ──────────────────────────────────────────────
+function populateFournisseurFilter(){
+  const sel=document.getElementById('filter-fournisseur');
   sel.innerHTML='<option value="">Tous fournisseurs</option>';
-  var fous=[...new Set(commandes.map(function(c){return c.fournisseur;}).filter(Boolean))].sort();
-  fous.forEach(function(f){var o=document.createElement('option');o.value=f;o.textContent=f;sel.appendChild(o);});
+  [...new Set(commandes.map(c=>c.fournisseur).filter(Boolean))].sort().forEach(f=>{
+    const o=document.createElement('option');o.value=f;o.textContent=f;sel.appendChild(o);
+  });
 }
+function renderAll(){ renderKPI(); renderTable(); }
 
-function renderAll() { renderKPI(); renderTable(); }
+// ── INIT ─────────────────────────────────────────────────
+charger();
 
-// Actualisation auto toutes les 5 minutes
-setInterval(function(){ if(sessionStorage.getItem('eco-auth')==='1') charger(); }, 5*60*1000);
+setInterval(()=>{ if(WEBAPP_URL) charger(); }, 5*60*1000);
 </script>
 </body>
 </html>
