@@ -344,7 +344,10 @@ function renderTable() {
   if(alertFilter==='urgent')rows=rows.filter(function(c){return c._a.n===3;});
   if(alertFilter==='warn')rows=rows.filter(function(c){return c._a.n>=1&&c._a.n<=2;});
   if(alertFilter==='ok')rows=rows.filter(function(c){return c._a.n===0;});
-  if(sortCol)rows.sort(function(a,b){
+  rows.sort(function(a,b){
+    if(sortCol==='ligne'){
+      return sortAsc ? (a.ligne-b.ligne) : (b.ligne-a.ligne);
+    }
     var va=(a[sortCol]||'').toString().toLowerCase(),vb=(b[sortCol]||'').toString().toLowerCase();
     return sortAsc?va.localeCompare(vb):vb.localeCompare(va);
   });
