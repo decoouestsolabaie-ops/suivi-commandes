@@ -419,12 +419,22 @@ function renderKPI() {
   var total=commandes.length, urgents=0, warns=0, ok=0, enCours=0;
   al.forEach(function(a){if(a.niveau===3)urgents++;else if(a.niveau>=1)warns++;else if(a.niveau===0)ok++;});
   commandes.forEach(function(c){if(STATUTS_TERMINES.indexOf((c.statutLivraison||'').trim())===-1)enCours++;});
-  document.getElementById('kpi-grid').innerHTML =
-    '<div class="kpi-card kpi-info" onclick="setAlertFilter(&quot;all&quot;)"><span class="kpi-label">Total</span><span class="kpi-value">'+total+'</span><span class="kpi-sub">commandes</span></div>'+
-    '<div class="kpi-card kpi-urgent" onclick="setAlertFilter(&quot;urgent&quot;)"><span class="kpi-label">Urgentes</span><span class="kpi-value">'+urgents+'</span><span class="kpi-sub">action requise</span></div>'+
-    '<div class="kpi-card kpi-warn" onclick="setAlertFilter(&quot;warn&quot;)"><span class="kpi-label">Attention</span><span class="kpi-value">'+warns+'</span><span class="kpi-sub">à surveiller</span></div>'+
-    '<div class="kpi-card kpi-ok" onclick="setAlertFilter(&quot;ok&quot;)"><span class="kpi-label">OK</span><span class="kpi-value">'+ok+'</span><span class="kpi-sub">sans alerte</span></div>'+
-    '<div class="kpi-card kpi-info"><span class="kpi-label">En cours</span><span class="kpi-value">'+enCours+'</span><span class="kpi-sub">non livrées</span></div>';
+  var kpiEl = document.getElementById('kpi-grid');
+  kpiEl.innerHTML = '';
+  var kpis = [
+    {cls:'kpi-info',   filter:'all',    label:'Total',    val:total,   sub:'commandes'},
+    {cls:'kpi-urgent', filter:'urgent', label:'Urgentes', val:urgents, sub:'action requise'},
+    {cls:'kpi-warn',   filter:'warn',   label:'Attention',val:warns,   sub:'surveiller'},
+    {cls:'kpi-ok',     filter:'ok',     label:'OK',       val:ok,      sub:'sans alerte'},
+    {cls:'kpi-info',   filter:'',       label:'En cours', val:enCours, sub:'non livrees'},
+  ];
+  kpis.forEach(function(k) {
+    var d = document.createElement('div');
+    d.className = 'kpi-card ' + k.cls;
+    if (k.filter) d.onclick = function() { setAlertFilter(k.filter); };
+    d.innerHTML = '<span class="kpi-label">'+k.label+'</span><span class="kpi-value">'+k.val+'</span><span class="kpi-sub">'+k.sub+'</span>';
+    kpiEl.appendChild(d);
+  });
 }
 
 // ── TABLE ─────────────────────────────────────────────────
