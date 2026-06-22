@@ -234,7 +234,7 @@
           <select id="f-statutLivraison"><option value="">—</option><option>En cours</option><option>Livré</option><option>En attente</option><option>Bloqué</option></select>
         </div>
         <div class="form-group"><label>Statut pose</label>
-          <select id="f-statutPose"><option value="">—</option><option>En cours</option><option>Pose</option><option>Termine</option><option>SAV</option></select>
+          <select id="f-statutPose"><option value="">—</option><option>A PLANIFIER</option><option>En cours</option><option>Pose</option><option>Termine</option><option>SAV</option></select>
         </div>
         <div class="form-group full"><label>Historique des commentaires / remarques</label>
           <textarea id="f-commentaire-historique" readonly style="background:#F5F7FA;color:var(--texte2);font-style:italic;min-height:90px;" placeholder="Aucun commentaire pour l'instant."></textarea>
@@ -366,7 +366,7 @@ function renderTable() {
   var rows=commandes.map(function(c,i){return Object.assign({},c,{_i:i,_a:alerte(c)});});
   if(q)rows=rows.filter(function(c){return (c.client||'').toLowerCase().indexOf(q)!==-1||(c.devis||'').toLowerCase().indexOf(q)!==-1||(c.arc||'').toLowerCase().indexOf(q)!==-1||(c.fournisseur||'').toLowerCase().indexOf(q)!==-1;});
   if(fF)rows=rows.filter(function(c){return c.fournisseur===fF;});
-  if(fS)rows=rows.filter(function(c){return (c.statutLivraison||'').indexOf(fS)!==-1||(c.statutPose||'').indexOf(fS)!==-1;});
+  if(fS)rows=rows.filter(function(c){var fSl=fS.toLowerCase();return (c.statutLivraison||'').toLowerCase().indexOf(fSl)!==-1||(c.statutPose||'').toLowerCase().indexOf(fSl)!==-1;});
   if(alertFilter==='urgent')rows=rows.filter(function(c){return c._a.n===3;});
   if(alertFilter==='warn')rows=rows.filter(function(c){return c._a.n>=1&&c._a.n<=2;});
   if(alertFilter==='ok')rows=rows.filter(function(c){return c._a.n===0;});
