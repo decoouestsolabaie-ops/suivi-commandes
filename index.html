@@ -169,7 +169,7 @@
         </select>
         <select class="select-filter" id="filter-statut" onchange="renderTable()">
           <option value="">Tous statuts</option>
-          <option>Livré</option><option>En cours</option><option>SAV</option><option>Terminé</option><option>Posé</option>
+          <option>A planifier</option><option>Livré</option><option>En cours</option><option>SAV</option><option>Terminé</option><option>Posé</option>
         </select>
         <span class="filter-badge all active" id="fb-all" onclick="setFilter('all')">Toutes</span>
         <span class="filter-badge urgent" id="fb-urgent" onclick="setFilter('urgent')">🔴 Urgentes</span>
@@ -236,8 +236,11 @@
         <div class="form-group"><label>Statut pose</label>
           <select id="f-statutPose"><option value="">—</option><option>En cours</option><option>Pose</option><option>Termine</option><option>SAV</option></select>
         </div>
-        <div class="form-group full"><label>Commentaire / Remarques</label>
-          <textarea id="f-commentaire" placeholder="Observations, SAV..."></textarea>
+        <div class="form-group full"><label>Historique des commentaires / remarques</label>
+          <textarea id="f-commentaire-historique" readonly style="background:#F5F7FA;color:var(--texte2);font-style:italic;min-height:90px;" placeholder="Aucun commentaire pour l'instant."></textarea>
+        </div>
+        <div class="form-group full"><label>Ajouter un nouveau commentaire</label>
+          <textarea id="f-commentaire-nouveau" placeholder="Ecrire une nouvelle remarque... (elle sera ajoutee a la suite avec la date du jour)"></textarea>
         </div>
       </div>
     </div>
@@ -276,6 +279,29 @@ function alerte(c) {
   if (!c.prevLivraison||!c.prevLivraison.trim()){m.push('Date livraison manquante');if(s<1)s=1;}
   if (!m.length) return {t:'OK',n:0};
   return {t:m.join(' | '),n:s};
+}
+function semaineBadge(s) {
+  if (!s || !s.trim()) return '<span style="color:#ccc">—</span>';
+  var clean = s.trim();
+  var match = clean.match(/S\s*0*(\d{1,2})/i);
+  if (match) {
+    var num = parseInt(match[1], 10);
+    var now = new Date();
+    var curWeek = getWeekNumber(now);
+    var color = '#1565C0', bg = '#E3F2FD';
+    if (num < curWeek) { color = '#D32F2F'; bg = '#FFEBEE'; }
+    else if (num === curWeek) { color = '#E65100'; bg = '#FFF3E0'; }
+    else if (num <= curWeek + 2) { color = '#F9A825'; bg = '#FFFDE7'; }
+    else { color = '#2E7D32'; bg = '#E8F5E9'; }
+    return '<span class="badge" style="background:'+bg+';color:'+color+';font-weight:700;">S'+num+'</span>';
+  }
+  return '<span style="font-size:12px;color:var(--texte2);">'+h(clean)+'</span>';
+}
+function getWeekNumber(d) {
+  d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+  var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+  return Math.ceil((((d-yearStart)/86400000)+1)/7);
 }
 function aClass(n){return n===0?'alerte-ok':n===1?'alerte-jaune':n===2?'alerte-orange':n===3?'alerte-rouge':'';}
 
@@ -364,7 +390,7 @@ function renderTable() {
       '<td class="col-mono">'+h(c.devis||'—')+'</td>'+
       '<td>'+(c.commande==='OUI'?'<span class="badge badge-ok">OUI</span>':c.commande==='NON'?'<span class="badge badge-urgent">NON</span>':'—')+'</td>'+
       '<td class="col-mono">'+h(c.arc||'—')+'</td>'+
-      '<td style="font-size:12px;color:var(--texte2);">'+h(c.prevLivraison||'—')+'</td>'+
+      '<td>'+semaineBadge(c.prevLivraison)+'</td>'+
       '<td>'+sL+'</td><td>'+sP+'</td>'+
       '<td class="col-comment" title="'+h(c.commentaire)+'">'+h(c.commentaire||'')+'</td>'+
       '<td><span class="alerte-text '+aClass(a.n)+'">'+(a.n===0?'OK':'⚠ '+h(a.t.split(' | ')[0]))+'</span>'+extra+'</td>'+
@@ -383,9 +409,11 @@ function openModal(idx) {
   if(idx>=0)editLigne=c.ligne;
   document.getElementById('modal-title').textContent=idx>=0?'Modifier - '+c.client:'Nouvelle commande';
   document.getElementById('btn-suppr').style.display=idx>=0?'inline-flex':'none';
-  ['client','devis','devisTTC','fournisseur','commande','arc','commentaireARC','prevLivraison','statutLivraison','statutPose','commentaire'].forEach(function(f){
+  ['client','devis','devisTTC','fournisseur','commande','arc','commentaireARC','prevLivraison','statutLivraison','statutPose'].forEach(function(f){
     var el=document.getElementById('f-'+f);if(el)el.value=c[f]||'';
   });
+  document.getElementById('f-commentaire-historique').value = c.commentaire || '';
+  document.getElementById('f-commentaire-nouveau').value = '';
   document.getElementById('overlay').classList.add('open');
 }
 function closeModal(){document.getElementById('overlay').classList.remove('open');}
@@ -393,10 +421,22 @@ function closeOut(e){if(e.target.id==='overlay')closeModal();}
 
 async function sauvegarder() {
   var c={};
-  ['client','devis','devisTTC','fournisseur','commande','arc','commentaireARC','prevLivraison','statutLivraison','statutPose','commentaire'].forEach(function(f){
+  ['client','devis','devisTTC','fournisseur','commande','arc','commentaireARC','prevLivraison','statutLivraison','statutPose'].forEach(function(f){
     var el=document.getElementById('f-'+f);if(el)c[f]=el.value.trim();
   });
   if(!c.client){alert('Client obligatoire.');return;}
+
+  // Gestion historique commentaire : on ajoute le nouveau texte saisi a la suite de l'existant
+  var nouveauTexte = document.getElementById('f-commentaire-nouveau').value.trim();
+  var historique = document.getElementById('f-commentaire-historique').value || '';
+  var commentaireFinal = historique;
+  if (nouveauTexte) {
+    var dateStr = new Date().toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit',year:'numeric'});
+    var ligneAjout = '['+dateStr+'] '+nouveauTexte;
+    commentaireFinal = historique ? historique + '\n' + ligneAjout : ligneAjout;
+  }
+  c.commentaire = commentaireFinal;
+
   document.getElementById('saving-msg').classList.add('active');
   try {
     var res;
