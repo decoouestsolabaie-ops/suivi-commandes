@@ -288,6 +288,7 @@
 </div>
 
 <script>
+var _jsonpCallback = null;
 var WEBAPP = 'https://script.google.com/macros/s/AKfycbxk1zFKVsCDoiN5J4RAZYF-9nEYqGMIypS2lqBooqZWkxwMUGo8JVq5-iS9ZvZUGasa/exec';
 var FOU_COLORS = {'ATLANTEM':'#1565C0','ATULAM':'#6A1B9A','LALLEMANT':'#2E7D32','SOKO':'#00695C','ALUGLASS':'#E65100','FILTERSUN':'#C62828','DC PROD':'#37474F','KE FRANCE':'#0277BD','SKYLUX':'#558B2F','BVL SERRULAC':'#4527A0','LEROY MERLIN':'#1B5E20','FOUSSIER':'#6D4C41','STOCK':'#546E7A'};
 var TERMINES = ['LIVRE','LIVRÉ','TERMINE','TERMINÉ','POSE','POSÉ','Livré','Terminé','Posé','Livre','Termine'];
@@ -382,7 +383,7 @@ async function charger() {
   };
   var script = document.createElement('script');
   script.id = 'jsonp-script';
-  script.src = WEBAPP + '?callback=window._jsonpCallback&t=' + Date.now();
+  script.src = WEBAPP + '?callback=_jsonpCallback&t=' + Date.now();
   script.onerror = function() {
     clearTimeout(window._jsonpTimeout);
     sync('error','Erreur connexion');
