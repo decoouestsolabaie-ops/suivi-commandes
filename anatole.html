@@ -47,10 +47,10 @@
   .chantier-info{flex:1;}
   .chantier-client{font-size:14px;font-weight:700;margin-bottom:3px;}
   .chantier-meta{font-size:11px;color:var(--texte2);}
-  .pv-status{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+  .pv-status{display:flex;flex-direction:column;align-items:stretch;gap:6px;min-width:130px;}
   .badge-pv-ok{background:var(--vert-bg);color:var(--vert);padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;}
   .badge-pv-non{background:var(--rouge-bg);color:var(--rouge);padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;}
-  .btn-pv{background:var(--bleu);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;}
+  .btn-pv{background:var(--bleu);color:#fff;border:none;border-radius:8px;padding:10px 14px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;width:100%;text-align:center;}
   .btn-pv:hover{background:#1976D2;}
   .empty{text-align:center;padding:40px 20px;color:var(--texte2);}
   .empty .icon{font-size:40px;margin-bottom:10px;}
@@ -273,6 +273,9 @@ function filtrerSemaine() {
   var today = new Date();
   var dateAujourd = today.toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit',year:'numeric'});
 
+  var TERMINES_P = ['Livré','Terminé','Posé','LIVRE','TERMINE','POSE','Livre','Termine'];
+
+  // D'abord chercher par date de pose (colonne T)
   var filtered = allChantiers.filter(function(c) {
     var dp = (c.datePose||'').trim();
     if (!dp) return false;
@@ -283,10 +286,16 @@ function filtrerSemaine() {
     return false;
   });
 
+  // Si aucun résultat par date de pose, afficher tous les chantiers actifs
   if (!filtered.length) {
-    var d2 = new Date(); d2.setDate(d2.getDate() + (sem - getWeekNum(d2)) * 7);
-    document.getElementById('chantiers-list').innerHTML = '<div class="empty"><div class="icon">📅</div><p>Aucun chantier pour la semaine S' + sem + '.</p></div>';
-    return;
+    filtered = allChantiers.filter(function(c) {
+      return TERMINES_P.indexOf((c.statutLivraison||'').trim()) === -1
+          && TERMINES_P.indexOf((c.statutPose||'').trim()) === -1;
+    });
+    if (!filtered.length) {
+      document.getElementById('chantiers-list').innerHTML = '<div class="empty"><div class="icon">✅</div><p>Aucun chantier en cours.</p></div>';
+      return;
+    }
   }
 
   var filteredData = filtered.slice().reverse();
