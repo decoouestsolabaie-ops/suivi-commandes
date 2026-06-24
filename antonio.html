@@ -298,7 +298,8 @@ function filtrerSemaine() {
       '</div>' +
       '<div class="pv-status">' +
       (pvFait ? '<span class="badge-pv-ok">✓ PV fait</span>' : '<span class="badge-pv-non">✗ PV manquant</span>') +
-      '<button class="btn-pv" onclick="ouvrirAvancement(' + JSON.stringify(c).replace(/"/g, "&quot;") + ')">▶ Ouvrir</button>' +
+      '<button class="btn-pv" style="background:#2E7D32;" onclick="ouvrirAvancement(' + JSON.stringify(c).replace(/"/g, "&quot;") + ')">✏️ Avancement</button>' +
+      '<button class="btn-pv" onclick="ouvrirPV(' + JSON.stringify(c).replace(/"/g, "&quot;") + ')">📋 Faire PV</button>' +
       '</div></div>';
   }).join('');
 }
