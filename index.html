@@ -665,6 +665,19 @@ function renderDashboard() {
     '</div></div>' +
     '<div class="dash-card" style="grid-column:1/-1;"><h4>📋 Suivi chantiers — Date de pose · Remarques poseurs · PV</h4>' + hC + '</div>';
 }
+
+function fillFournisseur() {
+  var sel = document.getElementById('filter-fournisseur');
+  sel.innerHTML = '<option value="">Tous fournisseurs</option>';
+  var fous = [];
+  commandes.forEach(function(c) { if(c.fournisseur && fous.indexOf(c.fournisseur) === -1) fous.push(c.fournisseur); });
+  fous.sort().forEach(function(f) {
+    var o = document.createElement('option');
+    o.value = f; o.textContent = f;
+    sel.appendChild(o);
+  });
+}
+
 function renderAll(){renderKPI();renderTable();}
 
 charger();
