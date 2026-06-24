@@ -363,21 +363,34 @@ function aClass(n){return n===0?'alerte-ok':n===1?'alerte-jaune':n===2?'alerte-o
 
 async function charger() {
   setLoader(true); sync('loading','Chargement...');
-  try {
-    var r = await fetch(WEBAPP, {redirect:'follow'});
-    var d = await r.json();
-    if (!d.ok) throw new Error(d.error);
+  var old = document.getElementById('jsonp-script');
+  if (old) old.parentNode.removeChild(old);
+  window._jsonpTimeout = setTimeout(function() {
+    sync('error','Erreur connexion');
+    setLoader(false);
+    document.getElementById('table-body').innerHTML = '<tr><td colspan="13"><div class="empty-state"><p>Impossible de joindre la Web App.</p></div></td></tr>';
+  }, 15000);
+  window._jsonpCallback = function(d) {
+    clearTimeout(window._jsonpTimeout);
+    if (!d.ok) { sync('error', d.error||'Erreur'); setLoader(false); return; }
     commandes = d.data;
     var t = new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
     sync('ok','Mis a jour '+t);
     fillFournisseur();
     renderAll();
-  } catch(e) {
+    setLoader(false);
+  };
+  var script = document.createElement('script');
+  script.id = 'jsonp-script';
+  script.src = WEBAPP + '?callback=_jsonpCallback&t=' + Date.now();
+  script.onerror = function() {
+    clearTimeout(window._jsonpTimeout);
     sync('error','Erreur connexion');
-    document.getElementById('table-body').innerHTML = '<tr><td colspan="11"><div class="empty-state"><p>Impossible de joindre la Web App.</p></div></td></tr>';
-  }
-  setLoader(false);
+    setLoader(false);
+  };
+  document.head.appendChild(script);
 }
+
 
 async function apiPost(body) {
   var r = await fetch(WEBAPP,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body),redirect:'follow'});
