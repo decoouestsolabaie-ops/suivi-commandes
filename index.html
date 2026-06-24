@@ -568,8 +568,10 @@ function renderDashboard() {
   var n=commandes.length||1;
 
   // Section 2 : Chantiers avec date de pose + remarques poseurs + PV
+  var TERMINES_D = ['Livré','Terminé','Posé','LIVRE','TERMINE','POSE','Livre','Termine'];
   var chantiersAvecPose = commandes.filter(function(c){
-    return c.datePose || c.poseur_ANATOLE || c.poseur_ARTIOM || c.poseur_ANTONIO;
+    return TERMINES_D.indexOf((c.statutLivraison||'').trim()) === -1
+        && (c.commentaireARC||'').toUpperCase() !== 'ANNULER';
   }).slice().sort(function(a,b){
     return (b.datePose||'').localeCompare(a.datePose||'');
   });
@@ -646,7 +648,7 @@ function renderDashboard() {
     '<div style="text-align:center;padding:14px;background:var(--gris-bg);border-radius:8px;"><div style="font-size:28px;font-weight:700;color:var(--bleu);">'+commandes.length+'</div><div style="font-size:11px;color:var(--texte2);">Total</div></div>'+
     '<div style="text-align:center;padding:14px;background:#FFEBEE;border-radius:8px;"><div style="font-size:28px;font-weight:700;color:var(--rouge);">'+ac.u+'</div><div style="font-size:11px;color:var(--texte2);">Urgences</div></div>'+
     '<div style="text-align:center;padding:14px;background:var(--vert-bg);border-radius:8px;"><div style="font-size:28px;font-weight:700;color:var(--vert);">'+commandes.filter(function(c){return (c.pvChantier||'').toUpperCase()==='OUI';}).length+'</div><div style="font-size:11px;color:var(--texte2);">PV Faits</div></div>'+
-    '<div style="text-align:center;padding:14px;background:#FFF3E0;border-radius:8px;"><div style="font-size:28px;font-weight:700;color:var(--orange);">'+commandes.filter(function(c){return (c.pvChantier||'').toUpperCase()!=='OUI'&&(c.datePose||c.poseur_ANATOLE||c.poseur_ARTIOM||c.poseur_ANTONIO);}).length+'</div><div style="font-size:11px;color:var(--texte2);">PV Manquants</div></div>'+
+    '<div style="text-align:center;padding:14px;background:#FFF3E0;border-radius:8px;"><div style="font-size:28px;font-weight:700;color:var(--orange);">'+commandes.filter(function(c){var t=['Livré','Terminé','Posé'];return t.indexOf((c.statutLivraison||'').trim())===-1&&(c.pvChantier||'').toUpperCase()!=='OUI';}).length+'</div><div style="font-size:11px;color:var(--texte2);">PV Manquants</div></div>'+
     '</div></div>'+
     // Ligne 3 : suivi chantiers pleine largeur
     '<div class="dash-card" style="grid-column:1/-1;"><h4>📋 Suivi chantiers — Date de pose · Remarques poseurs · PV</h4>'+htmlChantiers+'</div>';
