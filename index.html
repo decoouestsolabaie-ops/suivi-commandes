@@ -741,10 +741,28 @@ function renderSuiviPose() {
     {nom:'ARTIOM',  key:'poseur_ARTIOM',  couleur:'#2E7D32'},
     {nom:'ANTONIO', key:'poseur_ANTONIO', couleur:'#E65100'}
   ];
-  var TERMINES_S = ['Livré','Terminé','Posé','LIVRE','TERMINE','POSE','Livre','Termine'];
+  function getSemaine(d) {
+    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+    var y = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+    return Math.ceil((((d-y)/86400000)+1)/7);
+  }
+  var semActuelle = getSemaine(new Date());
+
+  function datePoseEnSemaine(dp, sem) {
+    if (!dp || !dp.trim()) return false;
+    var m = dp.trim().match(/S\s*0*(\d{1,2})/i);
+    if (m) return parseInt(m[1],10) === sem;
+    var d = new Date(dp);
+    if (!isNaN(d)) return getSemaine(d) === sem;
+    return false;
+  }
+
   var items = commandes.filter(function(c){
-    return TERMINES_S.indexOf((c.statutLivraison||'').trim()) === -1
-        && (c.commentaireARC||'').toUpperCase() !== 'ANNULER';
+    if ((c.commentaireARC||'').toUpperCase() === 'ANNULER') return false;
+    // Afficher si date de pose = semaine en cours OU remarques poseurs cette semaine
+    return datePoseEnSemaine(c.datePose, semActuelle)
+        || c.poseur_ANATOLE || c.poseur_ARTIOM || c.poseur_ANTONIO;
   }).slice().sort(function(a,b){
     return (b.datePose||'').localeCompare(a.datePose||'');
   });
