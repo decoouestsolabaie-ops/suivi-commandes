@@ -299,6 +299,10 @@ function filtrerSemaine() {
   }
 
   var filteredData = filtered.slice().reverse();
+  // Stocker les données dans un objet global pour accès par onclick
+  window._chantiersData = {};
+  filteredData.forEach(function(c) { window._chantiersData[c.ligne] = c; });
+
   document.getElementById('chantiers-list').innerHTML = filteredData.map(function(c) {
     var pvFait = (c.pvChantier||'').toUpperCase() === 'OUI';
     return '<div class="chantier-card">' +
@@ -308,20 +312,23 @@ function filtrerSemaine() {
       '</div>' +
       '<div class="pv-status">' +
       (pvFait ? '<span class="badge-pv-ok">✓ PV fait</span>' : '<span class="badge-pv-non">✗ PV manquant</span>') +
-      '<button class="btn-pv" style="background:#2E7D32;margin-bottom:6px;" id="btn-av-' + c.ligne + '">✏️ Avancement</button>' +
-      '<button class="btn-pv" id="btn-pv-' + c.ligne + '">📋 Faire PV</button>' +
+      '<button class="btn-pv" style="background:#2E7D32;" onclick="ouvrirAvancementParLigne(' + c.ligne + ')">✏️ Avancement</button>' +
+      '<button class="btn-pv" onclick="ouvrirPVParLigne(' + c.ligne + ')">📋 Faire PV</button>' +
       '</div></div>';
   }).join('');
-  // Attacher les événements après le rendu
-  filteredData.forEach(function(c) {
-    var btnAv = document.getElementById('btn-av-' + c.ligne);
-    var btnPv = document.getElementById('btn-pv-' + c.ligne);
-    if (btnAv) btnAv.onclick = function() { ouvrirAvancement(c); };
-    if (btnPv) btnPv.onclick = function() { ouvrirPV(c); };
-  });
 }
 
 // ── AVANCEMENT ────────────────────────────────────────────
+
+function ouvrirAvancementParLigne(ligne) {
+  var c = window._chantiersData && window._chantiersData[ligne];
+  if (c) ouvrirAvancement(c);
+}
+function ouvrirPVParLigne(ligne) {
+  var c = window._chantiersData && window._chantiersData[ligne];
+  if (c) ouvrirPV(c);
+}
+
 function ouvrirAvancement(c) {
   chantierActuel = c;
   document.getElementById('header-sub').textContent = c.client;
