@@ -105,6 +105,7 @@
   .sync-bar{background:var(--vert-bg);color:var(--vert);padding:8px 20px;font-size:12px;font-weight:600;text-align:center;display:none;}
   .sync-bar.show{display:block;}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -120,7 +121,6 @@
 </div>
 
 
-<input type="file" id="photo-input" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(event)">
 <div class="sync-bar" id="sync-bar">✅ Enregistré dans Google Sheets !</div>
 <div class="toast" id="toast"></div>
 
@@ -288,13 +288,13 @@ function renderChantiers(liste) {
         '<textarea class="input-field" id="comment-'+c.ligne+'" placeholder="Nouvelle remarque, problème rencontré..."></textarea>' +
         // Bouton
         // Section photos
-        '<div class="photo-section">'+
-        '<div class="section-title">📷 Photos chantier</div>'+
-        '<button class="btn-photo" onclick="ouvrirCamera('+c.ligne+')">📷 Prendre une photo</button>'+
-        '<div class="photo-uploading" id="photo-upload-'+c.ligne+'"></div>'+
-        '<div class="photo-grid" id="photo-grid-'+c.ligne+'"></div>'+
-        '</div>'+
-                '<button class="btn-save" onclick="enregistrer('+c.ligne+')">💾 Enregistrer mon avancement</button>' +
+        '<div style="margin-top:14px;padding:12px;background:var(--vert-bg);border-radius:10px;border:1.5px solid var(--vert);">'+
+        '<label style="display:flex;align-items:center;gap:10px;cursor:pointer;">'+
+        '<input type="checkbox" id="pv-'+c.ligne+'" '+(c.pvChantier&&c.pvChantier.toUpperCase()==='OUI'?'checked':'')+' style="width:20px;height:20px;accent-color:var(--vert);cursor:pointer;">'+
+        '<span style="font-size:14px;font-weight:700;color:var(--vert);">✓ PV de fin de chantier effectué</span>'+
+        '</label></div>'+
+        '<button class="btn-save" onclick="enregistrer('+c.ligne+')">💾 Enregistrer mon avancement</button>'+
+        '<button style="width:100%;padding:14px;background:var(--vert);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;margin-top:10px;" onclick="ouvrirPV('+JSON.stringify(c).replace(/"/g,'\\&quot;')+')">📋 Faire le PV de réception</button>' +
       '</div>' +
     '</div>';
   }).join('');
@@ -342,12 +342,6 @@ async function enregistrer(ligne) {
   var pieces  = (document.getElementById('pieces-'+ligne).value||'').trim();
   var reste   = (document.getElementById('reste-'+ligne).value||'').trim();
   var newComment = (document.getElementById('comment-'+ligne).value||'').trim();
-  // Ajouter les liens photos
-  if (photosEnAttente[ligne] && photosEnAttente[ligne].length) {
-    var photoLinks = photosEnAttente[ligne].map(function(url,i){return '📷 Photo '+(i+1)+': '+url;}).join(' | ');
-    newComment = newComment ? newComment + ' | ' + photoLinks : photoLinks;
-    photosEnAttente[ligne] = [];
-  }
 
   // Construire le commentaire poseur avec horodatage
   var histo = document.getElementById('histo-'+ligne).textContent;
@@ -364,8 +358,11 @@ async function enregistrer(ligne) {
   var commentaireFinal = histo ? histo + (nouvelleLigne ? '\n'+nouvelleLigne : '') : nouvelleLigne;
 
   // Colonne statut pose = 13 (M), commentaire poseur = colPoseur (Q=17, R=18, S=19)
+  var pvEl = document.getElementById('pv-'+ligne);
+  var pvVal = pvEl && pvEl.checked ? 'OUI' : 'NON';
   var champs = {};
   if (statutSel) champs[13] = statutSel;
+  champs[16] = pvVal;
   if (commentaireFinal) champs[colPoseur] = commentaireFinal;
 
   try {
@@ -393,75 +390,6 @@ async function enregistrer(ligne) {
 }
 
 
-var photoLigne = null;
-var photosEnAttente = {};
-
-function ouvrirCamera(ligne) {
-  photoLigne = ligne;
-  document.getElementById('photo-input').value = '';
-  document.getElementById('photo-input').click();
-}
-
-function handlePhoto(event) {
-  var file = event.target.files[0];
-  if (!file || !photoLigne) return;
-  var ligne = photoLigne;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var base64Full = e.target.result;
-    var base64 = base64Full.split(',')[1];
-    var mimeType = file.type;
-
-    // Prévisualisation immédiate
-    var grid = document.getElementById('photo-grid-'+ligne);
-    if (grid) {
-      var img = document.createElement('img');
-      img.src = base64Full;
-      img.className = 'photo-thumb';
-      grid.appendChild(img);
-    }
-
-    // Upload
-    uploaderPhoto(ligne, base64, mimeType);
-  };
-  reader.readAsDataURL(file);
-}
-
-async function uploaderPhoto(ligne, base64, mimeType) {
-  var uploadDiv = document.getElementById('photo-upload-'+ligne);
-  if (uploadDiv) uploadDiv.textContent = '⏳ Envoi en cours...';
-
-  // Trouver le client pour ce chantier
-  var chantier = chantiers.find(function(c){return c.ligne === ligne;});
-  var client = chantier ? chantier.client : 'Inconnu';
-
-  try {
-    var r = await fetch(WEBAPP, {
-      method: 'POST',
-      headers: {'Content-Type':'text/plain'},
-      body: JSON.stringify({
-        action:   'uploadPhoto',
-        client:   client,
-        poseur:   poseurActuel,
-        base64:   base64,
-        mimeType: mimeType
-      }),
-      redirect: 'follow'
-    });
-    var d = await r.json();
-    if (!d.ok) throw new Error(d.error);
-
-    // Stocker l'URL pour l'ajouter au commentaire lors de l'enregistrement
-    if (!photosEnAttente[ligne]) photosEnAttente[ligne] = [];
-    photosEnAttente[ligne].push(d.url);
-
-    if (uploadDiv) uploadDiv.textContent = '✅ Photo envoyée dans Drive !';
-    setTimeout(function(){if(uploadDiv)uploadDiv.textContent='';}, 3000);
-  } catch(err) {
-    if (uploadDiv) uploadDiv.textContent = '❌ Erreur upload : '+err.message;
-  }
-}
-
 function getWeekNum(d) {
   d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
   d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
@@ -481,6 +409,12 @@ function normaliserDate(s) {
   return s;
 }
 
+// Retour depuis PV
+function goBackPV() {
+  document.getElementById('screen-pv').classList.remove('active');
+  document.getElementById('screen-chantiers').classList.add('active');
+}
+
 // Demarrage automatique
 window.addEventListener('load', function() {
   document.getElementById('date-badge').textContent = (function(){
@@ -491,6 +425,389 @@ window.addEventListener('load', function() {
   showScreen('screen-chantiers');
   chargerChantiers();
 });
+
+
+var WEBAPP = 'https://script.google.com/macros/s/AKfycbxk1zFKVsCDoiN5J4RAZYF-9nEYqGMIypS2lqBooqZWkxwMUGo8JVq5-iS9ZvZUGasa/exec';
+var poseurActuel = null;
+var chantierActuel = null;
+var allChantiers = [];
+var sigCanvas, sigCtx, sigDrawing = false, sigHasSig = false;
+
+// ── NAVIGATION ────────────────────────────────────────────
+function choisirPoseur(nom, couleur) {
+  poseurActuel = nom;
+  document.getElementById('poseur-badge').textContent = nom;
+  document.getElementById('poseur-badge').style.display = 'block';
+  document.getElementById('btn-back').style.display = 'block';
+  document.getElementById('header-sub').textContent = 'Choisissez un chantier';
+
+  // Semaine courante par défaut
+  var sem = getWeekNum(new Date());
+  document.getElementById('week-input').value = sem;
+
+  showScreen('screen-chantiers');
+  chargerChantiers();
+}
+
+function goBack() {
+  var current = document.querySelector('.screen.active');
+  if (current.id === 'screen-pv') {
+    showScreen('screen-chantiers');
+    document.getElementById('header-sub').textContent = 'Choisissez un chantier';
+  } else {
+    showScreen('screen-accueil');
+    document.getElementById('poseur-badge').style.display = 'none';
+    document.getElementById('btn-back').style.display = 'none';
+    document.getElementById('header-sub').textContent = 'Constat de réception des travaux';
+    poseurActuel = null;
+  }
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById(id).classList.add('active');
+}
+
+// ── CHARGEMENT ────────────────────────────────────────────
+async function chargerChantiers() {
+  document.getElementById('chantiers-list').innerHTML = '<div class="loader"><div class="spinner"></div>Chargement...</div>';
+  try {
+    var r = await fetch(WEBAPP, {redirect:'follow'});
+    var d = await r.json();
+    if (!d.ok) throw new Error(d.error);
+    allChantiers = d.data.filter(function(c) {
+      return (c.commentaireARC||'').toUpperCase() !== 'ANNULER';
+    });
+    filtrerSemaine();
+  } catch(e) {
+    document.getElementById('chantiers-list').innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>Erreur de connexion.</p></div>';
+  }
+}
+
+function getWeekNum(d) {
+  d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+  var y = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+  return Math.ceil((((d-y)/86400000)+1)/7);
+}
+
+function filtrerSemaine() {
+  var semStr = document.getElementById('week-input').value;
+  if (!semStr) return;
+  var sem = parseInt(semStr, 10);
+
+  var filtered = allChantiers.filter(function(c) {
+    var dp = (c.datePose||'').trim();
+    if (!dp) return false;
+    var mSem = dp.match(/S\s*0*(\d{1,2})/i);
+    if (mSem) return parseInt(mSem[1],10) === sem;
+    // Date précise
+    var d = new Date(dp);
+    if (!isNaN(d)) return getWeekNum(d) === sem;
+    return false;
+  });
+
+  if (!filtered.length) {
+    document.getElementById('chantiers-list').innerHTML =
+      '<div class="empty"><div class="icon">📅</div><p>Aucun chantier trouvé pour la semaine S'+sem+'.</p></div>';
+    return;
+  }
+
+  document.getElementById('chantiers-list').innerHTML = filtered.map(function(c, i) {
+    var pvFait = (c.pvChantier||'').toUpperCase() === 'OUI';
+    return '<div class="chantier-card">'
+      + '<div class="chantier-info">'
+      + '<div class="chantier-client">'+h(c.client)+'</div>'
+      + '<div class="chantier-meta">'+(c.fournisseur||'')+(c.devis?' · '+c.devis:'')+(c.datePose?' · 📅 '+c.datePose:'')+'</div>'
+      + '</div>'
+      + '<div class="pv-status">'
+      + (pvFait ? '<span class="badge-pv-ok">✓ PV fait</span>' : '<span class="badge-pv-non">✗ PV manquant</span>')
+      + '<button class="btn-pv" onclick="ouvrirPV('+JSON.stringify(c).replace(/"/g,'&quot;')+')">📋 '+(pvFait?'Voir PV':'Faire PV')+'</button>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+// ── FORMULAIRE PV ─────────────────────────────────────────
+function ouvrirPV(c) {
+  chantierActuel = c;
+  document.getElementById('header-sub').textContent = c.client;
+
+  // Pré-remplir
+  document.getElementById('pv-client').value = c.client || '';
+  document.getElementById('pv-contrat').value = c.devis || '';
+  document.getElementById('pv-date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('pv-adresse').value = '';
+  document.getElementById('pv-poseur').value = poseurActuel;
+  document.getElementById('pv-commentaires').value = c.commentaire || '';
+  document.getElementById('pv-reglement').value = '';
+  document.getElementById('pv-lieu').value = 'Viroflay';
+
+  // Reset radio
+  document.getElementById('rb-sans').className = 'radio-btn';
+  document.getElementById('rb-avec').className = 'radio-btn';
+  selReception('sans');
+
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('screen-pv').classList.add('active');
+
+  // Init canvas signature
+  setTimeout(initSignature, 100);
+}
+
+function selReception(val) {
+  document.getElementById('rb-sans').className = 'radio-btn' + (val==='sans'?' selected-vert':'');
+  document.getElementById('rb-avec').className = 'radio-btn' + (val==='avec'?' selected-orange':'');
+  document.querySelectorAll('input[name="reception"]').forEach(function(r){
+    r.checked = r.value === val;
+  });
+}
+
+// ── SIGNATURE ─────────────────────────────────────────────
+function initSignature() {
+  sigCanvas = document.getElementById('sig-canvas');
+  sigCanvas.width = sigCanvas.offsetWidth;
+  sigCtx = sigCanvas.getContext('2d');
+  sigCtx.strokeStyle = '#1A1A2E';
+  sigCtx.lineWidth = 2.5;
+  sigCtx.lineCap = 'round';
+  sigCtx.lineJoin = 'round';
+  sigDrawing = false;
+  sigHasSig = false;
+
+  sigCanvas.addEventListener('mousedown',  startDraw);
+  sigCanvas.addEventListener('mousemove',  draw);
+  sigCanvas.addEventListener('mouseup',    endDraw);
+  sigCanvas.addEventListener('touchstart', startDraw, {passive:false});
+  sigCanvas.addEventListener('touchmove',  draw,      {passive:false});
+  sigCanvas.addEventListener('touchend',   endDraw);
+}
+
+function getPos(e) {
+  var rect = sigCanvas.getBoundingClientRect();
+  var touch = e.touches ? e.touches[0] : e;
+  return { x: touch.clientX - rect.left, y: touch.clientY - rect.top };
+}
+
+function startDraw(e) { e.preventDefault(); sigDrawing=true; var p=getPos(e); sigCtx.beginPath(); sigCtx.moveTo(p.x,p.y); }
+function draw(e)       { e.preventDefault(); if(!sigDrawing)return; var p=getPos(e); sigCtx.lineTo(p.x,p.y); sigCtx.stroke(); sigHasSig=true; }
+function endDraw(e)    { e.preventDefault(); sigDrawing=false; }
+function clearSignature(){ if(sigCtx) sigCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height); sigHasSig=false; }
+
+// ── GÉNÉRATION PDF ────────────────────────────────────────
+
+function envoyerMail() {
+  var d = window.pvMailData || {};
+  var sujet = encodeURIComponent("PV de réception des travaux - " + (d.client||'') + " - " + (d.date||''));
+  var corps = encodeURIComponent(
+    "Madame, Monsieur " + (d.client||'') + ",\n\n" +
+    "Veuillez trouver ci-joint le Constat de Réception des Travaux effectués à :\n" +
+    (d.adresse||'') + "\n\n" +
+    "Réception prononcée : " + (d.recVal==='sans' ? 'SANS RÉSERVE' : 'AVEC RÉSERVE') + "\n\n" +
+    "Cordialement,\n" +
+    poseurActuel + "\n" +
+    "D'ECO OUEST SOLABAIE\n" +
+    "153, avenue du Général Leclerc · 78220 VIROFLAY\n" +
+    "Tél. 01 39 24 26 26"
+  );
+  // Ouvrir Outlook avec mailto
+  window.location.href = "mailto:?subject=" + sujet + "&body=" + corps;
+  showToast('📧 Outlook ouvert — attachez le PDF téléchargé');
+}
+
+async function genererPDF() {
+  var client    = document.getElementById('pv-client').value.trim();
+  var contrat   = document.getElementById('pv-contrat').value.trim();
+  var date      = document.getElementById('pv-date').value;
+  var adresse   = document.getElementById('pv-adresse').value.trim();
+  var commentaires = document.getElementById('pv-commentaires').value.trim();
+  var reglement = document.getElementById('pv-reglement').value.trim();
+  var lieu      = document.getElementById('pv-lieu').value.trim();
+  var reception = document.querySelector('input[name="reception"]:checked');
+  var recVal    = reception ? reception.value : 'sans';
+
+  if (!client) { showToast('⚠️ Nom du client obligatoire'); return; }
+  if (!sigHasSig) { showToast('⚠️ Signature du client requise'); return; }
+
+  var btn = document.getElementById('btn-generate');
+  btn.disabled = true; btn.textContent = '⏳ Génération en cours...';
+
+  try {
+    var { jsPDF } = window.jspdf;
+    var doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+
+    // ── EN-TÊTE ──
+    doc.setFillColor(21, 101, 192);
+    doc.rect(0, 0, 210, 28, 'F');
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(16); doc.setFont('helvetica','bold');
+    doc.text("CONSTAT DE RÉCEPTION DES TRAVAUX", 105, 12, {align:'center'});
+    doc.setFontSize(9); doc.setFont('helvetica','normal');
+    doc.text("Obligatoire. Il est le point de départ de la période de garantie « Assurance »", 105, 19, {align:'center'});
+
+    // Bandeau jaune
+    doc.setFillColor(255, 193, 7);
+    doc.rect(0, 28, 210, 6, 'F');
+
+    // Infos société
+    doc.setTextColor(30,30,30);
+    doc.setFontSize(8); doc.setFont('helvetica','bold');
+    doc.text("D'ECO OUEST", 14, 42);
+    doc.setFont('helvetica','normal');
+    doc.text("153, avenue du Général Leclerc · 78220 VIROFLAY", 14, 47);
+    doc.text("Tél. 01 39 24 26 26 · info@d-eco-ouest.fr · www.eco-isolation.fr", 14, 52);
+    doc.text("SARL au capital de 50 000 Euros · SIREN 505 343 210 R.C.S VERSAILLES", 14, 57);
+
+    // Ligne séparatrice
+    doc.setDrawColor(200,200,200);
+    doc.line(14, 62, 196, 62);
+
+    // ── CORPS ──
+    var y = 70;
+    doc.setFontSize(10); doc.setFont('helvetica','normal'); doc.setTextColor(30,30,30);
+
+    doc.text("Je soussigné(e) :", 14, y);
+    doc.setFont('helvetica','bold');
+    doc.text(client, 55, y);
+    y += 8;
+
+    doc.setFont('helvetica','normal');
+    doc.text("après avoir procédé à l'examen des travaux exécutés par la Société D'ECO OUEST", 14, y);
+    y += 6;
+    doc.text("au titre du contrat : " + (contrat||'—'), 14, y);
+    y += 8;
+    doc.text("À la date du : " + (date ? new Date(date).toLocaleDateString('fr-FR') : '—'), 14, y);
+    y += 6;
+    doc.text("Concernant les travaux : " + (adresse||'—'), 14, y);
+    y += 8;
+    doc.text("En présence de : " + poseurActuel + "  —  représentant l'entreprise : D'ECO OUEST SOLABAIE", 14, y);
+    y += 10;
+
+    // Réception
+    doc.setFont('helvetica','bold');
+    doc.text("Déclare que la réception est prononcée :", 14, y);
+    y += 8;
+    doc.setFont('helvetica','normal');
+    doc.setFillColor(recVal==='sans'?46:230, recVal==='sans'?125:81, recVal==='sans'?50:0);
+    doc.roundedRect(14, y-5, 80, 10, 2, 2, 'F');
+    doc.setTextColor(255,255,255);
+    doc.text(recVal==='sans'? '✓  SANS RÉSERVE' : '⚠  AVEC RÉSERVE', 54, y+1, {align:'center'});
+    doc.setTextColor(30,30,30);
+    y += 16;
+
+    // Garanties
+    doc.setFillColor(21,101,192);
+    doc.rect(14, y, 182, 7, 'F');
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(9); doc.setFont('helvetica','bold');
+    doc.text("GARANTIES", 105, y+5, {align:'center'});
+    y += 10;
+    doc.setTextColor(60,60,60); doc.setFont('helvetica','normal'); doc.setFontSize(8);
+    var gText = "Les garanties découlant des articles 1792, 1792-2 et 1792-3 du Code Civil commencent à courir à dater de la signature du présent Constat.";
+    doc.text(gText, 14, y, {maxWidth:182});
+    y += 10;
+
+    // Commentaires
+    doc.setFillColor(21,101,192);
+    doc.rect(14, y, 182, 7, 'F');
+    doc.setTextColor(255,255,255);
+    doc.setFont('helvetica','bold'); doc.setFontSize(9);
+    doc.text("COMMENTAIRES", 105, y+5, {align:'center'});
+    y += 10;
+    doc.setTextColor(30,30,30); doc.setFont('helvetica','normal'); doc.setFontSize(9);
+    if (commentaires) {
+      var lines = doc.splitTextToSize(commentaires, 182);
+      doc.text(lines, 14, y);
+      y += lines.length * 5 + 8;
+    } else {
+      doc.setTextColor(150,150,150);
+      doc.text("Aucun commentaire.", 14, y);
+      doc.setTextColor(30,30,30);
+      y += 10;
+    }
+
+    // Règlement
+    doc.setFillColor(21,101,192);
+    doc.rect(14, y, 182, 7, 'F');
+    doc.setTextColor(255,255,255);
+    doc.setFont('helvetica','bold'); doc.setFontSize(9);
+    doc.text("RÈGLEMENT", 105, y+5, {align:'center'});
+    y += 10;
+    doc.setTextColor(30,30,30); doc.setFont('helvetica','normal');
+    if (reglement) {
+      doc.text(reglement, 14, y, {maxWidth:182});
+      y += 10;
+    } else {
+      y += 6;
+    }
+
+    // Lieu et date
+    y += 4;
+    doc.setFontSize(9);
+    doc.text("Fait en deux exemplaires, à " + (lieu||'—') + ", le " + (date ? new Date(date).toLocaleDateString('fr-FR') : '—'), 14, y);
+    y += 10;
+
+    // Signature
+    doc.setFont('helvetica','bold');
+    doc.text("Signature du Maître de l'ouvrage :", 110, y);
+    y += 4;
+    var sigData = sigCanvas.toDataURL('image/png');
+    doc.addImage(sigData, 'PNG', 110, y, 80, 35);
+    doc.setDrawColor(100,100,100);
+    doc.rect(110, y, 80, 35);
+
+    // Poseur signature
+    doc.setFont('helvetica','normal');
+    doc.text("Représentant D'ECO OUEST :", 14, y+5);
+    doc.setFont('helvetica','bold'); doc.setFontSize(11);
+    doc.text(poseurActuel, 14, y+15);
+    y += 42;
+
+    // Footer
+    doc.setFillColor(21,101,192);
+    doc.rect(0, 285, 210, 12, 'F');
+    doc.setTextColor(255,255,255); doc.setFontSize(8); doc.setFont('helvetica','normal');
+    doc.text("D'ECO OUEST SOLABAIE · 153 av. du Général Leclerc · 78220 VIROFLAY · Tél. 01 39 24 26 26", 105, 292, {align:'center'});
+
+    // ── SAUVEGARDER ──
+    var fileName = 'PV_' + client.replace(/\s/g,'_') + '_' + (date||'').replace(/-/g,'') + '.pdf';
+    doc.save(fileName);
+
+    // Marquer PV comme fait dans Sheets
+    if (chantierActuel && chantierActuel.ligne) {
+      await fetch(WEBAPP, {
+        method:'POST',
+        headers:{'Content-Type':'text/plain'},
+        body:JSON.stringify({action:'modifier', ligne:chantierActuel.ligne, champs:{16:'OUI'}}),
+        redirect:'follow'
+      });
+    }
+
+    showToast('✅ PV généré et téléchargé !');
+    // Afficher le bouton mail
+    document.getElementById('btn-mail').style.display = 'flex';
+    // Stocker infos pour le mail
+    window.pvMailData = {
+      client: client,
+      date: date ? new Date(date).toLocaleDateString('fr-FR') : '',
+      adresse: adresse,
+      fileName: fileName,
+      recVal: recVal
+    };
+    setTimeout(function(){ goBackPV(); }, 2000);
+
+  } catch(e) {
+    showToast('❌ Erreur : ' + e.message);
+    console.error(e);
+  }
+
+  btn.disabled = false;
+  btn.textContent = '📄 Générer et enregistrer le PV';
+}
+
+function h(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function showToast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},3000); }
+
 
 function h(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
@@ -507,5 +824,76 @@ function showSyncBar() {
   setTimeout(function(){ b.classList.remove('show'); }, 3000);
 }
 </script>
+
+<!-- ÉCRAN PV -->
+<div class="screen" id="screen-pv">
+  <div class="pv-form">
+    <div class="pv-title">Constat de Réception des Travaux</div>
+    <div class="pv-subtitle">D'ECO OUEST · 153 av. du Général Leclerc · 78220 VIROFLAY</div>
+    <div class="form-group">
+      <label>Je soussigné(e) — Nom du client *</label>
+      <input type="text" id="pv-client" placeholder="Nom et prénom du client">
+    </div>
+    <div class="form-group">
+      <label>Au titre du contrat / Référence</label>
+      <input type="text" id="pv-contrat">
+    </div>
+    <div class="form-group">
+      <label>À la date du</label>
+      <input type="date" id="pv-date">
+    </div>
+    <div class="form-group">
+      <label>Adresse du chantier</label>
+      <input type="text" id="pv-adresse" placeholder="Adresse complète">
+    </div>
+    <div class="form-group">
+      <label>En présence de (poseur)</label>
+      <input type="text" id="pv-poseur" readonly style="background:var(--bg);">
+    </div>
+    <div class="section-divider">RÉCEPTION</div>
+    <div class="form-group">
+      <label>La réception est prononcée</label>
+      <div class="radio-group">
+        <div class="radio-btn" id="rb-sans" onclick="selReception('sans')">
+          <input type="radio" name="reception" value="sans"> Sans réserve ✅
+        </div>
+        <div class="radio-btn" id="rb-avec" onclick="selReception('avec')">
+          <input type="radio" name="reception" value="avec"> Avec réserve ⚠️
+        </div>
+      </div>
+    </div>
+    <div class="section-divider">COMMENTAIRES</div>
+    <div class="form-group">
+      <label>Commentaires / Réserves</label>
+      <textarea id="pv-commentaires" placeholder="Détail des réserves éventuelles..."></textarea>
+    </div>
+    <div class="section-divider">RÈGLEMENT</div>
+    <div class="form-group">
+      <label>Modalités de règlement</label>
+      <textarea id="pv-reglement" placeholder="Ex: Solde réglé, chèque remis..."></textarea>
+    </div>
+    <div class="section-divider">SIGNATURE DU CLIENT</div>
+    <div class="form-group">
+      <label>Fait à</label>
+      <input type="text" id="pv-lieu" placeholder="Ville">
+    </div>
+    <div class="form-group">
+      <label>Signature du Maître de l'ouvrage</label>
+      <div class="signature-zone">
+        <canvas id="sig-canvas" height="160"></canvas>
+      </div>
+      <div class="sig-toolbar">
+        <button class="btn-clear" onclick="clearSignature()">🗑 Effacer</button>
+        <span style="font-size:11px;color:var(--texte2);padding-top:8px;">Signez avec votre doigt</span>
+      </div>
+    </div>
+    <button class="btn-generate" id="btn-generate" onclick="genererPDF()">
+      📄 Générer et télécharger le PV
+    </button>
+    <button class="btn-generate" id="btn-mail" onclick="envoyerMail()" style="background:#0078D4;margin-top:10px;display:none;">
+      📧 Envoyer par Outlook
+    </button>
+  </div>
+</div>
 </body>
 </html>
