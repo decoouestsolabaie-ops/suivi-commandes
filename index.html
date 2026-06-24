@@ -366,10 +366,10 @@ async function charger() {
   var old = document.getElementById('jsonp-script');
   if (old) old.parentNode.removeChild(old);
   window._jsonpTimeout = setTimeout(function() {
-    sync('error','Erreur connexion');
+    sync('error','Timeout - reessayez');
     setLoader(false);
-    document.getElementById('table-body').innerHTML = '<tr><td colspan="13"><div class="empty-state"><p>Impossible de joindre la Web App.</p></div></td></tr>';
-  }, 15000);
+    document.getElementById('table-body').innerHTML = '<tr><td colspan="13"><div class="empty-state"><p>Timeout. Cliquez Actualiser pour réessayer.</p></div></td></tr>';
+  }, 20000);
   window._jsonpCallback = function(d) {
     clearTimeout(window._jsonpTimeout);
     if (!d.ok) { sync('error', d.error||'Erreur'); setLoader(false); return; }
@@ -382,7 +382,7 @@ async function charger() {
   };
   var script = document.createElement('script');
   script.id = 'jsonp-script';
-  script.src = WEBAPP + '?callback=_jsonpCallback&t=' + Date.now();
+  script.src = WEBAPP + '?callback=window._jsonpCallback&t=' + Date.now();
   script.onerror = function() {
     clearTimeout(window._jsonpTimeout);
     sync('error','Erreur connexion');
