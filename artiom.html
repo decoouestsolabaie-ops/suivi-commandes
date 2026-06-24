@@ -2,843 +2,464 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
 <title>ECO OUEST — ARTIOM</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-  :root {
-    --bleu:#1565C0;--bleu-bg:#E3F2FD;
-    --vert:#2E7D32;--vert-bg:#E8F5E9;
-    --rouge:#D32F2F;--rouge-bg:#FFEBEE;
-    --orange:#E65100;--orange-bg:#FFF3E0;
-    --texte:#1A1A2E;--texte2:#546E7A;--bordure:#E0E7EF;--bg:#F0F4F8;
-  }
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:"Inter",sans-serif;background:var(--bg);color:var(--texte);min-height:100vh;}
-  .header{background:var(--bleu);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
-  .header h1{font-size:15px;font-weight:700;color:#fff;}
-  .header small{font-size:10px;color:#90CAF9;display:block;}
-  .poseur-badge{background:rgba(255,255,255,.2);color:#fff;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;}
-  .btn-back{background:none;border:none;color:#90CAF9;font-size:22px;cursor:pointer;padding:2px 8px 2px 0;}
-
-  .screen{display:none;padding:16px;}
-  .screen.active{display:block;}
-
-  /* ÉCRAN 1 : CHOIX POSEUR */
-  .welcome{text-align:center;padding:32px 20px 24px;}
-  .welcome h2{font-size:20px;font-weight:700;margin-bottom:6px;}
-  .welcome p{font-size:13px;color:var(--texte2);}
-  .poseurs-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px;}
-  .poseur-btn{background:#fff;border:2px solid var(--bordure);border-radius:12px;padding:20px 14px;text-align:center;cursor:pointer;transition:all .15s;font-family:inherit;}
-  .poseur-btn:hover{border-color:var(--bleu);background:var(--bleu-bg);}
-  .avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;margin:0 auto 10px;}
-  .poseur-btn .name{font-size:14px;font-weight:700;}
-
-  /* ÉCRAN 2 : LISTE CHANTIERS */
-  .week-selector{display:flex;align-items:center;gap:8px;margin-bottom:14px;background:#fff;border-radius:10px;padding:10px 14px;border:1px solid var(--bordure);}
-  .week-selector label{font-size:12px;font-weight:600;color:var(--texte2);white-space:nowrap;}
-  .week-input{flex:1;border:1.5px solid var(--bordure);border-radius:7px;padding:7px 10px;font-family:inherit;font-size:14px;font-weight:700;outline:none;text-align:center;}
-  .week-input:focus{border-color:var(--bleu);}
-  .btn-week{background:var(--bleu);color:#fff;border:none;border-radius:7px;padding:7px 14px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;}
-
-  .chantier-card{background:#fff;border-radius:12px;border:1px solid var(--bordure);padding:14px 16px;margin-bottom:10px;display:flex;flex-direction:column;gap:10px;}
-  .chantier-info{flex:1;}
-  .chantier-client{font-size:14px;font-weight:700;margin-bottom:3px;}
-  .chantier-meta{font-size:11px;color:var(--texte2);}
-  .pv-status{display:flex;flex-direction:row;gap:8px;flex-wrap:wrap;}
-  .badge-pv-ok{background:var(--vert-bg);color:var(--vert);padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;}
-  .badge-pv-non{background:var(--rouge-bg);color:var(--rouge);padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;}
-  .btn-pv{background:var(--bleu);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;flex:1;text-align:center;}
-  .btn-pv:hover{background:#1976D2;}
-  .empty{text-align:center;padding:40px 20px;color:var(--texte2);}
-  .empty .icon{font-size:40px;margin-bottom:10px;}
-
-  /* ÉCRAN 3 : FORMULAIRE PV */
-  .pv-form{background:#fff;border-radius:12px;border:1px solid var(--bordure);padding:18px;}
-  .pv-title{font-size:16px;font-weight:700;color:var(--bleu);margin-bottom:4px;}
-  .pv-subtitle{font-size:12px;color:var(--texte2);margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--bordure);}
-  .form-group{margin-bottom:14px;}
-  .form-group label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--texte2);margin-bottom:5px;}
-  .form-group input,.form-group textarea,.form-group select{width:100%;border:1.5px solid var(--bordure);border-radius:8px;padding:9px 12px;font-family:inherit;font-size:14px;outline:none;color:var(--texte);}
-  .form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--bleu);}
-  .form-group textarea{resize:vertical;min-height:80px;}
-  .radio-group{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-  .radio-btn{display:flex;align-items:center;gap:8px;padding:12px;border:2px solid var(--bordure);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s;}
-  .radio-btn.selected-vert{border-color:var(--vert);background:var(--vert-bg);color:var(--vert);}
-  .radio-btn.selected-orange{border-color:var(--orange);background:var(--orange-bg);color:var(--orange);}
-  .radio-btn input{accent-color:var(--vert);width:16px;height:16px;}
-
-  /* SIGNATURE */
-  .signature-zone{border:2px dashed var(--bordure);border-radius:10px;overflow:hidden;margin-top:6px;background:#fff;}
-  .signature-zone canvas{display:block;width:100%;touch-action:none;}
-  .sig-toolbar{display:flex;gap:8px;margin-top:8px;}
-  .btn-clear{background:var(--rouge-bg);color:var(--rouge);border:none;border-radius:7px;padding:8px 14px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;}
-  .sig-hint{font-size:11px;color:var(--texte2);margin-top:6px;text-align:center;font-style:italic;}
-
-  /* BOUTONS */
-  .btn-generate{width:100%;padding:16px;background:var(--bleu);color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;margin-top:18px;display:flex;align-items:center;justify-content:center;gap:8px;}
-  .btn-generate:hover{background:#1976D2;}
-  .btn-generate:disabled{background:#90CAF9;cursor:not-allowed;}
-
-  /* TOAST */
-  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1A1A2E;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:999;display:none;}
-  .toast.show{display:block;}
-
-  .section-divider{background:var(--bleu);color:#fff;text-align:center;padding:8px;font-size:11px;font-weight:700;letter-spacing:2px;border-radius:6px;margin:16px 0 12px;}
-  .loader{text-align:center;padding:32px;color:var(--texte2);}
-  .spinner{width:28px;height:28px;border:3px solid var(--bleu-bg);border-top-color:var(--bleu);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 10px;}
-  @keyframes spin{to{transform:rotate(360deg)}}
-
-  /* POSEUR EXTRA */
-  .statut-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
-  .statut-btn{padding:10px;border-radius:8px;border:2px solid var(--bordure);background:#fff;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all .12s;}
-  .statut-btn.active-vert{border-color:var(--vert);background:var(--vert-bg);color:var(--vert);}
-  .statut-btn.active-orange{border-color:var(--orange);background:var(--orange-bg);color:var(--orange);}
-  .statut-btn.active-rouge{border-color:var(--rouge);background:var(--rouge-bg);color:var(--rouge);}
-  .statut-btn.active-jaune{border-color:var(--jaune);background:var(--jaune-bg);color:#856404;}
-  .checkbox-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-  .checkbox-item{display:flex;align-items:center;gap:8px;background:var(--bg);border-radius:8px;padding:10px 12px;cursor:pointer;border:1.5px solid transparent;transition:all .12s;}
-  .checkbox-item.checked{background:var(--vert-bg);border-color:var(--vert);}
-  .checkbox-item input{accent-color:var(--vert);width:16px;height:16px;cursor:pointer;}
-  .checkbox-item label{font-size:13px;font-weight:500;cursor:pointer;}
-  .btn-save{width:100%;padding:14px;background:var(--bleu);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:8px;}
-  .btn-save:hover{background:#1976D2;}
-  .sync-bar{background:var(--vert-bg);color:var(--vert);padding:8px 20px;font-size:12px;font-weight:600;text-align:center;display:none;}
-  .sync-bar.show{display:block;}
-  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1A1A2E;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:999;display:none;}
-  .toast.show{display:block;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,sans-serif;background:#F0F4F8;color:#1A1A2E;min-height:100vh;}
+.header{background:#2E7D32;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.header h1{font-size:15px;font-weight:700;color:#fff;}
+.header small{font-size:10px;color:rgba(255,255,255,.7);display:block;}
+.badge{background:rgba(255,255,255,.25);color:#fff;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;}
+.btn-back{background:none;border:none;color:rgba(255,255,255,.8);font-size:22px;cursor:pointer;margin-right:8px;padding:0;}
+.screen{display:none;padding:16px;}
+.screen.active{display:block;}
+.week-bar{background:#fff;border-radius:10px;border:1px solid #E0E7EF;padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.week-bar label{font-size:12px;font-weight:600;color:#546E7A;white-space:nowrap;}
+.week-bar input{flex:1;border:1.5px solid #E0E7EF;border-radius:7px;padding:8px;font-size:15px;font-weight:700;text-align:center;outline:none;}
+.week-bar button{background:#2E7D32;color:#fff;border:none;border-radius:7px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;}
+.card{background:#fff;border-radius:12px;border:1px solid #E0E7EF;padding:14px;margin-bottom:10px;}
+.card-client{font-size:15px;font-weight:700;margin-bottom:3px;}
+.card-meta{font-size:12px;color:#546E7A;margin-bottom:10px;}
+.card-btns{display:flex;gap:8px;}
+.card-btns button{flex:1;padding:12px;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;}
+.btn-av{background:#2E7D32;color:#fff;}
+.btn-pv-card{background:#2E7D32;color:#fff;}
+.badge-pv-ok{display:inline-block;background:#E8F5E9;color:#2E7D32;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;margin-bottom:8px;}
+.badge-pv-non{display:inline-block;background:#FFEBEE;color:#D32F2F;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;margin-bottom:8px;}
+.empty{text-align:center;padding:48px 20px;color:#546E7A;}
+.loader{text-align:center;padding:40px;color:#546E7A;}
+.spinner{width:32px;height:32px;border:3px solid #E3F2FD;border-top-color:#2E7D32;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#546E7A;margin:14px 0 6px;}
+.input-f{width:100%;border:1.5px solid #E0E7EF;border-radius:8px;padding:10px 12px;font-size:14px;font-family:Arial,sans-serif;outline:none;color:#1A1A2E;}
+textarea.input-f{resize:vertical;min-height:70px;margin-bottom:0;}
+.statuts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.s-btn{padding:10px;border-radius:8px;border:2px solid #E0E7EF;background:#fff;font-family:Arial,sans-serif;font-size:13px;font-weight:600;cursor:pointer;text-align:center;}
+.s-vert{border-color:#2E7D32;background:#E8F5E9;color:#2E7D32;}
+.s-orange{border-color:#E65100;background:#FFF3E0;color:#E65100;}
+.s-rouge{border-color:#D32F2F;background:#FFEBEE;color:#D32F2F;}
+.s-jaune{border-color:#F9A825;background:#FFFDE7;color:#856404;}
+.types{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.type-item{display:flex;align-items:center;gap:8px;background:#F5F7FA;border-radius:8px;padding:10px 12px;cursor:pointer;border:1.5px solid transparent;}
+.type-item.on{background:#E8F5E9;border-color:#2E7D32;}
+.type-item label{font-size:13px;cursor:pointer;}
+.historique{background:#F5F7FA;border-radius:8px;padding:10px 12px;font-size:12px;color:#546E7A;font-style:italic;max-height:100px;overflow-y:auto;white-space:pre-wrap;margin-bottom:8px;}
+.pv-check{padding:12px;background:#E8F5E9;border-radius:10px;border:1.5px solid #2E7D32;margin:12px 0;display:flex;align-items:center;gap:10px;cursor:pointer;}
+.pv-check span{font-size:14px;font-weight:700;color:#2E7D32;}
+.pv-check input{width:20px;height:20px;accent-color:#2E7D32;cursor:pointer;}
+.btn-save{width:100%;padding:14px;background:#2E7D32;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-top:10px;font-family:Arial,sans-serif;}
+.btn-pv-open{width:100%;padding:14px;background:#1565C0;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;font-family:Arial,sans-serif;}
+.pv-form{background:#fff;border-radius:12px;border:1px solid #E0E7EF;padding:18px;}
+.pv-title{font-size:16px;font-weight:700;color:#1565C0;margin-bottom:4px;}
+.pv-sub{font-size:12px;color:#546E7A;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #E0E7EF;}
+.radio-group{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.radio-btn{display:flex;align-items:center;gap:8px;padding:12px;border:2px solid #E0E7EF;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;}
+.rb-vert{border-color:#2E7D32;background:#E8F5E9;color:#2E7D32;}
+.rb-orange{border-color:#E65100;background:#FFF3E0;color:#E65100;}
+.sig-zone{border:2px dashed #E0E7EF;border-radius:10px;overflow:hidden;background:#fff;margin-top:6px;}
+.sig-zone canvas{display:block;width:100%;touch-action:none;}
+.sig-toolbar{display:flex;gap:8px;margin-top:8px;}
+.btn-clear{background:#FFEBEE;color:#D32F2F;border:none;border-radius:7px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:Arial,sans-serif;}
+.btn-gen{width:100%;padding:16px;background:#1565C0;color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;margin-top:16px;font-family:Arial,sans-serif;}
+.btn-mail{width:100%;padding:14px;background:#0078D4;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;font-family:Arial,sans-serif;display:none;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1A1A2E;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:999;display:none;}
+.toast.on{display:block;}
+.divider{background:#1565C0;color:#fff;text-align:center;padding:8px;font-size:11px;font-weight:700;letter-spacing:2px;border-radius:6px;margin:14px 0 10px;}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div style="display:flex;align-items:center;gap:8px;">
-    <button class="btn-back" id="btn-back" onclick="goBack()" style="display:none">←</button>
-    <div>
-      <h1>ECO OUEST — ARTIOM</h1>
-      <small id="header-sub">Mes chantiers du jour</small>
-    </div>
+  <div style="display:flex;align-items:center;">
+    <button class="btn-back" id="btn-back" onclick="goBack()" style="display:none">&#8592;</button>
+    <div><h1>ECO OUEST &#8212; ARTIOM</h1><small id="sub">Mes chantiers</small></div>
   </div>
-  <div class="poseur-badge" style="display:block;background:#2E7D32">ARTIOM</div>
+  <div class="badge">ARTIOM</div>
 </div>
 
-<div class="sync-bar" id="sync-bar">✅ Enregistré !</div>
 <div class="toast" id="toast"></div>
 
-<!-- ÉCRAN CHANTIERS -->
-<div class="screen active" id="screen-chantiers">
-  <div class="week-selector">
+<div class="screen active" id="s-list">
+  <div class="week-bar">
     <label>Semaine :</label>
-    <input type="number" class="week-input" id="week-input" min="1" max="53" placeholder="26">
-    <button class="btn-week" onclick="filtrerSemaine()">🔍 Voir</button>
+    <input type="number" id="week-inp" min="1" max="53" value="26">
+    <button onclick="filtrer()">Voir</button>
   </div>
-  <div id="chantiers-list">
-    <div class="loader"><div class="spinner"></div>Chargement...</div>
-  </div>
+  <div id="list-content"><div class="loader"><div class="spinner"></div>Chargement...</div></div>
 </div>
 
-<!-- ÉCRAN AVANCEMENT -->
-<div class="screen" id="screen-avancement">
-  <div id="avancement-form"></div>
+<div class="screen" id="s-av">
+  <div id="av-content"></div>
 </div>
 
-<!-- ÉCRAN PV -->
-<div class="screen" id="screen-pv">
+<div class="screen" id="s-pv">
   <div class="pv-form">
-    <div class="pv-title">Constat de Réception des Travaux</div>
-    <div class="pv-subtitle">D'ECO OUEST · 153 av. du Général Leclerc · 78220 VIROFLAY</div>
-    <div class="form-group"><label>Client *</label><input type="text" id="pv-client"></div>
-    <div class="form-group"><label>N° Contrat / Devis</label><input type="text" id="pv-contrat"></div>
-    <div class="form-group"><label>Date</label><input type="date" id="pv-date"></div>
-    <div class="form-group"><label>Adresse chantier</label><input type="text" id="pv-adresse"></div>
-    <div class="form-group"><label>Poseur</label><input type="text" id="pv-poseur" readonly style="background:var(--bg);"></div>
-    <div class="section-divider">RÉCEPTION</div>
-    <div class="form-group">
-      <label>La réception est prononcée</label>
-      <div class="radio-group">
-        <div class="radio-btn" id="rb-sans" onclick="selReception('sans')"><input type="radio" name="reception" value="sans"> Sans réserve ✅</div>
-        <div class="radio-btn" id="rb-avec" onclick="selReception('avec')"><input type="radio" name="reception" value="avec"> Avec réserve ⚠️</div>
-      </div>
+    <div class="pv-title">Constat de Reception des Travaux</div>
+    <div class="pv-sub">D ECO OUEST - 153 av. du General Leclerc - 78220 VIROFLAY</div>
+    <div class="section-label">Client</div>
+    <input type="text" class="input-f" id="pv-client">
+    <div class="section-label">N Contrat / Devis</div>
+    <input type="text" class="input-f" id="pv-contrat">
+    <div class="section-label">Date</div>
+    <input type="date" class="input-f" id="pv-date">
+    <div class="section-label">Adresse chantier</div>
+    <input type="text" class="input-f" id="pv-adresse">
+    <div class="section-label">Poseur</div>
+    <input type="text" class="input-f" id="pv-poseur" readonly style="background:#F5F7FA;">
+    <div class="divider">RECEPTION</div>
+    <div class="section-label">Reception prononcee</div>
+    <div class="radio-group">
+      <div class="radio-btn" id="rb-sans"><input type="radio" name="rec" value="sans"> Sans reserve</div>
+      <div class="radio-btn" id="rb-avec"><input type="radio" name="rec" value="avec"> Avec reserve</div>
     </div>
-    <div class="section-divider">COMMENTAIRES</div>
-    <div class="form-group"><label>Commentaires / Réserves</label><textarea id="pv-commentaires"></textarea></div>
-    <div class="section-divider">RÈGLEMENT</div>
-    <div class="form-group"><label>Modalités de règlement</label><textarea id="pv-reglement"></textarea></div>
-    <div class="section-divider">SIGNATURE DU CLIENT</div>
-    <div class="form-group"><label>Fait à</label><input type="text" id="pv-lieu" value="Viroflay"></div>
-    <div class="form-group">
-      <label>Signature du Maître de l'ouvrage</label>
-      <div class="signature-zone"><canvas id="sig-canvas" height="160"></canvas></div>
-      <div class="sig-toolbar"><button class="btn-clear" onclick="clearSignature()">🗑 Effacer</button></div>
-    </div>
-    <button class="btn-generate" id="btn-generate" onclick="genererPDF()">📄 Générer le PV</button>
-    <button class="btn-generate" id="btn-mail" onclick="envoyerMail()" style="background:#0078D4;margin-top:10px;display:none;">📧 Envoyer par Outlook</button>
+    <div class="divider">COMMENTAIRES</div>
+    <textarea class="input-f" id="pv-comments" placeholder="Reserves eventuelles..."></textarea>
+    <div class="divider">REGLEMENT</div>
+    <textarea class="input-f" id="pv-reglement" placeholder="Modalites..."></textarea>
+    <div class="divider">SIGNATURE CLIENT</div>
+    <div class="section-label">Fait a</div>
+    <input type="text" class="input-f" id="pv-lieu" value="Viroflay">
+    <div class="section-label">Signature du client</div>
+    <div class="sig-zone"><canvas id="sig-canvas" height="160"></canvas></div>
+    <div class="sig-toolbar"><button class="btn-clear" onclick="clearSig()">Effacer</button></div>
+    <button class="btn-gen" onclick="genPDF()">Generer le PV</button>
+    <button class="btn-mail" id="btn-mail" onclick="sendMail()">Envoyer par Outlook</button>
   </div>
 </div>
 
 <script>
 var WEBAPP = 'https://script.google.com/macros/s/AKfycbxk1zFKVsCDoiN5J4RAZYF-9nEYqGMIypS2lqBooqZWkxwMUGo8JVq5-iS9ZvZUGasa/exec';
-var poseurActuel = 'ARTIOM';
-var colPoseur = 18;
-var allChantiers = [];
-var chantierActuel = null;
-var sigCanvas, sigCtx, sigDrawing = false, sigHasSig = false;
-var photosEnAttente = {};
-var STATUTS = [
-  {label:'Termine ✅', cls:'active-vert', val:'Termine'},
-  {label:'En cours 🔧', cls:'active-orange', val:'En cours'},
-  {label:'A planifier 📅', cls:'active-jaune', val:'A planifier'},
-  {label:'SAV ⚠️', cls:'active-rouge', val:'SAV'},
-];
-var TYPES_POSE = ['Fenetre','Porte','Volet','Porte-fenetre','Baie vitree','Velux','Portail','Store','Autre'];
+var NOM = 'ARTIOM';
+var COL = 18;
+var TERMINES = ["Livr\u00e9", "Termin\u00e9", "Pos\u00e9", "LIVRE", "TERMINE", "POSE", "Livre", "Termine"];
+var STATUTS = [{"label": "Termine", "cls": "vert", "val": "Termine"}, {"label": "En cours", "cls": "orange", "val": "En cours"}, {"label": "A planifier", "cls": "jaune", "val": "A planifier"}, {"label": "SAV", "cls": "rouge", "val": "SAV"}];
+var TYPES = ["Fenetre", "Porte", "Volet", "Porte-fenetre", "Baie vitree", "Velux", "Portail", "Store", "Autre"];
+var allData = [];
+var currentC = null;
+var currentLigne = null;
+var sigCanvas, sigCtx, sigDraw = false, sigOk = false;
 
-// ── NAVIGATION ────────────────────────────────────────────
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+function show(id) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
   document.getElementById(id).classList.add('active');
 }
 
 function goBack() {
-  var active = document.querySelector('.screen.active');
-  if (active.id === 'screen-pv') {
-    showScreen('screen-avancement');
-    document.getElementById('header-sub').textContent = chantierActuel ? chantierActuel.client : 'Avancement';
-  } else if (active.id === 'screen-avancement') {
-    showScreen('screen-chantiers');
-    document.getElementById('header-sub').textContent = 'Mes chantiers du jour';
+  var cur = document.querySelector('.screen.active').id;
+  if (cur === 's-pv') {
+    show('s-av');
+    document.getElementById('sub').textContent = currentC ? currentC.client : '';
+  } else if (cur === 's-av') {
+    show('s-list');
+    document.getElementById('sub').textContent = 'Mes chantiers';
     document.getElementById('btn-back').style.display = 'none';
   }
 }
 
-function goBackFromPV() {
-  showScreen('screen-avancement');
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('on');
+  setTimeout(function() { t.classList.remove('on'); }, 3000);
 }
 
-// ── CHARGEMENT JSONP ──────────────────────────────────────
+function h(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function getWeek(d) {
+  d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+  var y = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil((((d - y) / 86400000) + 1) / 7);
+}
+
 window.addEventListener('load', function() {
-  var sem = getWeekNum(new Date());
-  document.getElementById('week-input').value = sem;
-  chargerChantiers();
+  var sem = getWeek(new Date());
+  document.getElementById('week-inp').value = sem;
+  charger();
 });
 
-function chargerChantiers() {
-  document.getElementById('chantiers-list').innerHTML = '<div class="loader"><div class="spinner"></div>Chargement...</div>';
-  var old = document.getElementById('jsonp-poseur');
+function charger() {
+  document.getElementById('list-content').innerHTML = '<div class="loader"><div class="spinner"></div>Chargement...</div>';
+  var old = document.getElementById('jsonp-sc');
   if (old) old.parentNode.removeChild(old);
-  var timeout = setTimeout(function() {
-    document.getElementById('chantiers-list').innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>Erreur de connexion.</p></div>';
+  var to = setTimeout(function() {
+    document.getElementById('list-content').innerHTML = '<div class="empty"><p>Erreur de connexion</p></div>';
   }, 15000);
-  window._poseurCallback = function(d) {
-    clearTimeout(timeout);
-    if (!d.ok) {
-      document.getElementById('chantiers-list').innerHTML = '<div class="empty"><p>Erreur: ' + (d.error||'inconnue') + '</p></div>';
-      return;
-    }
-    allChantiers = d.data.filter(function(c) {
-      return (c.commentaireARC||'').toUpperCase() !== 'ANNULER';
-    });
-    filtrerSemaine();
+  window['_cbArtiom'] = function(d) {
+    clearTimeout(to);
+    if (!d.ok) { document.getElementById('list-content').innerHTML = '<div class="empty"><p>Erreur</p></div>'; return; }
+    allData = d.data.filter(function(c) { return (c.commentaireARC||'').toUpperCase() !== 'ANNULER'; });
+    filtrer();
   };
-  var script = document.createElement('script');
-  script.id = 'jsonp-poseur';
-  script.src = WEBAPP + '?callback=_poseurCallback&t=' + Date.now();
-  script.onerror = function() {
-    clearTimeout(timeout);
-    document.getElementById('chantiers-list').innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>Erreur de connexion.</p></div>';
-  };
-  document.head.appendChild(script);
+  var sc = document.createElement('script');
+  sc.id = 'jsonp-sc';
+  sc.src = WEBAPP + '?callback=_cbArtiom&t=' + Date.now();
+  sc.onerror = function() { clearTimeout(to); document.getElementById('list-content').innerHTML = '<div class="empty"><p>Erreur connexion</p></div>'; };
+  document.head.appendChild(sc);
 }
 
-function getWeekNum(d) {
-  d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
-  var y = new Date(Date.UTC(d.getUTCFullYear(),0,1));
-  return Math.ceil((((d-y)/86400000)+1)/7);
-}
-
-function normaliserDate(s) {
-  if (!s) return '';
-  s = s.trim();
-  if (s.match(/^\d{4}-\d{2}-\d{2}/)) { var p=s.slice(0,10).split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
-  if (s.match(/^\d{2}\/\d{2}\/\d{4}/)) return s.slice(0,10);
-  return s;
-}
-
-function filtrerSemaine() {
-  var semStr = document.getElementById('week-input').value;
-  if (!semStr) return;
-  var sem = parseInt(semStr, 10);
-  var today = new Date();
-  var dateAujourd = today.toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit',year:'numeric'});
-
-  var TERMINES_P = ['Livré','Terminé','Posé','LIVRE','TERMINE','POSE','Livre','Termine'];
-
-  // D'abord chercher par date de pose (colonne T)
-  var filtered = allChantiers.filter(function(c) {
+function filtrer() {
+  var sem = parseInt(document.getElementById('week-inp').value, 10);
+  var f = allData.filter(function(c) {
     var dp = (c.datePose||'').trim();
     if (!dp) return false;
-    var mSem = dp.match(/S\s*0*(\d{1,2})/i);
-    if (mSem) return parseInt(mSem[1],10) === sem;
+    var m = dp.match(/S\s*0*(\d{1,2})/i);
+    if (m) return parseInt(m[1], 10) === sem;
     var d = new Date(dp);
-    if (!isNaN(d)) return getWeekNum(d) === sem;
+    if (!isNaN(d)) return getWeek(d) === sem;
     return false;
   });
-
-  // Si aucun résultat par date de pose, afficher tous les chantiers actifs
-  if (!filtered.length) {
-    filtered = allChantiers.filter(function(c) {
-      return TERMINES_P.indexOf((c.statutLivraison||'').trim()) === -1
-          && TERMINES_P.indexOf((c.statutPose||'').trim()) === -1;
+  if (!f.length) {
+    f = allData.filter(function(c) {
+      return TERMINES.indexOf((c.statutLivraison||'').trim()) === -1
+          && TERMINES.indexOf((c.statutPose||'').trim()) === -1;
     });
-    if (!filtered.length) {
-      document.getElementById('chantiers-list').innerHTML = '<div class="empty"><div class="icon">✅</div><p>Aucun chantier en cours.</p></div>';
-      return;
-    }
   }
-
-  var filteredData = filtered.slice().reverse();
-  // Stocker les données dans un objet global pour accès par onclick
-  window._chantiersData = {};
-  filteredData.forEach(function(c) { window._chantiersData[c.ligne] = c; });
-
-  document.getElementById('chantiers-list').innerHTML = filteredData.map(function(c) {
-    var pvFait = (c.pvChantier||'').toUpperCase() === 'OUI';
-    return '<div class="chantier-card">' +
-      '<div class="chantier-info">' +
-      '<div class="chantier-client">' + h(c.client) + '</div>' +
-      '<div class="chantier-meta">' + (c.fournisseur||'') + (c.devis?' · '+c.devis:'') + (c.datePose?' · 📅 '+c.datePose:'') + '</div>' +
-      '</div>' +
-      '<div class="pv-status">' +
-      (pvFait ? '<span class="badge-pv-ok">✓ PV fait</span>' : '<span class="badge-pv-non">✗ PV manquant</span>') +
-      '<button class="btn-pv" style="background:#2E7D32;" onclick="ouvrirAvancementParLigne(' + c.ligne + ')">✏️ Avancement</button>' +
-      '<button class="btn-pv" onclick="ouvrirPVParLigne(' + c.ligne + ')">📋 Faire PV</button>' +
-      '</div></div>';
-  }).join('');
-}
-
-// ── AVANCEMENT ────────────────────────────────────────────
-
-function ouvrirAvancementParLigne(ligne) {
-  var c = window._chantiersData && window._chantiersData[ligne];
-  if (c) ouvrirAvancement(c);
-}
-function ouvrirPVParLigne(ligne) {
-  var c = window._chantiersData && window._chantiersData[ligne];
-  if (c) ouvrirPV(c);
-}
-
-function ouvrirAvancement(c) {
-  chantierActuel = c;
-  document.getElementById('header-sub').textContent = c.client;
-  document.getElementById('btn-back').style.display = 'block';
-
-  var statutSel = c.statutPose || '';
-  var html = '<div style="padding:16px;">';
-  html += '<div style="font-size:16px;font-weight:700;margin-bottom:4px;">' + h(c.client) + '</div>';
-  html += '<div style="font-size:12px;color:var(--texte2);margin-bottom:16px;">' + h(c.fournisseur||'') + (c.datePose?' · 📅 '+c.datePose:'') + '</div>';
-
-  if (c.commentaire) {
-    html += '<div style="padding:10px 12px;background:#FFF3E0;border-radius:8px;border-left:3px solid var(--orange);margin-bottom:14px;">';
-    html += '<div style="font-size:11px;font-weight:700;color:var(--orange);">📋 NOTE BUREAU</div>';
-    html += '<div style="font-size:12px;margin-top:4px;">' + h(c.commentaire) + '</div></div>';
-  }
-
-  html += '<div class="section-title">Statut du chantier</div>';
-  html += '<div class="statut-grid">' + STATUTS.map(function(s) {
-    var isSel = statutSel.toLowerCase() === s.val.toLowerCase();
-    return '<button class="statut-btn' + (isSel?' '+s.cls:'') + '" id="statut-' + c.ligne + '-' + s.val + '" onclick="selStatut(' + c.ligne + ',\'' + s.val + '\',\'' + s.cls + '\')">' + s.label + '</button>';
-  }).join('') + '</div>';
-
-  html += '<div class="section-title">Elements poses</div>';
-  html += '<div class="checkbox-grid">' + TYPES_POSE.map(function(t) {
-    return '<div class="checkbox-item" id="chk-' + c.ligne + '-' + t + '" onclick="toggleCheck(' + c.ligne + ',\'' + t + '\')">' +
-      '<input type="checkbox" id="cb-' + c.ligne + '-' + t + '" onclick="event.stopPropagation()"><label>' + t + '</label></div>';
-  }).join('') + '</div>';
-
-  html += '<div class="section-title">Pieces concernees</div>';
-  html += '<input class="input-field" id="pieces-' + c.ligne + '" type="text" placeholder="Salon, Chambre 1...">';
-
-  html += '<div class="section-title">Ce qui reste a faire</div>';
-  html += '<textarea class="input-field" id="reste-' + c.ligne + '" placeholder="Details..."></textarea>';
-
-  html += '<div class="section-title">Mon suivi (historique)</div>';
-  html += '<div class="historique" id="histo-' + c.ligne + '">' + h(c['poseur_' + poseurActuel] || '') + '</div>';
-
-  html += '<div class="section-title">Ajouter un commentaire</div>';
-  html += '<textarea class="input-field" id="comment-' + c.ligne + '" placeholder="Nouvelle remarque..."></textarea>';
-
-  html += '<div style="padding:12px;background:var(--vert-bg);border-radius:10px;border:1.5px solid var(--vert);margin-top:14px;">';
-  html += '<label style="display:flex;align-items:center;gap:10px;cursor:pointer;">';
-  html += '<input type="checkbox" id="pv-cb-' + c.ligne + '" ' + ((c.pvChantier||'').toUpperCase()==='OUI'?'checked':'') + ' style="width:20px;height:20px;accent-color:var(--vert);cursor:pointer;">';
-  html += '<span style="font-size:14px;font-weight:700;color:var(--vert);">✓ PV de fin de chantier effectue</span>';
-  html += '</label></div>';
-
-  html += '<button class="btn-save" onclick="enregistrer(' + c.ligne + ')">💾 Enregistrer mon avancement</button>';
-  html += '<button style="width:100%;padding:14px;background:#1565C0;color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;margin-top:10px;" onclick="ouvrirPV(' + JSON.stringify(c).replace(/"/g, '&quot;') + ')">📋 Faire le PV de reception</button>';
-  html += '</div>';
-
-  document.getElementById('avancement-form').innerHTML = html;
-  showScreen('screen-avancement');
-}
-
-function selStatut(ligne, val, cls) {
-  STATUTS.forEach(function(s) {
-    var btn = document.getElementById('statut-' + ligne + '-' + s.val);
-    if (btn) btn.className = 'statut-btn' + (s.val === val ? ' ' + cls : '');
-  });
-}
-
-function toggleCheck(ligne, type) {
-  var item = document.getElementById('chk-' + ligne + '-' + type);
-  var cb   = document.getElementById('cb-' + ligne + '-' + type);
-  cb.checked = !cb.checked;
-  item.classList.toggle('checked', cb.checked);
-}
-
-async function enregistrer(ligne) {
-  var btn = document.querySelector('#avancement-form .btn-save');
-  if (btn) { btn.disabled=true; btn.textContent='Enregistrement...'; }
-
-  var statutSel = '';
-  STATUTS.forEach(function(s) {
-    var b = document.getElementById('statut-' + ligne + '-' + s.val);
-    if (b && b.className.indexOf('active') !== -1) statutSel = s.val;
-  });
-
-  var typesCochesList = TYPES_POSE.filter(function(t) {
-    var cb = document.getElementById('cb-' + ligne + '-' + t);
-    return cb && cb.checked;
-  });
-
-  var pieces  = (document.getElementById('pieces-' + ligne)||{}).value||'';
-  var reste   = (document.getElementById('reste-' + ligne)||{}).value||'';
-  var newComment = (document.getElementById('comment-' + ligne)||{}).value||'';
-  var pvCb    = document.getElementById('pv-cb-' + ligne);
-  var pvVal   = pvCb && pvCb.checked ? 'OUI' : 'NON';
-
-  var histo = document.getElementById('histo-' + ligne);
-  var histoText = histo ? histo.textContent : '';
-  var now = new Date();
-  var dateStr = now.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'}) + ' ' + now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-  var lignes2 = [];
-  if (statutSel) lignes2.push('Statut: ' + statutSel);
-  if (typesCochesList.length) lignes2.push('Pose: ' + typesCochesList.join(', '));
-  if (pieces.trim()) lignes2.push('Pieces: ' + pieces.trim());
-  if (reste.trim()) lignes2.push('Reste: ' + reste.trim());
-  if (newComment.trim()) lignes2.push(newComment.trim());
-
-  var nouvelleLigne = lignes2.length ? '[' + dateStr + ' - ' + poseurActuel + '] ' + lignes2.join(' | ') : '';
-  var commentaireFinal = histoText ? histoText + (nouvelleLigne ? '\n' + nouvelleLigne : '') : nouvelleLigne;
-
-  var champs = {};
-  if (statutSel) champs[13] = statutSel;
-  champs[16] = pvVal;
-  if (commentaireFinal) champs[colPoseur] = commentaireFinal;
-
-  try {
-    var r = await fetch(WEBAPP, {
-      method:'POST', headers:{'Content-Type':'text/plain'},
-      body: JSON.stringify({action:'modifier', ligne:ligne, champs:champs}),
-      redirect:'follow'
-    });
-    var d = await r.json();
-    if (!d.ok) throw new Error(d.error);
-    if (histo) histo.textContent = commentaireFinal;
-    var cmtEl = document.getElementById('comment-' + ligne);
-    if (cmtEl) cmtEl.value = '';
-    showToast('✅ Avancement enregistre !');
-    showSyncBar();
-  } catch(e) {
-    showToast('❌ Erreur : ' + e.message);
-  }
-
-  if (btn) { btn.disabled=false; btn.textContent='💾 Enregistrer mon avancement'; }
-}
-
-// ── PV ────────────────────────────────────────────────────
-function ouvrirPV(c) {
-  chantierActuel = c;
-  document.getElementById('pv-client').value = c.client || '';
-  document.getElementById('pv-contrat').value = c.devis || '';
-  document.getElementById('pv-date').value = new Date().toISOString().slice(0,10);
-  document.getElementById('pv-adresse').value = '';
-  document.getElementById('pv-poseur').value = poseurActuel;
-  document.getElementById('pv-commentaires').value = c.commentaire || '';
-  document.getElementById('pv-reglement').value = '';
-  document.getElementById('pv-lieu').value = 'Viroflay';
-  document.getElementById('rb-sans').className = 'radio-btn';
-  document.getElementById('rb-avec').className = 'radio-btn';
-  selReception('sans');
-  document.getElementById('btn-mail').style.display = 'none';
-  showScreen('screen-pv');
-  setTimeout(initSignature, 100);
-}
-
-function h(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function showToast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},3000); }
-function showSyncBar(){ var b=document.getElementById('sync-bar'); b.classList.add('show'); setTimeout(function(){b.classList.remove('show');},3000); }
-function envoyerMail() {
-  var d = window.pvMailData || {};
-  var sujet = encodeURIComponent('PV reception - ' + (d.client||'') + ' - ' + (d.date||''));
-  var corps = encodeURIComponent('Madame, Monsieur ' + (d.client||'') + ',\n\nVeuillez trouver ci-joint le PV de reception.\n\nCordialement,\n' + poseurActuel + "\nD'ECO OUEST");
-  window.location.href = 'mailto:?subject=' + sujet + '&body=' + corps;
-  showToast('📧 Outlook ouvert');
-}
-
-
-var WEBAPP = 'https://script.google.com/macros/s/AKfycbxk1zFKVsCDoiN5J4RAZYF-9nEYqGMIypS2lqBooqZWkxwMUGo8JVq5-iS9ZvZUGasa/exec';
-var poseurActuel = null;
-var chantierActuel = null;
-var allChantiers = [];
-var sigCanvas, sigCtx, sigDrawing = false, sigHasSig = false;
-
-// ── NAVIGATION ────────────────────────────────────────────
-function choisirPoseur(nom, couleur) {
-  poseurActuel = nom;
-  document.getElementById('poseur-badge').textContent = nom;
-  document.getElementById('poseur-badge').style.display = 'block';
-  document.getElementById('btn-back').style.display = 'block';
-  document.getElementById('header-sub').textContent = 'Choisissez un chantier';
-
-  // Semaine courante par défaut
-  var sem = getWeekNum(new Date());
-  document.getElementById('week-input').value = sem;
-
-  showScreen('screen-chantiers');
-  chargerChantiers();
-}
-
-function goBack() {
-  var current = document.querySelector('.screen.active');
-  if (current.id === 'screen-pv') {
-    showScreen('screen-chantiers');
-    document.getElementById('header-sub').textContent = 'Choisissez un chantier';
-  } else {
-    showScreen('screen-accueil');
-    document.getElementById('poseur-badge').style.display = 'none';
-    document.getElementById('btn-back').style.display = 'none';
-    document.getElementById('header-sub').textContent = 'Constat de réception des travaux';
-    poseurActuel = null;
-  }
-}
-
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
-  document.getElementById(id).classList.add('active');
-}
-
-// ── CHARGEMENT ────────────────────────────────────────────
-async function chargerChantiers() {
-  document.getElementById('chantiers-list').innerHTML = '<div class="loader"><div class="spinner"></div>Chargement...</div>';
-  try {
-    var r = await fetch(WEBAPP, {redirect:'follow'});
-    var d = await r.json();
-    if (!d.ok) throw new Error(d.error);
-    allChantiers = d.data.filter(function(c) {
-      return (c.commentaireARC||'').toUpperCase() !== 'ANNULER';
-    });
-    filtrerSemaine();
-  } catch(e) {
-    document.getElementById('chantiers-list').innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>Erreur de connexion.</p></div>';
-  }
-}
-
-function getWeekNum(d) {
-  d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
-  var y = new Date(Date.UTC(d.getUTCFullYear(),0,1));
-  return Math.ceil((((d-y)/86400000)+1)/7);
-}
-
-function filtrerSemaine() {
-  var semStr = document.getElementById('week-input').value;
-  if (!semStr) return;
-  var sem = parseInt(semStr, 10);
-
-  var filtered = allChantiers.filter(function(c) {
-    var dp = (c.datePose||'').trim();
-    if (!dp) return false;
-    var mSem = dp.match(/S\s*0*(\d{1,2})/i);
-    if (mSem) return parseInt(mSem[1],10) === sem;
-    // Date précise
-    var d = new Date(dp);
-    if (!isNaN(d)) return getWeekNum(d) === sem;
-    return false;
-  });
-
-  if (!filtered.length) {
-    document.getElementById('chantiers-list').innerHTML =
-      '<div class="empty"><div class="icon">📅</div><p>Aucun chantier trouvé pour la semaine S'+sem+'.</p></div>';
+  if (!f.length) {
+    document.getElementById('list-content').innerHTML = '<div class="empty"><p>Aucun chantier en cours</p></div>';
     return;
   }
-
-  document.getElementById('chantiers-list').innerHTML = filtered.map(function(c, i) {
-    var pvFait = (c.pvChantier||'').toUpperCase() === 'OUI';
-    return '<div class="chantier-card">'
-      + '<div class="chantier-info">'
-      + '<div class="chantier-client">'+h(c.client)+'</div>'
-      + '<div class="chantier-meta">'+(c.fournisseur||'')+(c.devis?' · '+c.devis:'')+(c.datePose?' · 📅 '+c.datePose:'')+'</div>'
-      + '</div>'
-      + '<div class="pv-status">'
-      + (pvFait ? '<span class="badge-pv-ok">✓ PV fait</span>' : '<span class="badge-pv-non">✗ PV manquant</span>')
-      + '<button class="btn-pv" onclick="ouvrirPV('+JSON.stringify(c).replace(/"/g,'&quot;')+')">📋 '+(pvFait?'Voir PV':'Faire PV')+'</button>'
-      + '</div>'
-      + '</div>';
+  var rev = f.slice().reverse();
+  var html = rev.map(function(c, i) {
+    var pv = (c.pvChantier||'').toUpperCase() === 'OUI';
+    return '<div class="card">' +
+      (pv ? '<span class="badge-pv-ok">PV fait</span>' : '<span class="badge-pv-non">PV manquant</span>') +
+      '<div class="card-client">' + h(c.client) + '</div>' +
+      '<div class="card-meta">' + h(c.fournisseur||'') + (c.datePose ? ' - S' + c.datePose : '') + '</div>' +
+      '<div class="card-btns">' +
+      '<button class="btn-av" data-idx="' + i + '">Avancement</button>' +
+      '<button class="btn-pv-card" data-idx="' + i + '">Faire PV</button>' +
+      '</div></div>';
   }).join('');
+  document.getElementById('list-content').innerHTML = html;
+  document.getElementById('list-content').querySelectorAll('.btn-av').forEach(function(btn) {
+    var idx = parseInt(btn.getAttribute('data-idx'), 10);
+    btn.addEventListener('click', function() { ouvrirAv(rev[idx]); });
+  });
+  document.getElementById('list-content').querySelectorAll('.btn-pv-card').forEach(function(btn) {
+    var idx = parseInt(btn.getAttribute('data-idx'), 10);
+    btn.addEventListener('click', function() { ouvrirPV(rev[idx]); });
+  });
 }
 
-// ── FORMULAIRE PV ─────────────────────────────────────────
-function ouvrirPV(c) {
-  chantierActuel = c;
-  document.getElementById('header-sub').textContent = c.client;
+function ouvrirAv(c) {
+  currentC = c;
+  currentLigne = c.ligne;
+  document.getElementById('sub').textContent = c.client;
+  document.getElementById('btn-back').style.display = 'block';
+  var sP = c.statutPose || '';
+  var histo = c['poseur_' + NOM] || '';
+  var html = '<div style="padding:16px;">';
+  html += '<div style="font-size:16px;font-weight:700;margin-bottom:2px;">' + h(c.client) + '</div>';
+  html += '<div style="font-size:12px;color:#546E7A;margin-bottom:14px;">' + h(c.fournisseur||'') + (c.datePose ? ' - ' + c.datePose : '') + '</div>';
+  if (c.commentaire) {
+    html += '<div style="padding:10px;background:#FFF3E0;border-radius:8px;border-left:3px solid #E65100;margin-bottom:12px;">';
+    html += '<div style="font-size:11px;font-weight:700;color:#E65100;">NOTE BUREAU</div>';
+    html += '<div style="font-size:12px;margin-top:4px;">' + h(c.commentaire) + '</div></div>';
+  }
+  html += '<div class="section-label">Statut</div>';
+  html += '<div class="statuts">';
+  STATUTS.forEach(function(s) {
+    var on = sP.toLowerCase() === s.val.toLowerCase();
+    html += '<button class="s-btn' + (on ? ' s-' + s.cls : '') + '" data-val="' + s.val + '" data-cls="' + s.cls + '">' + s.label + '</button>';
+  });
+  html += '</div>';
+  html += '<div class="section-label">Elements poses</div>';
+  html += '<div class="types">';
+  TYPES.forEach(function(t) {
+    html += '<div class="type-item" data-type="' + t + '"><input type="checkbox" onclick="event.stopPropagation()"><label>' + t + '</label></div>';
+  });
+  html += '</div>';
+  html += '<div class="section-label">Pieces</div>';
+  html += '<input class="input-f" id="pi-av" type="text" placeholder="Salon, Chambre...">';
+  html += '<div class="section-label">Reste a faire</div>';
+  html += '<textarea class="input-f" id="re-av" placeholder="Details..."></textarea>';
+  html += '<div class="section-label">Suivi poseur</div>';
+  html += '<div class="historique" id="hi-av">' + h(histo) + '</div>';
+  html += '<div class="section-label">Nouveau commentaire</div>';
+  html += '<textarea class="input-f" id="co-av" placeholder="Nouvelle remarque..."></textarea>';
+  html += '<label class="pv-check"><input type="checkbox" id="pvcb-av" ' + ((c.pvChantier||'').toUpperCase()==='OUI'?'checked':'') + '><span>PV de fin de chantier effectue</span></label>';
+  html += '<button class="btn-save" id="btn-enreg">Enregistrer</button>';
+  html += '<button class="btn-pv-open" id="btn-open-pv">Faire le PV de reception</button>';
+  html += '</div>';
+  document.getElementById('av-content').innerHTML = html;
+  show('s-av');
+  // Statuts
+  document.querySelectorAll('.s-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var val = btn.getAttribute('data-val');
+      var cls = btn.getAttribute('data-cls');
+      document.querySelectorAll('.s-btn').forEach(function(b) { b.className = 's-btn'; });
+      btn.className = 's-btn s-' + cls;
+    });
+  });
+  // Types
+  document.querySelectorAll('.type-item').forEach(function(item) {
+    item.addEventListener('click', function() {
+      var cb = item.querySelector('input[type=checkbox]');
+      cb.checked = !cb.checked;
+      item.classList.toggle('on', cb.checked);
+    });
+  });
+  // Enregistrer
+  document.getElementById('btn-enreg').addEventListener('click', function() { enreg(); });
+  // PV
+  document.getElementById('btn-open-pv').addEventListener('click', function() { ouvrirPV(currentC); });
+}
 
-  // Pré-remplir
+async function enreg() {
+  var btn = document.getElementById('btn-enreg');
+  if (btn) { btn.disabled = true; btn.textContent = 'Enregistrement...'; }
+  var sS = '';
+  document.querySelectorAll('.s-btn').forEach(function(b) {
+    if (b.className.indexOf('s-vert') !== -1) sS = 'Termine';
+    else if (b.className.indexOf('s-orange') !== -1) sS = 'En cours';
+    else if (b.className.indexOf('s-jaune') !== -1) sS = 'A planifier';
+    else if (b.className.indexOf('s-rouge') !== -1) sS = 'SAV';
+  });
+  var types = [];
+  document.querySelectorAll('.type-item.on').forEach(function(item) { types.push(item.getAttribute('data-type')); });
+  var pi = (document.getElementById('pi-av')||{}).value || '';
+  var re = (document.getElementById('re-av')||{}).value || '';
+  var co = (document.getElementById('co-av')||{}).value || '';
+  var pvCb = document.getElementById('pvcb-av');
+  var pvVal = pvCb && pvCb.checked ? 'OUI' : 'NON';
+  var histo = document.getElementById('hi-av');
+  var histoTxt = histo ? histo.textContent : '';
+  var now = new Date();
+  var ds = now.toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit',year:'numeric'}) + ' ' + now.toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'});
+  var parts = [];
+  if (sS) parts.push('Statut: ' + sS);
+  if (types.length) parts.push('Pose: ' + types.join(', '));
+  if (pi.trim()) parts.push('Pieces: ' + pi.trim());
+  if (re.trim()) parts.push('Reste: ' + re.trim());
+  if (co.trim()) parts.push(co.trim());
+  var newLine = parts.length ? '[' + ds + ' - ' + NOM + '] ' + parts.join(' | ') : '';
+  var final = histoTxt ? (histoTxt + (newLine ? '\n' + newLine : '')) : newLine;
+  var champs = {};
+  if (sS) champs[13] = sS;
+  champs[16] = pvVal;
+  if (final) champs[COL] = final;
+  try {
+    var r = await fetch(WEBAPP, {method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'modifier',ligne:currentLigne,champs:champs}),redirect:'follow'});
+    var d = await r.json();
+    if (!d.ok) throw new Error(d.error);
+    if (histo) histo.textContent = final;
+    var coEl = document.getElementById('co-av');
+    if (coEl) coEl.value = '';
+    toast('Enregistre !');
+  } catch(e) { toast('Erreur: ' + e.message); }
+  if (btn) { btn.disabled = false; btn.textContent = 'Enregistrer'; }
+}
+
+function ouvrirPV(c) {
+  currentC = c;
   document.getElementById('pv-client').value = c.client || '';
   document.getElementById('pv-contrat').value = c.devis || '';
   document.getElementById('pv-date').value = new Date().toISOString().slice(0,10);
   document.getElementById('pv-adresse').value = '';
-  document.getElementById('pv-poseur').value = poseurActuel;
-  document.getElementById('pv-commentaires').value = c.commentaire || '';
+  document.getElementById('pv-poseur').value = NOM;
+  document.getElementById('pv-comments').value = c.commentaire || '';
   document.getElementById('pv-reglement').value = '';
   document.getElementById('pv-lieu').value = 'Viroflay';
-
-  // Reset radio
-  document.getElementById('rb-sans').className = 'radio-btn';
+  document.getElementById('rb-sans').className = 'radio-btn rb-vert';
   document.getElementById('rb-avec').className = 'radio-btn';
-  selReception('sans');
-
-  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
-  document.getElementById('screen-pv').classList.add('active');
-
-  // Init canvas signature
-  setTimeout(initSignature, 100);
+  document.getElementById('rb-sans').querySelector('input').checked = true;
+  document.getElementById('btn-mail').style.display = 'none';
+  show('s-pv');
+  document.getElementById('btn-back').style.display = 'block';
+  setTimeout(initSig, 100);
 }
 
-function selReception(val) {
-  document.getElementById('rb-sans').className = 'radio-btn' + (val==='sans'?' selected-vert':'');
-  document.getElementById('rb-avec').className = 'radio-btn' + (val==='avec'?' selected-orange':'');
-  document.querySelectorAll('input[name="reception"]').forEach(function(r){
-    r.checked = r.value === val;
-  });
-}
+document.getElementById('rb-sans').addEventListener('click', function() {
+  document.getElementById('rb-sans').className = 'radio-btn rb-vert';
+  document.getElementById('rb-avec').className = 'radio-btn';
+  document.getElementById('rb-sans').querySelector('input').checked = true;
+});
+document.getElementById('rb-avec').addEventListener('click', function() {
+  document.getElementById('rb-avec').className = 'radio-btn rb-orange';
+  document.getElementById('rb-sans').className = 'radio-btn';
+  document.getElementById('rb-avec').querySelector('input').checked = true;
+});
 
-// ── SIGNATURE ─────────────────────────────────────────────
-function initSignature() {
+function initSig() {
   sigCanvas = document.getElementById('sig-canvas');
   sigCanvas.width = sigCanvas.offsetWidth;
   sigCtx = sigCanvas.getContext('2d');
-  sigCtx.strokeStyle = '#1A1A2E';
-  sigCtx.lineWidth = 2.5;
-  sigCtx.lineCap = 'round';
-  sigCtx.lineJoin = 'round';
-  sigDrawing = false;
-  sigHasSig = false;
-
-  sigCanvas.addEventListener('mousedown',  startDraw);
-  sigCanvas.addEventListener('mousemove',  draw);
-  sigCanvas.addEventListener('mouseup',    endDraw);
-  sigCanvas.addEventListener('touchstart', startDraw, {passive:false});
-  sigCanvas.addEventListener('touchmove',  draw,      {passive:false});
-  sigCanvas.addEventListener('touchend',   endDraw);
+  sigCtx.strokeStyle = '#1A1A2E'; sigCtx.lineWidth = 2.5; sigCtx.lineCap = 'round'; sigCtx.lineJoin = 'round';
+  sigDraw = false; sigOk = false;
+  function pos(e) { var r=sigCanvas.getBoundingClientRect(), t=e.touches?e.touches[0]:e; return {x:t.clientX-r.left,y:t.clientY-r.top}; }
+  sigCanvas.onmousedown = sigCanvas.ontouchstart = function(e) { e.preventDefault(); sigDraw=true; var p=pos(e); sigCtx.beginPath(); sigCtx.moveTo(p.x,p.y); };
+  sigCanvas.onmousemove = sigCanvas.ontouchmove = function(e) { e.preventDefault(); if(!sigDraw)return; var p=pos(e); sigCtx.lineTo(p.x,p.y); sigCtx.stroke(); sigOk=true; };
+  sigCanvas.onmouseup = sigCanvas.ontouchend = function(e) { e.preventDefault(); sigDraw=false; };
 }
+function clearSig() { if(sigCtx) sigCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height); sigOk=false; }
 
-function getPos(e) {
-  var rect = sigCanvas.getBoundingClientRect();
-  var touch = e.touches ? e.touches[0] : e;
-  return { x: touch.clientX - rect.left, y: touch.clientY - rect.top };
-}
-
-function startDraw(e) { e.preventDefault(); sigDrawing=true; var p=getPos(e); sigCtx.beginPath(); sigCtx.moveTo(p.x,p.y); }
-function draw(e)       { e.preventDefault(); if(!sigDrawing)return; var p=getPos(e); sigCtx.lineTo(p.x,p.y); sigCtx.stroke(); sigHasSig=true; }
-function endDraw(e)    { e.preventDefault(); sigDrawing=false; }
-function clearSignature(){ if(sigCtx) sigCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height); sigHasSig=false; }
-
-// ── GÉNÉRATION PDF ────────────────────────────────────────
-async function genererPDF() {
-  var client    = document.getElementById('pv-client').value.trim();
-  var contrat   = document.getElementById('pv-contrat').value.trim();
-  var date      = document.getElementById('pv-date').value;
-  var adresse   = document.getElementById('pv-adresse').value.trim();
-  var commentaires = document.getElementById('pv-commentaires').value.trim();
-  var reglement = document.getElementById('pv-reglement').value.trim();
-  var lieu      = document.getElementById('pv-lieu').value.trim();
-  var reception = document.querySelector('input[name="reception"]:checked');
-  var recVal    = reception ? reception.value : 'sans';
-
-  if (!client) { showToast('⚠️ Nom du client obligatoire'); return; }
-  if (!sigHasSig) { showToast('⚠️ Signature du client requise'); return; }
-
-  var btn = document.getElementById('btn-generate');
-  btn.disabled = true; btn.textContent = '⏳ Génération en cours...';
-
+async function genPDF() {
+  if (!sigOk) { toast('Signature requise'); return; }
+  var cl = document.getElementById('pv-client').value.trim();
+  if (!cl) { toast('Client obligatoire'); return; }
+  var btn = document.querySelector('.btn-gen'); btn.disabled=true; btn.textContent='Generation...';
   try {
-    var { jsPDF } = window.jspdf;
-    var doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
-
-    // ── EN-TÊTE ──
-    doc.setFillColor(21, 101, 192);
-    doc.rect(0, 0, 210, 28, 'F');
-    doc.setTextColor(255,255,255);
-    doc.setFontSize(16); doc.setFont('helvetica','bold');
-    doc.text("CONSTAT DE RÉCEPTION DES TRAVAUX", 105, 12, {align:'center'});
+    var jspdf = window.jspdf;
+    var doc = new jspdf.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    doc.setFillColor(21,101,192); doc.rect(0,0,210,28,'F');
+    doc.setTextColor(255,255,255); doc.setFontSize(14); doc.setFont('helvetica','bold');
+    doc.text('CONSTAT DE RECEPTION DES TRAVAUX',105,12,{align:'center'});
     doc.setFontSize(9); doc.setFont('helvetica','normal');
-    doc.text("Obligatoire. Il est le point de départ de la période de garantie « Assurance »", 105, 19, {align:'center'});
-
-    // Bandeau jaune
-    doc.setFillColor(255, 193, 7);
-    doc.rect(0, 28, 210, 6, 'F');
-
-    // Infos société
+    doc.text("D ECO OUEST - 153 av. du General Leclerc - 78220 VIROFLAY - Tel. 01 39 24 26 26",105,22,{align:'center'});
     doc.setTextColor(30,30,30);
-    doc.setFontSize(8); doc.setFont('helvetica','bold');
-    doc.text("D'ECO OUEST", 14, 42);
-    doc.setFont('helvetica','normal');
-    doc.text("153, avenue du Général Leclerc · 78220 VIROFLAY", 14, 47);
-    doc.text("Tél. 01 39 24 26 26 · info@d-eco-ouest.fr · www.eco-isolation.fr", 14, 52);
-    doc.text("SARL au capital de 50 000 Euros · SIREN 505 343 210 R.C.S VERSAILLES", 14, 57);
-
-    // Ligne séparatrice
-    doc.setDrawColor(200,200,200);
-    doc.line(14, 62, 196, 62);
-
-    // ── CORPS ──
-    var y = 70;
-    doc.setFontSize(10); doc.setFont('helvetica','normal'); doc.setTextColor(30,30,30);
-
-    doc.text("Je soussigné(e) :", 14, y);
-    doc.setFont('helvetica','bold');
-    doc.text(client, 55, y);
-    y += 8;
-
-    doc.setFont('helvetica','normal');
-    doc.text("après avoir procédé à l'examen des travaux exécutés par la Société D'ECO OUEST", 14, y);
-    y += 6;
-    doc.text("au titre du contrat : " + (contrat||'—'), 14, y);
-    y += 8;
-    doc.text("À la date du : " + (date ? new Date(date).toLocaleDateString('fr-FR') : '—'), 14, y);
-    y += 6;
-    doc.text("Concernant les travaux : " + (adresse||'—'), 14, y);
-    y += 8;
-    doc.text("En présence de : " + poseurActuel + "  —  représentant l'entreprise : D'ECO OUEST SOLABAIE", 14, y);
-    y += 10;
-
-    // Réception
-    doc.setFont('helvetica','bold');
-    doc.text("Déclare que la réception est prononcée :", 14, y);
-    y += 8;
-    doc.setFont('helvetica','normal');
-    doc.setFillColor(recVal==='sans'?46:230, recVal==='sans'?125:81, recVal==='sans'?50:0);
-    doc.roundedRect(14, y-5, 80, 10, 2, 2, 'F');
+    var y=36;
+    var dt=document.getElementById('pv-date').value;
+    var ad=document.getElementById('pv-adresse').value;
+    var li=document.getElementById('pv-lieu').value;
+    var cm=document.getElementById('pv-comments').value;
+    var rg=document.getElementById('pv-reglement').value;
+    var ct=document.getElementById('pv-contrat').value;
+    var recOui=document.getElementById('rb-sans').querySelector('input').checked;
+    doc.setFontSize(10);
+    doc.text('Je soussigne(e) : ' + cl,14,y); y+=8;
+    doc.text('Contrat : ' + (ct||'—'),14,y); y+=7;
+    doc.text('Date : ' + (dt?new Date(dt).toLocaleDateString('fr-FR'):'—'),14,y); y+=7;
+    doc.text('Travaux : ' + (ad||'—'),14,y); y+=7;
+    doc.text('Poseur : ' + NOM + ' - D ECO OUEST SOLABAIE',14,y); y+=10;
+    doc.setFillColor(recOui?46:230,recOui?125:81,recOui?50:0);
+    doc.roundedRect(14,y-5,80,10,2,2,'F');
     doc.setTextColor(255,255,255);
-    doc.text(recVal==='sans'? '✓  SANS RÉSERVE' : '⚠  AVEC RÉSERVE', 54, y+1, {align:'center'});
-    doc.setTextColor(30,30,30);
-    y += 16;
-
-    // Garanties
-    doc.setFillColor(21,101,192);
-    doc.rect(14, y, 182, 7, 'F');
-    doc.setTextColor(255,255,255);
-    doc.setFontSize(9); doc.setFont('helvetica','bold');
-    doc.text("GARANTIES", 105, y+5, {align:'center'});
-    y += 10;
-    doc.setTextColor(60,60,60); doc.setFont('helvetica','normal'); doc.setFontSize(8);
-    var gText = "Les garanties découlant des articles 1792, 1792-2 et 1792-3 du Code Civil commencent à courir à dater de la signature du présent Constat.";
-    doc.text(gText, 14, y, {maxWidth:182});
-    y += 10;
-
-    // Commentaires
-    doc.setFillColor(21,101,192);
-    doc.rect(14, y, 182, 7, 'F');
-    doc.setTextColor(255,255,255);
-    doc.setFont('helvetica','bold'); doc.setFontSize(9);
-    doc.text("COMMENTAIRES", 105, y+5, {align:'center'});
-    y += 10;
-    doc.setTextColor(30,30,30); doc.setFont('helvetica','normal'); doc.setFontSize(9);
-    if (commentaires) {
-      var lines = doc.splitTextToSize(commentaires, 182);
-      doc.text(lines, 14, y);
-      y += lines.length * 5 + 8;
-    } else {
-      doc.setTextColor(150,150,150);
-      doc.text("Aucun commentaire.", 14, y);
-      doc.setTextColor(30,30,30);
-      y += 10;
+    doc.text(recOui?'SANS RESERVE':'AVEC RESERVE',54,y+1,{align:'center'});
+    doc.setTextColor(30,30,30); y+=15;
+    if(cm){ doc.text('Commentaires : '+cm,14,y,{maxWidth:182}); y+=12; }
+    if(rg){ doc.text('Reglement : '+rg,14,y,{maxWidth:182}); y+=10; }
+    doc.text('Fait a ' + (li||'—') + ', le ' + (dt?new Date(dt).toLocaleDateString('fr-FR'):'—'),14,y); y+=8;
+    doc.text('Signature client :',110,y); y+=4;
+    var sd=sigCanvas.toDataURL('image/png');
+    doc.addImage(sd,'PNG',110,y,80,35); doc.rect(110,y,80,35); y+=42;
+    doc.setFillColor(21,101,192); doc.rect(0,285,210,12,'F');
+    doc.setTextColor(255,255,255); doc.setFontSize(8);
+    doc.text("D ECO OUEST SOLABAIE - SIREN 505 343 210",105,292,{align:'center'});
+    var fn='PV_'+cl.replace(/\s/g,'_')+'_'+(dt||'').replace(/-/g,'')+'.pdf';
+    doc.save(fn);
+    window.pvMailData={client:cl,date:dt?new Date(dt).toLocaleDateString('fr-FR'):''};
+    if(currentC&&currentC.ligne){
+      await fetch(WEBAPP,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'modifier',ligne:currentC.ligne,champs:{16:'OUI'}}),redirect:'follow'});
     }
-
-    // Règlement
-    doc.setFillColor(21,101,192);
-    doc.rect(14, y, 182, 7, 'F');
-    doc.setTextColor(255,255,255);
-    doc.setFont('helvetica','bold'); doc.setFontSize(9);
-    doc.text("RÈGLEMENT", 105, y+5, {align:'center'});
-    y += 10;
-    doc.setTextColor(30,30,30); doc.setFont('helvetica','normal');
-    if (reglement) {
-      doc.text(reglement, 14, y, {maxWidth:182});
-      y += 10;
-    } else {
-      y += 6;
-    }
-
-    // Lieu et date
-    y += 4;
-    doc.setFontSize(9);
-    doc.text("Fait en deux exemplaires, à " + (lieu||'—') + ", le " + (date ? new Date(date).toLocaleDateString('fr-FR') : '—'), 14, y);
-    y += 10;
-
-    // Signature
-    doc.setFont('helvetica','bold');
-    doc.text("Signature du Maître de l'ouvrage :", 110, y);
-    y += 4;
-    var sigData = sigCanvas.toDataURL('image/png');
-    doc.addImage(sigData, 'PNG', 110, y, 80, 35);
-    doc.setDrawColor(100,100,100);
-    doc.rect(110, y, 80, 35);
-
-    // Poseur signature
-    doc.setFont('helvetica','normal');
-    doc.text("Représentant D'ECO OUEST :", 14, y+5);
-    doc.setFont('helvetica','bold'); doc.setFontSize(11);
-    doc.text(poseurActuel, 14, y+15);
-    y += 42;
-
-    // Footer
-    doc.setFillColor(21,101,192);
-    doc.rect(0, 285, 210, 12, 'F');
-    doc.setTextColor(255,255,255); doc.setFontSize(8); doc.setFont('helvetica','normal');
-    doc.text("D'ECO OUEST SOLABAIE · 153 av. du Général Leclerc · 78220 VIROFLAY · Tél. 01 39 24 26 26", 105, 292, {align:'center'});
-
-    // ── SAUVEGARDER ──
-    var fileName = 'PV_' + client.replace(/\s/g,'_') + '_' + (date||'').replace(/-/g,'') + '.pdf';
-    doc.save(fileName);
-
-    // Marquer PV comme fait dans Sheets
-    if (chantierActuel && chantierActuel.ligne) {
-      await fetch(WEBAPP, {
-        method:'POST',
-        headers:{'Content-Type':'text/plain'},
-        body:JSON.stringify({action:'modifier', ligne:chantierActuel.ligne, champs:{16:'OUI'}}),
-        redirect:'follow'
-      });
-    }
-
-    showToast('✅ PV généré et téléchargé !');
-    setTimeout(function(){ goBackFromPV(); }, 2000);
-
-  } catch(e) {
-    showToast('❌ Erreur : ' + e.message);
-    console.error(e);
-  }
-
-  btn.disabled = false;
-  btn.textContent = '📄 Générer et enregistrer le PV';
+    document.getElementById('btn-mail').style.display='block';
+    toast('PV genere et telecharge !');
+  } catch(e) { toast('Erreur: '+e.message); console.error(e); }
+  btn.disabled=false; btn.textContent='Generer le PV';
 }
 
-function h(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function showToast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},3000); }
-
+function sendMail() {
+  var d=window.pvMailData||{};
+  var s=encodeURIComponent('PV reception - '+(d.client||'')+' - '+(d.date||''));
+  var b=encodeURIComponent('Madame, Monsieur '+(d.client||'')+',\n\nVeuillez trouver ci-joint le PV de reception.\n\nCordialement,\n'+NOM+'\nD ECO OUEST');
+  window.location.href='mailto:?subject='+s+'&body='+b;
+  toast('Outlook ouvert - attachez le PDF');
+}
 </script>
 </body>
 </html>
