@@ -269,7 +269,7 @@
           <select id="f-statutPose"><option value="">—</option><option>A PLANIFIER</option><option>En cours</option><option>Pose</option><option>Termine</option><option>SAV</option></select>
         </div>
         <div class="form-group full"><label>Historique des commentaires / remarques</label>
-          <textarea id="f-commentaire-historique" readonly style="background:#F5F7FA;color:var(--texte2);font-style:italic;min-height:90px;" placeholder="Aucun commentaire pour l'instant."></textarea>
+          <textarea id="f-commentaire-historique" readonly style="background:#F5F7FA;color:var(--texte2);font-style:italic;min-height:90px;" placeholder="Aucun commentaire pour le moment."></textarea>
         </div>
         <div class="form-group full"><label>Ajouter un nouveau commentaire</label>
           <textarea id="f-commentaire-nouveau" placeholder="Ecrire une nouvelle remarque... (elle sera ajoutee a la suite avec la date du jour)"></textarea>
@@ -484,6 +484,8 @@ function openModal(idx) {
   });
   var pvEl = document.getElementById('f-pvChantier');
   if (pvEl) pvEl.checked = (c.pvChantier||'').toUpperCase() === 'OUI';
+  var dpEl = document.getElementById('f-datePose');
+  if (dpEl) dpEl.value = c.datePose || '';
   document.getElementById('f-commentaire-historique').value = c.commentaire || '';
   document.getElementById('f-commentaire-nouveau').value = '';
   document.getElementById('overlay').classList.add('open');
@@ -498,6 +500,8 @@ async function sauvegarder() {
   });
   var pvEl = document.getElementById('f-pvChantier');
   c.pvChantier = pvEl && pvEl.checked ? 'OUI' : 'NON';
+  var dpEl2 = document.getElementById('f-datePose');
+  c.datePose = dpEl2 ? dpEl2.value.trim() : '';
   if(!c.client){alert('Client obligatoire.');return;}
 
   // Gestion historique commentaire : on ajoute le nouveau texte saisi a la suite de l'existant
@@ -515,7 +519,7 @@ async function sauvegarder() {
   try {
     var res;
     if(editLigne>0){
-      res=await apiPost({action:'modifier',ligne:editLigne,champs:{1:c.client,3:c.devis,4:c.devisTTC,5:c.fournisseur,6:c.commande,7:c.arc,9:c.commentaireARC,10:c.prevLivraison,12:c.statutLivraison,13:c.statutPose,14:c.commentaire,16:c.pvChantier}});
+      res=await apiPost({action:'modifier',ligne:editLigne,champs:{1:c.client,3:c.devis,4:c.devisTTC,5:c.fournisseur,6:c.commande,7:c.arc,9:c.commentaireARC,10:c.prevLivraison,12:c.statutLivraison,13:c.statutPose,14:c.commentaire,16:c.pvChantier,20:c.datePose}});
     } else {
       res=await apiPost({action:'ajouter',commande:c});
     }
@@ -664,6 +668,129 @@ function renderDashboard() {
     '<div style="text-align:center;padding:14px;background:#FFF3E0;border-radius:8px;"><div style="font-size:28px;font-weight:700;color:var(--orange);">' + pvManquants + '</div><div style="font-size:11px;color:var(--texte2);">PV Manquants</div></div>' +
     '</div></div>' +
     '<div class="dash-card" style="grid-column:1/-1;"><h4>📋 Suivi chantiers — Date de pose · Remarques poseurs · PV</h4>' + hC + '</div>';
+}
+
+
+// ── NAVIGATION ───────────────────────────────────────────
+function showView(v) {
+  document.querySelectorAll('.view').forEach(function(el){el.classList.remove('active');});
+  document.querySelectorAll('.nav-item').forEach(function(el){el.classList.remove('active');});
+  document.getElementById('view-'+v).classList.add('active');
+  var map = {suivi:0, alertes:1, dashboard:2, poseurs:3, suivipose:4};
+  if (map[v] !== undefined) document.querySelectorAll('.nav-item')[map[v]].classList.add('active');
+  var titles = {suivi:'Suivi des commandes', alertes:'Alertes actives', dashboard:'Tableau de bord', poseurs:'Commentaires Poseurs', suivipose:'Suivi de Pose'};
+  document.getElementById('topbar-title').textContent = titles[v] || v;
+  if (v === 'alertes')    renderAlertes();
+  if (v === 'dashboard')  renderDashboard();
+  if (v === 'poseurs')    renderPoseurs();
+  if (v === 'suivipose')  renderSuiviPose();
+}
+
+// ── POSEURS ───────────────────────────────────────────────
+function renderPoseurs() {
+  var poseurs = [
+    {nom:'ANATOLE', key:'poseur_ANATOLE', couleur:'#1565C0'},
+    {nom:'ARTIOM',  key:'poseur_ARTIOM',  couleur:'#2E7D32'},
+    {nom:'ANTONIO', key:'poseur_ANTONIO', couleur:'#E65100'}
+  ];
+  var html = '';
+  poseurs.forEach(function(p) {
+    var items = commandes.filter(function(c){return c[p.key] && c[p.key].trim();});
+    html += '<div class="poseur-section">';
+    html += '<div class="poseur-section-title">';
+    html += '<div class="poseur-avatar" style="background:'+p.couleur+'">'+p.nom.slice(0,2)+'</div>';
+    html += '<div><div class="poseur-name">'+p.nom+'</div><div class="poseur-count">'+items.length+' commentaire(s)</div></div>';
+    html += '</div>';
+    if (!items.length) {
+      html += '<div class="poseur-empty">Aucun commentaire pour le moment.</div>';
+    } else {
+      items.forEach(function(c) {
+        var lignes = c[p.key].split('\n');
+        html += '<div class="poseur-card">';
+        html += '<div class="poseur-card-header">';
+        html += '<span class="poseur-card-client">'+h(c.client)+'</span>';
+        var m = dernier.indexOf('[') !== -1 ? dernier.match(/\[(\d{2}\/\d{2}\/\d{4})/) : null;
+        if (m) html += '<span class="poseur-card-date">'+m[1]+'</span>';
+        html += '</div>';
+        html += '<div class="poseur-card-comment">'+h(c[p.key])+'</div>';
+        html += '</div>';
+      });
+    }
+    html += '</div>';
+  });
+  document.getElementById('poseurs-content').innerHTML = html;
+}
+
+// ── SUIVI POSE ────────────────────────────────────────────
+function renderSuiviPose() {
+  var poseurs = [
+    {nom:'ANATOLE', key:'poseur_ANATOLE', couleur:'#1565C0'},
+    {nom:'ARTIOM',  key:'poseur_ARTIOM',  couleur:'#2E7D32'},
+    {nom:'ANTONIO', key:'poseur_ANTONIO', couleur:'#E65100'}
+  ];
+  var TERMINES_S = ['Livré','Terminé','Posé','LIVRE','TERMINE','POSE','Livre','Termine'];
+  var items = commandes.filter(function(c){
+    return TERMINES_S.indexOf((c.statutLivraison||'').trim()) === -1
+        && (c.commentaireARC||'').toUpperCase() !== 'ANNULER';
+  }).slice().sort(function(a,b){
+    return (b.datePose||'').localeCompare(a.datePose||'');
+  });
+
+  if (!items.length) {
+    document.getElementById('suivipose-content').innerHTML = '<div class="empty-state"><p>Aucun chantier actif.</p></div>';
+    return;
+  }
+
+  var html = '';
+  items.forEach(function(c) {
+    var pvFait = (c.pvChantier||'').toUpperCase() === 'OUI';
+    html += '<div class="suivipose-card">';
+    html += '<div class="suivipose-header">';
+    html += '<div><div class="suivipose-client">'+h(c.client)+'</div>';
+    html += '<div class="suivipose-meta">'+(c.fournisseur||'')+(c.devis?' · '+c.devis:'')+'</div></div>';
+    html += '<div style="text-align:right;">';
+    if (c.datePose) html += '<span class="suivipose-date">📅 '+h(cleanDate(c.datePose))+'</span>';
+    var sP = c.statutPose||'';
+    if (sP) {
+      var sBg=sP==='SAV'?'var(--rouge-bg)':sP.indexOf('Termin')!==-1?'var(--vert-bg)':'var(--orange-bg)';
+      var sC=sP==='SAV'?'var(--rouge)':sP.indexOf('Termin')!==-1?'var(--vert)':'var(--orange)';
+      html += '<br><span style="font-size:11px;font-weight:700;background:'+sBg+';color:'+sC+';padding:2px 8px;border-radius:5px;display:inline-block;margin-top:4px;">'+h(sP)+'</span>';
+    }
+    html += '<br><span style="font-size:11px;font-weight:700;background:'+(pvFait?'var(--vert-bg)':'#FFEBEE')+';color:'+(pvFait?'var(--vert)':'var(--rouge)')+';padding:2px 8px;border-radius:5px;display:inline-block;margin-top:4px;">'+(pvFait?'✓ PV Fait':'✗ PV Manquant')+'</span>';
+    html += '</div></div>';
+    html += '<div class="suivipose-body">';
+    if (c.commentaire) {
+      html += '<div style="margin-bottom:10px;padding:8px 12px;background:#FFF3E0;border-radius:8px;border-left:3px solid var(--orange);">';
+      html += '<div style="font-size:11px;font-weight:700;color:var(--orange);margin-bottom:4px;">📋 NOTE BUREAU</div>';
+      html += '<div style="font-size:12px;white-space:pre-wrap;">'+h(c.commentaire)+'</div></div>';
+    }
+    poseurs.forEach(function(p) {
+      html += '<div class="suivipose-poseur">';
+      html += '<div class="suivipose-poseur-name">';
+      html += '<div class="suivipose-poseur-avatar" style="background:'+p.couleur+'">'+p.nom.slice(0,2)+'</div>';
+      html += '<span class="suivipose-poseur-label">'+p.nom+'</span></div>';
+      if (c[p.key] && c[p.key].trim()) {
+        html += '<div class="suivipose-comment">'+h(c[p.key])+'</div>';
+      } else {
+        html += '<div class="suivipose-empty">Aucun suivi poseur.</div>';
+      }
+      html += '</div>';
+    });
+    html += '</div></div>';
+  });
+  document.getElementById('suivipose-content').innerHTML = html;
+}
+
+
+function cleanDate(s) {
+  if (!s || !s.trim()) return '';
+  // Si c'est une date JS longue (GMT...) -> extraire juste la date
+  var m = s.match(/(\w+ \w+ \d+ \d{4})/);
+  if (m) {
+    var d = new Date(s);
+    if (!isNaN(d)) return d.toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit',year:'numeric'});
+  }
+  return s.trim();
 }
 
 function fillFournisseur() {
