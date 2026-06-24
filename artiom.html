@@ -4,137 +4,177 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>ECO OUEST — ARTIOM</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
+
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
   :root {
-    --bleu:#2E7D32;--bleu-bg:#E3F2FD;
+    --bleu:#1565C0;--bleu-bg:#E3F2FD;
     --vert:#2E7D32;--vert-bg:#E8F5E9;
     --rouge:#D32F2F;--rouge-bg:#FFEBEE;
     --orange:#E65100;--orange-bg:#FFF3E0;
-    --jaune:#F9A825;--jaune-bg:#FFFDE7;
     --texte:#1A1A2E;--texte2:#546E7A;--bordure:#E0E7EF;--bg:#F0F4F8;
   }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:"Inter",sans-serif;background:var(--bg);color:var(--texte);min-height:100vh;}
+  .header{background:var(--bleu);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+  .header h1{font-size:15px;font-weight:700;color:#fff;}
+  .header small{font-size:10px;color:#90CAF9;display:block;}
+  .poseur-badge{background:rgba(255,255,255,.2);color:#fff;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;}
+  .btn-back{background:none;border:none;color:#90CAF9;font-size:22px;cursor:pointer;padding:2px 8px 2px 0;}
 
-  /* HEADER */
-  .header{background:var(--bleu);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
-  .header-left{display:flex;align-items:center;gap:10px;}
-  .header h1{font-size:16px;font-weight:700;color:#fff;}
-  .header small{font-size:11px;color:#90CAF9;display:block;}
-  .poseur-badge{background:rgba(255,255,255,.2);color:#fff;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;}
-  .btn-retour{background:none;border:none;color:#90CAF9;font-size:20px;cursor:pointer;padding:4px;}
-
-  /* ÉCRAN CHOIX POSEUR */
-  .screen{display:none;padding:20px;min-height:calc(100vh - 60px);}
+  .screen{display:none;padding:16px;}
   .screen.active{display:block;}
-  .welcome{text-align:center;padding:40px 20px 30px;}
-  .welcome h2{font-size:22px;font-weight:700;margin-bottom:8px;}
-  .welcome p{font-size:14px;color:var(--texte2);}
-  .poseurs-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:30px;}
-  .poseur-btn{background:#fff;border:2px solid var(--bordure);border-radius:14px;padding:24px 16px;text-align:center;cursor:pointer;transition:all .15s;font-family:inherit;}
-  .poseur-btn:hover,.poseur-btn:active{border-color:var(--bleu);background:var(--bleu-bg);}
-  .poseur-btn .avatar{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;margin:0 auto 12px;}
-  .poseur-btn .name{font-size:15px;font-weight:700;color:var(--texte);}
-  .poseur-btn .role{font-size:11px;color:var(--texte2);margin-top:2px;}
 
-  /* LISTE CHANTIERS */
-  .toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
-  .toolbar input{flex:1;border:1.5px solid var(--bordure);border-radius:10px;padding:10px 14px;font-family:inherit;font-size:14px;outline:none;}
-  .toolbar input:focus{border-color:var(--bleu);}
-  .date-badge{background:#fff;border:1px solid var(--bordure);border-radius:8px;padding:8px 12px;font-size:12px;font-weight:600;color:var(--texte2);white-space:nowrap;}
+  /* ÉCRAN 1 : CHOIX POSEUR */
+  .welcome{text-align:center;padding:32px 20px 24px;}
+  .welcome h2{font-size:20px;font-weight:700;margin-bottom:6px;}
+  .welcome p{font-size:13px;color:var(--texte2);}
+  .poseurs-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px;}
+  .poseur-btn{background:#fff;border:2px solid var(--bordure);border-radius:12px;padding:20px 14px;text-align:center;cursor:pointer;transition:all .15s;font-family:inherit;}
+  .poseur-btn:hover{border-color:var(--bleu);background:var(--bleu-bg);}
+  .avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;margin:0 auto 10px;}
+  .poseur-btn .name{font-size:14px;font-weight:700;}
 
-  .chantier-card{background:#fff;border-radius:14px;border:1px solid var(--bordure);margin-bottom:12px;overflow:hidden;transition:box-shadow .15s;}
-  .chantier-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08);}
-  .chantier-header{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
-  .chantier-client{font-size:15px;font-weight:700;}
-  .chantier-sub{font-size:12px;color:var(--texte2);margin-top:2px;}
-  .chantier-badges{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:6px;}
-  .chip{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
-  .chip-bleu{background:var(--bleu-bg);color:var(--bleu);}
-  .chip-vert{background:var(--vert-bg);color:var(--vert);}
-  .chip-rouge{background:var(--rouge-bg);color:var(--rouge);}
-  .chip-orange{background:var(--orange-bg);color:var(--orange);}
-  .chip-jaune{background:var(--jaune-bg);color:var(--jaune);}
-  .chevron{font-size:18px;color:var(--texte2);transition:transform .2s;}
-  .chevron.open{transform:rotate(180deg);}
+  /* ÉCRAN 2 : LISTE CHANTIERS */
+  .week-selector{display:flex;align-items:center;gap:8px;margin-bottom:14px;background:#fff;border-radius:10px;padding:10px 14px;border:1px solid var(--bordure);}
+  .week-selector label{font-size:12px;font-weight:600;color:var(--texte2);white-space:nowrap;}
+  .week-input{flex:1;border:1.5px solid var(--bordure);border-radius:7px;padding:7px 10px;font-family:inherit;font-size:14px;font-weight:700;outline:none;text-align:center;}
+  .week-input:focus{border-color:var(--bleu);}
+  .btn-week{background:var(--bleu);color:#fff;border:none;border-radius:7px;padding:7px 14px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;}
 
-  /* FORMULAIRE AVANCEMENT */
-  .chantier-body{display:none;padding:0 16px 16px;border-top:1px solid var(--bordure);}
-  .chantier-body.open{display:block;}
-  .section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--texte2);margin:14px 0 8px;}
-  .input-field{width:100%;border:1.5px solid var(--bordure);border-radius:8px;padding:10px 12px;font-family:inherit;font-size:14px;outline:none;margin-bottom:8px;color:var(--texte);}
-  .input-field:focus{border-color:var(--bleu);}
-  textarea.input-field{resize:vertical;min-height:70px;}
-  .checkbox-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-  .checkbox-item{display:flex;align-items:center;gap:8px;background:var(--bg);border-radius:8px;padding:10px 12px;cursor:pointer;border:1.5px solid transparent;transition:all .12s;}
-  .checkbox-item.checked{background:var(--vert-bg);border-color:var(--vert);}
-  .checkbox-item input{accent-color:var(--vert);width:16px;height:16px;cursor:pointer;}
-  .checkbox-item label{font-size:13px;font-weight:500;cursor:pointer;}
+  .chantier-card{background:#fff;border-radius:12px;border:1px solid var(--bordure);padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .chantier-info{flex:1;}
+  .chantier-client{font-size:14px;font-weight:700;margin-bottom:3px;}
+  .chantier-meta{font-size:11px;color:var(--texte2);}
+  .pv-status{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+  .badge-pv-ok{background:var(--vert-bg);color:var(--vert);padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;}
+  .badge-pv-non{background:var(--rouge-bg);color:var(--rouge);padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;}
+  .btn-pv{background:var(--bleu);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;}
+  .btn-pv:hover{background:#1976D2;}
+  .empty{text-align:center;padding:40px 20px;color:var(--texte2);}
+  .empty .icon{font-size:40px;margin-bottom:10px;}
 
-  /* STATUT SELECT */
+  /* ÉCRAN 3 : FORMULAIRE PV */
+  .pv-form{background:#fff;border-radius:12px;border:1px solid var(--bordure);padding:18px;}
+  .pv-title{font-size:16px;font-weight:700;color:var(--bleu);margin-bottom:4px;}
+  .pv-subtitle{font-size:12px;color:var(--texte2);margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--bordure);}
+  .form-group{margin-bottom:14px;}
+  .form-group label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--texte2);margin-bottom:5px;}
+  .form-group input,.form-group textarea,.form-group select{width:100%;border:1.5px solid var(--bordure);border-radius:8px;padding:9px 12px;font-family:inherit;font-size:14px;outline:none;color:var(--texte);}
+  .form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--bleu);}
+  .form-group textarea{resize:vertical;min-height:80px;}
+  .radio-group{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .radio-btn{display:flex;align-items:center;gap:8px;padding:12px;border:2px solid var(--bordure);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s;}
+  .radio-btn.selected-vert{border-color:var(--vert);background:var(--vert-bg);color:var(--vert);}
+  .radio-btn.selected-orange{border-color:var(--orange);background:var(--orange-bg);color:var(--orange);}
+  .radio-btn input{accent-color:var(--vert);width:16px;height:16px;}
+
+  /* SIGNATURE */
+  .signature-zone{border:2px dashed var(--bordure);border-radius:10px;overflow:hidden;margin-top:6px;background:#fff;}
+  .signature-zone canvas{display:block;width:100%;touch-action:none;}
+  .sig-toolbar{display:flex;gap:8px;margin-top:8px;}
+  .btn-clear{background:var(--rouge-bg);color:var(--rouge);border:none;border-radius:7px;padding:8px 14px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;}
+  .sig-hint{font-size:11px;color:var(--texte2);margin-top:6px;text-align:center;font-style:italic;}
+
+  /* BOUTONS */
+  .btn-generate{width:100%;padding:16px;background:var(--bleu);color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;margin-top:18px;display:flex;align-items:center;justify-content:center;gap:8px;}
+  .btn-generate:hover{background:#1976D2;}
+  .btn-generate:disabled{background:#90CAF9;cursor:not-allowed;}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1A1A2E;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:999;display:none;}
+  .toast.show{display:block;}
+
+  .section-divider{background:var(--bleu);color:#fff;text-align:center;padding:8px;font-size:11px;font-weight:700;letter-spacing:2px;border-radius:6px;margin:16px 0 12px;}
+  .loader{text-align:center;padding:32px;color:var(--texte2);}
+  .spinner{width:28px;height:28px;border:3px solid var(--bleu-bg);border-top-color:var(--bleu);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 10px;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* POSEUR EXTRA */
   .statut-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
   .statut-btn{padding:10px;border-radius:8px;border:2px solid var(--bordure);background:#fff;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all .12s;}
   .statut-btn.active-vert{border-color:var(--vert);background:var(--vert-bg);color:var(--vert);}
   .statut-btn.active-orange{border-color:var(--orange);background:var(--orange-bg);color:var(--orange);}
   .statut-btn.active-rouge{border-color:var(--rouge);background:var(--rouge-bg);color:var(--rouge);}
   .statut-btn.active-jaune{border-color:var(--jaune);background:var(--jaune-bg);color:#856404;}
-
-  /* HISTORIQUE COMMENTAIRES */
-  .historique{background:var(--bg);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--texte2);font-style:italic;margin-bottom:8px;max-height:100px;overflow-y:auto;white-space:pre-wrap;}
-  .historique:empty::before{content:"Aucun commentaire poseur pour l\'instant.";}
-
-  /* BOUTON ENREGISTRER */
+  .checkbox-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .checkbox-item{display:flex;align-items:center;gap:8px;background:var(--bg);border-radius:8px;padding:10px 12px;cursor:pointer;border:1.5px solid transparent;transition:all .12s;}
+  .checkbox-item.checked{background:var(--vert-bg);border-color:var(--vert);}
+  .checkbox-item input{accent-color:var(--vert);width:16px;height:16px;cursor:pointer;}
+  .checkbox-item label{font-size:13px;font-weight:500;cursor:pointer;}
   .btn-save{width:100%;padding:14px;background:var(--bleu);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:8px;}
   .btn-save:hover{background:#1976D2;}
-  .btn-save:disabled{background:#90CAF9;cursor:not-allowed;}
-
-  /* TOAST */
-  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1A1A2E;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:999;display:none;animation:slideUp .3s ease;}
-  .toast.show{display:block;}
-  @keyframes slideUp{from{transform:translateX(-50%) translateY(20px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
-
-  /* LOADER */
-  .loader{text-align:center;padding:40px;color:var(--texte2);font-size:14px;}
-  .spinner{width:32px;height:32px;border:3px solid var(--bleu-bg);border-top-color:var(--bleu);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;}
-  @keyframes spin{to{transform:rotate(360deg)}}
-
-  .empty{text-align:center;padding:48px 20px;color:var(--texte2);}
-  .empty .icon{font-size:48px;margin-bottom:12px;}
-
   .sync-bar{background:var(--vert-bg);color:var(--vert);padding:8px 20px;font-size:12px;font-weight:600;text-align:center;display:none;}
   .sync-bar.show{display:block;}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1A1A2E;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:999;display:none;}
+  .toast.show{display:block;}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
 <div class="header">
-  <div class="header-left">
-    
+  <div style="display:flex;align-items:center;gap:8px;">
+    <button class="btn-back" id="btn-back" onclick="goBack()" style="display:none">←</button>
     <div>
-      <h1>ECO OUEST</h1>
-      <small id="header-sub">Choisissez votre profil</small>
+      <h1>ECO OUEST — ARTIOM</h1>
+      <small id="header-sub">Mes chantiers du jour</small>
     </div>
   </div>
-  <div class="poseur-badge" style="display:block">ARTIOM</div>
+  <div class="poseur-badge" style="display:block;background:#2E7D32">ARTIOM</div>
 </div>
 
-
-<div class="sync-bar" id="sync-bar">✅ Enregistré dans Google Sheets !</div>
+<div class="sync-bar" id="sync-bar">✅ Enregistré !</div>
 <div class="toast" id="toast"></div>
 
-<!-- ÉCRAN ACCUEIL SUPPRIME - demarrage direct -->
-<div class="screen" id="screen-accueil"></div>
-
-<!-- ÉCRAN 2 : CHANTIERS -->
-<div class="screen" id="screen-chantiers">
-  <div class="toolbar">
-    <input type="text" id="search-chantier" placeholder="🔍 Rechercher un chantier..." oninput="filtrerChantiers()">
-    <div class="date-badge" id="date-badge"></div>
+<!-- ÉCRAN CHANTIERS -->
+<div class="screen active" id="screen-chantiers">
+  <div class="week-selector">
+    <label>Semaine :</label>
+    <input type="number" class="week-input" id="week-input" min="1" max="53" placeholder="26">
+    <button class="btn-week" onclick="filtrerSemaine()">🔍 Voir</button>
   </div>
   <div id="chantiers-list">
-    <div class="loader"><div class="spinner"></div>Chargement des chantiers...</div>
+    <div class="loader"><div class="spinner"></div>Chargement...</div>
+  </div>
+</div>
+
+<!-- ÉCRAN AVANCEMENT -->
+<div class="screen" id="screen-avancement">
+  <div id="avancement-form"></div>
+</div>
+
+<!-- ÉCRAN PV -->
+<div class="screen" id="screen-pv">
+  <div class="pv-form">
+    <div class="pv-title">Constat de Réception des Travaux</div>
+    <div class="pv-subtitle">D'ECO OUEST · 153 av. du Général Leclerc · 78220 VIROFLAY</div>
+    <div class="form-group"><label>Client *</label><input type="text" id="pv-client"></div>
+    <div class="form-group"><label>N° Contrat / Devis</label><input type="text" id="pv-contrat"></div>
+    <div class="form-group"><label>Date</label><input type="date" id="pv-date"></div>
+    <div class="form-group"><label>Adresse chantier</label><input type="text" id="pv-adresse"></div>
+    <div class="form-group"><label>Poseur</label><input type="text" id="pv-poseur" readonly style="background:var(--bg);"></div>
+    <div class="section-divider">RÉCEPTION</div>
+    <div class="form-group">
+      <label>La réception est prononcée</label>
+      <div class="radio-group">
+        <div class="radio-btn" id="rb-sans" onclick="selReception('sans')"><input type="radio" name="reception" value="sans"> Sans réserve ✅</div>
+        <div class="radio-btn" id="rb-avec" onclick="selReception('avec')"><input type="radio" name="reception" value="avec"> Avec réserve ⚠️</div>
+      </div>
+    </div>
+    <div class="section-divider">COMMENTAIRES</div>
+    <div class="form-group"><label>Commentaires / Réserves</label><textarea id="pv-commentaires"></textarea></div>
+    <div class="section-divider">RÈGLEMENT</div>
+    <div class="form-group"><label>Modalités de règlement</label><textarea id="pv-reglement"></textarea></div>
+    <div class="section-divider">SIGNATURE DU CLIENT</div>
+    <div class="form-group"><label>Fait à</label><input type="text" id="pv-lieu" value="Viroflay"></div>
+    <div class="form-group">
+      <label>Signature du Maître de l'ouvrage</label>
+      <div class="signature-zone"><canvas id="sig-canvas" height="160"></canvas></div>
+      <div class="sig-toolbar"><button class="btn-clear" onclick="clearSignature()">🗑 Effacer</button></div>
+    </div>
+    <button class="btn-generate" id="btn-generate" onclick="genererPDF()">📄 Générer le PV</button>
+    <button class="btn-generate" id="btn-mail" onclick="envoyerMail()" style="background:#0078D4;margin-top:10px;display:none;">📧 Envoyer par Outlook</button>
   </div>
 </div>
 
@@ -142,253 +182,74 @@
 var WEBAPP = 'https://script.google.com/macros/s/AKfycbxk1zFKVsCDoiN5J4RAZYF-9nEYqGMIypS2lqBooqZWkxwMUGo8JVq5-iS9ZvZUGasa/exec';
 var poseurActuel = 'ARTIOM';
 var colPoseur = 18;
-var chantiers = [];
-
-var TYPES_POSE = ['Fenetre','Porte','Volet','Porte-fenetre','Baie vitree','Velux','Portail','Portillon','Store','Autre'];
+var allChantiers = [];
+var chantierActuel = null;
+var sigCanvas, sigCtx, sigDrawing = false, sigHasSig = false;
+var photosEnAttente = {};
 var STATUTS = [
-  {label:'Termine ✅',  cls:'active-vert',   val:'Termine'},
-  {label:'En cours 🔧', cls:'active-orange',  val:'En cours'},
+  {label:'Termine ✅', cls:'active-vert', val:'Termine'},
+  {label:'En cours 🔧', cls:'active-orange', val:'En cours'},
   {label:'A planifier 📅', cls:'active-jaune', val:'A planifier'},
-  {label:'SAV ⚠️',      cls:'active-rouge',   val:'SAV'},
+  {label:'SAV ⚠️', cls:'active-rouge', val:'SAV'},
 ];
+var TYPES_POSE = ['Fenetre','Porte','Volet','Porte-fenetre','Baie vitree','Velux','Portail','Store','Autre'];
 
-function choisirPoseur(nom, col, couleur) {
-  poseurActuel = nom;
-  colPoseur = col;
-  document.getElementById('poseur-badge').textContent = nom;
-  document.getElementById('poseur-badge').style.display = 'block';
-  document.getElementById('header-sub').textContent = 'Mes chantiers';
-  document.getElementById('btn-retour').style.display = 'block';
-  var d = new Date();
-  var sem = getWeekNum(d);
-  document.getElementById('date-badge').textContent = d.toLocaleDateString('fr-FR',{weekday:'short',day:'2-digit',month:'2-digit'}) + ' · S'+sem;
-  showScreen('screen-chantiers');
-  chargerChantiers();
-}
-
-function retourAccueil() {
-  poseurActuel = null;
-  document.getElementById('poseur-badge').style.display = 'none';
-  document.getElementById('btn-retour').style.display = 'none';
-  document.getElementById('header-sub').textContent = 'Choisissez votre profil';
-  showScreen('screen-accueil');
-}
-
+// ── NAVIGATION ────────────────────────────────────────────
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
   document.getElementById(id).classList.add('active');
 }
 
-async function chargerChantiers() {
+function goBack() {
+  var active = document.querySelector('.screen.active');
+  if (active.id === 'screen-pv') {
+    showScreen('screen-avancement');
+    document.getElementById('header-sub').textContent = chantierActuel ? chantierActuel.client : 'Avancement';
+  } else if (active.id === 'screen-avancement') {
+    showScreen('screen-chantiers');
+    document.getElementById('header-sub').textContent = 'Mes chantiers du jour';
+    document.getElementById('btn-back').style.display = 'none';
+  }
+}
+
+function goBackFromPV() {
+  showScreen('screen-avancement');
+}
+
+// ── CHARGEMENT JSONP ──────────────────────────────────────
+window.addEventListener('load', function() {
+  var sem = getWeekNum(new Date());
+  document.getElementById('week-input').value = sem;
+  chargerChantiers();
+});
+
+function chargerChantiers() {
   document.getElementById('chantiers-list').innerHTML = '<div class="loader"><div class="spinner"></div>Chargement...</div>';
-  try {
-    var r = await fetch(WEBAPP, {redirect:'follow'});
-    var d = await r.json();
-    if (!d.ok) throw new Error(d.error);
-    // Filtrer : chantiers du jour (colonne T) + non annulés
-    var today = new Date();
-    var semaineAujourd = getWeekNum(today);
-    var dateAujourd = today.toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit',year:'numeric'});
-
-    chantiers = d.data.filter(function(c) {
-      if ((c.commentaireARC||'').toUpperCase() === 'ANNULER') return false;
-      var dp = (c.datePose||'').trim();
-      if (!dp) return false;
-      // Vérifier si c'est un numéro de semaine (ex: S26, S 26)
-      var mSem = dp.match(/S\s*0*(\d{1,2})/i);
-      if (mSem) {
-        return parseInt(mSem[1], 10) === semaineAujourd;
-      }
-      // Vérifier si c'est une date précise (formats DD/MM/YYYY ou YYYY-MM-DD)
-      var dpNorm = normaliserDate(dp);
-      return dpNorm === dateAujourd;
-    });
-    renderChantiers(chantiers);
-  } catch(e) {
-    document.getElementById('chantiers-list').innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>Impossible de charger les chantiers.<br>Vérifiez la connexion.</p></div>';
-  }
-}
-
-function filtrerChantiers() {
-  var q = document.getElementById('search-chantier').value.toLowerCase();
-  var filtre = chantiers.filter(function(c) {
-    return (c.client||'').toLowerCase().indexOf(q) !== -1;
-  });
-  renderChantiers(filtre);
-}
-
-function renderChantiers(liste) {
-  if (!liste.length) {
-    var today2 = new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'2-digit',month:'long'});
-    document.getElementById('chantiers-list').innerHTML = '<div class="empty"><div class="icon">📅</div><p>Aucun chantier planifié pour <strong>'+today2+'</strong>.</p></div>';
-    return;
-  }
-  // Inverser : plus récent en premier
-  var sorted = liste.slice().reverse();
-  document.getElementById('chantiers-list').innerHTML = sorted.map(function(c, i) {
-    var sP = c.statutPose || '';
-    var chipStatut = '';
-    if (sP === 'SAV') chipStatut = '<span class="chip chip-rouge">⚠ SAV</span>';
-    else if (sP === 'A PLANIFIER' || sP === 'A planifier') chipStatut = '<span class="chip chip-jaune">📅 A planifier</span>';
-    else if (sP === 'En cours') chipStatut = '<span class="chip chip-orange">🔧 En cours</span>';
-    else if (sP === 'Terminé' || sP === 'Termine') chipStatut = '<span class="chip chip-vert">✅ Terminé</span>';
-
-    var semBadge = '';
-    if (c.prevLivraison) {
-      var m = c.prevLivraison.match(/S\s*0*(\d{1,2})/i);
-      if (m) semBadge = '<span class="chip chip-bleu">S'+m[1]+'</span>';
+  var old = document.getElementById('jsonp-poseur');
+  if (old) old.parentNode.removeChild(old);
+  var timeout = setTimeout(function() {
+    document.getElementById('chantiers-list').innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>Erreur de connexion.</p></div>';
+  }, 15000);
+  window._poseurCallback = function(d) {
+    clearTimeout(timeout);
+    if (!d.ok) {
+      document.getElementById('chantiers-list').innerHTML = '<div class="empty"><p>Erreur: ' + (d.error||'inconnue') + '</p></div>';
+      return;
     }
-
-    var commentairePoseur = c['poseur_'+poseurActuel] || '';
-
-    return '<div class="chantier-card" id="card-'+c.ligne+'">' +
-      '<div class="chantier-header" onclick="toggleCard('+c.ligne+')">' +
-        '<div style="flex:1">' +
-          '<div class="chantier-client">'+h(c.client)+'</div>' +
-          '<div class="chantier-sub">'+h(c.fournisseur||'')+(c.devis?' · '+h(c.devis):'')+'</div>' +
-          '<div class="chantier-badges">' + chipStatut + semBadge +
-            (c.commentaire ? '<span class="chip chip-bleu">💬 Note bureau</span>' : '') +
-            (commentairePoseur ? '<span class="chip chip-vert">✏️ Mon suivi</span>' : '') +
-          '</div>' +
-        '</div>' +
-        '<span class="chevron" id="chevron-'+c.ligne+'">▾</span>' +
-      '</div>' +
-      '<div class="chantier-body" id="body-'+c.ligne+'">' +
-        // Note bureau (lecture seule)
-        (c.commentaire ? '<div class="section-title">📋 Note du bureau</div><div class="historique">'+h(c.commentaire)+'</div>' : '') +
-        // Statut pose
-        '<div class="section-title">Statut du chantier</div>' +
-        '<div class="statut-grid">' +
-          STATUTS.map(function(s) {
-            var isSel = sP.toLowerCase() === s.val.toLowerCase();
-            return '<button class="statut-btn'+(isSel?' '+s.cls:'')+'" id="statut-'+c.ligne+'-'+s.val+'" onclick="selStatut('+c.ligne+',\''+s.val+'\',\''+s.cls+'\')" >'+s.label+'</button>';
-          }).join('') +
-        '</div>' +
-        // Types posés
-        '<div class="section-title">Éléments posés</div>' +
-        '<div class="checkbox-grid" id="types-'+c.ligne+'">'+
-          TYPES_POSE.map(function(t) {
-            return '<div class="checkbox-item" id="chk-'+c.ligne+'-'+t+'" onclick="toggleCheck('+c.ligne+',\''+t+'\')">' +
-              '<input type="checkbox" id="cb-'+c.ligne+'-'+t+'" onclick="event.stopPropagation()"> ' +
-              '<label>'+t+'</label>' +
-            '</div>';
-          }).join('') +
-        '</div>' +
-        // Pièces
-        '<div class="section-title">Pièces concernées</div>' +
-        '<input class="input-field" id="pieces-'+c.ligne+'" type="text" placeholder="Ex: Salon, Chambre 1, WC...">' +
-        // Ce qui reste
-        '<div class="section-title">Ce qui reste à faire</div>' +
-        '<textarea class="input-field" id="reste-'+c.ligne+'" placeholder="Ex: Pose volet chambre 2, finitions..."></textarea>' +
-        // Commentaire poseur - historique
-        '<div class="section-title">Mon suivi / commentaires (historique)</div>' +
-        '<div class="historique" id="histo-'+c.ligne+'">'+(commentairePoseur||'')+'</div>' +
-        // Nouveau commentaire
-        '<div class="section-title">Ajouter un commentaire</div>' +
-        '<textarea class="input-field" id="comment-'+c.ligne+'" placeholder="Nouvelle remarque, problème rencontré..."></textarea>' +
-        // Bouton
-        // Section photos
-        '<div style="margin-top:14px;padding:12px;background:var(--vert-bg);border-radius:10px;border:1.5px solid var(--vert);">'+
-        '<label style="display:flex;align-items:center;gap:10px;cursor:pointer;">'+
-        '<input type="checkbox" id="pv-'+c.ligne+'" '+(c.pvChantier&&c.pvChantier.toUpperCase()==='OUI'?'checked':'')+' style="width:20px;height:20px;accent-color:var(--vert);cursor:pointer;">'+
-        '<span style="font-size:14px;font-weight:700;color:var(--vert);">✓ PV de fin de chantier effectué</span>'+
-        '</label></div>'+
-        '<button class="btn-save" onclick="enregistrer('+c.ligne+')">💾 Enregistrer mon avancement</button>'+
-        '<button style="width:100%;padding:14px;background:var(--vert);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;margin-top:10px;" onclick="ouvrirPV('+JSON.stringify(c).replace(/"/g,'\\&quot;')+')">📋 Faire le PV de réception</button>' +
-      '</div>' +
-    '</div>';
-  }).join('');
-}
-
-function toggleCard(ligne) {
-  var body = document.getElementById('body-'+ligne);
-  var chev = document.getElementById('chevron-'+ligne);
-  body.classList.toggle('open');
-  chev.classList.toggle('open');
-}
-
-function selStatut(ligne, val, cls) {
-  STATUTS.forEach(function(s) {
-    var btn = document.getElementById('statut-'+ligne+'-'+s.val);
-    if (btn) btn.className = 'statut-btn' + (s.val === val ? ' '+cls : '');
-  });
-}
-
-function toggleCheck(ligne, type) {
-  var item = document.getElementById('chk-'+ligne+'-'+type);
-  var cb   = document.getElementById('cb-'+ligne+'-'+type);
-  cb.checked = !cb.checked;
-  item.classList.toggle('checked', cb.checked);
-}
-
-async function enregistrer(ligne) {
-  var btn = document.querySelector('#card-'+ligne+' .btn-save');
-  btn.disabled = true;
-  btn.textContent = 'Enregistrement...';
-
-  // Récupérer statut sélectionné
-  var statutSel = '';
-  STATUTS.forEach(function(s) {
-    var b = document.getElementById('statut-'+ligne+'-'+s.val);
-    if (b && b.className.indexOf('active') !== -1) statutSel = s.val;
-  });
-
-  // Récupérer types cochés
-  var typesCochesList = TYPES_POSE.filter(function(t) {
-    var cb = document.getElementById('cb-'+ligne+'-'+t);
-    return cb && cb.checked;
-  });
-
-  var pieces  = (document.getElementById('pieces-'+ligne).value||'').trim();
-  var reste   = (document.getElementById('reste-'+ligne).value||'').trim();
-  var newComment = (document.getElementById('comment-'+ligne).value||'').trim();
-
-  // Construire le commentaire poseur avec horodatage
-  var histo = document.getElementById('histo-'+ligne).textContent;
-  var now = new Date();
-  var dateStr = now.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'})+' '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-  var lignes = [];
-  if (statutSel)         lignes.push('Statut: '+statutSel);
-  if (typesCochesList.length) lignes.push('Posé: '+typesCochesList.join(', '));
-  if (pieces)            lignes.push('Pièces: '+pieces);
-  if (reste)             lignes.push('Reste: '+reste);
-  if (newComment)        lignes.push(newComment);
-
-  var nouvelleLigne = lignes.length ? '['+dateStr+' - '+poseurActuel+'] '+lignes.join(' | ') : '';
-  var commentaireFinal = histo ? histo + (nouvelleLigne ? '\n'+nouvelleLigne : '') : nouvelleLigne;
-
-  // Colonne statut pose = 13 (M), commentaire poseur = colPoseur (Q=17, R=18, S=19)
-  var pvEl = document.getElementById('pv-'+ligne);
-  var pvVal = pvEl && pvEl.checked ? 'OUI' : 'NON';
-  var champs = {};
-  if (statutSel) champs[13] = statutSel;
-  champs[16] = pvVal;
-  if (commentaireFinal) champs[colPoseur] = commentaireFinal;
-
-  try {
-    var r = await fetch(WEBAPP, {
-      method:'POST',
-      headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({action:'modifier', ligne:ligne, champs:champs}),
-      redirect:'follow'
+    allChantiers = d.data.filter(function(c) {
+      return (c.commentaireARC||'').toUpperCase() !== 'ANNULER';
     });
-    var d = await r.json();
-    if (!d.ok) throw new Error(d.error);
-
-    // Mettre à jour l'historique affiché
-    document.getElementById('histo-'+ligne).textContent = commentaireFinal;
-    document.getElementById('comment-'+ligne).value = '';
-
-    showToast('✅ Avancement enregistré !');
-    showSyncBar();
-  } catch(e) {
-    showToast('❌ Erreur : '+e.message);
-  }
-
-  btn.disabled = false;
-  btn.textContent = '💾 Enregistrer mon avancement';
+    filtrerSemaine();
+  };
+  var script = document.createElement('script');
+  script.id = 'jsonp-poseur';
+  script.src = WEBAPP + '?callback=_poseurCallback&t=' + Date.now();
+  script.onerror = function() {
+    clearTimeout(timeout);
+    document.getElementById('chantiers-list').innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>Erreur de connexion.</p></div>';
+  };
+  document.head.appendChild(script);
 }
-
 
 function getWeekNum(d) {
   d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
@@ -398,33 +259,208 @@ function getWeekNum(d) {
 }
 
 function normaliserDate(s) {
-  // Convertit YYYY-MM-DD ou DD/MM/YYYY en DD/MM/YYYY
   if (!s) return '';
   s = s.trim();
-  if (s.match(/^\d{4}-\d{2}-\d{2}/)) {
-    var p = s.slice(0,10).split('-');
-    return p[2]+'/'+p[1]+'/'+p[0];
-  }
+  if (s.match(/^\d{4}-\d{2}-\d{2}/)) { var p=s.slice(0,10).split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
   if (s.match(/^\d{2}\/\d{2}\/\d{4}/)) return s.slice(0,10);
   return s;
 }
 
-// Retour depuis PV
-function goBackPV() {
-  document.getElementById('screen-pv').classList.remove('active');
-  document.getElementById('screen-chantiers').classList.add('active');
+function filtrerSemaine() {
+  var semStr = document.getElementById('week-input').value;
+  if (!semStr) return;
+  var sem = parseInt(semStr, 10);
+  var today = new Date();
+  var dateAujourd = today.toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit',year:'numeric'});
+
+  var filtered = allChantiers.filter(function(c) {
+    var dp = (c.datePose||'').trim();
+    if (!dp) return false;
+    var mSem = dp.match(/S\s*0*(\d{1,2})/i);
+    if (mSem) return parseInt(mSem[1],10) === sem;
+    var d = new Date(dp);
+    if (!isNaN(d)) return getWeekNum(d) === sem;
+    return false;
+  });
+
+  if (!filtered.length) {
+    var d2 = new Date(); d2.setDate(d2.getDate() + (sem - getWeekNum(d2)) * 7);
+    document.getElementById('chantiers-list').innerHTML = '<div class="empty"><div class="icon">📅</div><p>Aucun chantier pour la semaine S' + sem + '.</p></div>';
+    return;
+  }
+
+  document.getElementById('chantiers-list').innerHTML = filtered.slice().reverse().map(function(c) {
+    var pvFait = (c.pvChantier||'').toUpperCase() === 'OUI';
+    return '<div class="chantier-card">' +
+      '<div class="chantier-info">' +
+      '<div class="chantier-client">' + h(c.client) + '</div>' +
+      '<div class="chantier-meta">' + (c.fournisseur||'') + (c.devis?' · '+c.devis:'') + (c.datePose?' · 📅 '+c.datePose:'') + '</div>' +
+      '</div>' +
+      '<div class="pv-status">' +
+      (pvFait ? '<span class="badge-pv-ok">✓ PV fait</span>' : '<span class="badge-pv-non">✗ PV manquant</span>') +
+      '<button class="btn-pv" onclick="ouvrirAvancement(' + JSON.stringify(c).replace(/"/g, "&quot;") + ')">▶ Ouvrir</button>' +
+      '</div></div>';
+  }).join('');
 }
 
-// Demarrage automatique
-window.addEventListener('load', function() {
-  document.getElementById('date-badge').textContent = (function(){
-    var d = new Date();
-    var sem = getWeekNum(d);
-    return d.toLocaleDateString('fr-FR',{weekday:'short',day:'2-digit',month:'2-digit'}) + ' · S'+sem;
-  })();
-  showScreen('screen-chantiers');
-  chargerChantiers();
-});
+// ── AVANCEMENT ────────────────────────────────────────────
+function ouvrirAvancement(c) {
+  chantierActuel = c;
+  document.getElementById('header-sub').textContent = c.client;
+  document.getElementById('btn-back').style.display = 'block';
+
+  var statutSel = c.statutPose || '';
+  var html = '<div style="padding:16px;">';
+  html += '<div style="font-size:16px;font-weight:700;margin-bottom:4px;">' + h(c.client) + '</div>';
+  html += '<div style="font-size:12px;color:var(--texte2);margin-bottom:16px;">' + h(c.fournisseur||'') + (c.datePose?' · 📅 '+c.datePose:'') + '</div>';
+
+  if (c.commentaire) {
+    html += '<div style="padding:10px 12px;background:#FFF3E0;border-radius:8px;border-left:3px solid var(--orange);margin-bottom:14px;">';
+    html += '<div style="font-size:11px;font-weight:700;color:var(--orange);">📋 NOTE BUREAU</div>';
+    html += '<div style="font-size:12px;margin-top:4px;">' + h(c.commentaire) + '</div></div>';
+  }
+
+  html += '<div class="section-title">Statut du chantier</div>';
+  html += '<div class="statut-grid">' + STATUTS.map(function(s) {
+    var isSel = statutSel.toLowerCase() === s.val.toLowerCase();
+    return '<button class="statut-btn' + (isSel?' '+s.cls:'') + '" id="statut-' + c.ligne + '-' + s.val + '" onclick="selStatut(' + c.ligne + ',\'' + s.val + '\',\'' + s.cls + '\')">' + s.label + '</button>';
+  }).join('') + '</div>';
+
+  html += '<div class="section-title">Elements poses</div>';
+  html += '<div class="checkbox-grid">' + TYPES_POSE.map(function(t) {
+    return '<div class="checkbox-item" id="chk-' + c.ligne + '-' + t + '" onclick="toggleCheck(' + c.ligne + ',\'' + t + '\')">' +
+      '<input type="checkbox" id="cb-' + c.ligne + '-' + t + '" onclick="event.stopPropagation()"><label>' + t + '</label></div>';
+  }).join('') + '</div>';
+
+  html += '<div class="section-title">Pieces concernees</div>';
+  html += '<input class="input-field" id="pieces-' + c.ligne + '" type="text" placeholder="Salon, Chambre 1...">';
+
+  html += '<div class="section-title">Ce qui reste a faire</div>';
+  html += '<textarea class="input-field" id="reste-' + c.ligne + '" placeholder="Details..."></textarea>';
+
+  html += '<div class="section-title">Mon suivi (historique)</div>';
+  html += '<div class="historique" id="histo-' + c.ligne + '">' + h(c['poseur_' + poseurActuel] || '') + '</div>';
+
+  html += '<div class="section-title">Ajouter un commentaire</div>';
+  html += '<textarea class="input-field" id="comment-' + c.ligne + '" placeholder="Nouvelle remarque..."></textarea>';
+
+  html += '<div style="padding:12px;background:var(--vert-bg);border-radius:10px;border:1.5px solid var(--vert);margin-top:14px;">';
+  html += '<label style="display:flex;align-items:center;gap:10px;cursor:pointer;">';
+  html += '<input type="checkbox" id="pv-cb-' + c.ligne + '" ' + ((c.pvChantier||'').toUpperCase()==='OUI'?'checked':'') + ' style="width:20px;height:20px;accent-color:var(--vert);cursor:pointer;">';
+  html += '<span style="font-size:14px;font-weight:700;color:var(--vert);">✓ PV de fin de chantier effectue</span>';
+  html += '</label></div>';
+
+  html += '<button class="btn-save" onclick="enregistrer(' + c.ligne + ')">💾 Enregistrer mon avancement</button>';
+  html += '<button style="width:100%;padding:14px;background:#1565C0;color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;margin-top:10px;" onclick="ouvrirPV(' + JSON.stringify(c).replace(/"/g, '&quot;') + ')">📋 Faire le PV de reception</button>';
+  html += '</div>';
+
+  document.getElementById('avancement-form').innerHTML = html;
+  showScreen('screen-avancement');
+}
+
+function selStatut(ligne, val, cls) {
+  STATUTS.forEach(function(s) {
+    var btn = document.getElementById('statut-' + ligne + '-' + s.val);
+    if (btn) btn.className = 'statut-btn' + (s.val === val ? ' ' + cls : '');
+  });
+}
+
+function toggleCheck(ligne, type) {
+  var item = document.getElementById('chk-' + ligne + '-' + type);
+  var cb   = document.getElementById('cb-' + ligne + '-' + type);
+  cb.checked = !cb.checked;
+  item.classList.toggle('checked', cb.checked);
+}
+
+async function enregistrer(ligne) {
+  var btn = document.querySelector('#avancement-form .btn-save');
+  if (btn) { btn.disabled=true; btn.textContent='Enregistrement...'; }
+
+  var statutSel = '';
+  STATUTS.forEach(function(s) {
+    var b = document.getElementById('statut-' + ligne + '-' + s.val);
+    if (b && b.className.indexOf('active') !== -1) statutSel = s.val;
+  });
+
+  var typesCochesList = TYPES_POSE.filter(function(t) {
+    var cb = document.getElementById('cb-' + ligne + '-' + t);
+    return cb && cb.checked;
+  });
+
+  var pieces  = (document.getElementById('pieces-' + ligne)||{}).value||'';
+  var reste   = (document.getElementById('reste-' + ligne)||{}).value||'';
+  var newComment = (document.getElementById('comment-' + ligne)||{}).value||'';
+  var pvCb    = document.getElementById('pv-cb-' + ligne);
+  var pvVal   = pvCb && pvCb.checked ? 'OUI' : 'NON';
+
+  var histo = document.getElementById('histo-' + ligne);
+  var histoText = histo ? histo.textContent : '';
+  var now = new Date();
+  var dateStr = now.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'}) + ' ' + now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  var lignes2 = [];
+  if (statutSel) lignes2.push('Statut: ' + statutSel);
+  if (typesCochesList.length) lignes2.push('Pose: ' + typesCochesList.join(', '));
+  if (pieces.trim()) lignes2.push('Pieces: ' + pieces.trim());
+  if (reste.trim()) lignes2.push('Reste: ' + reste.trim());
+  if (newComment.trim()) lignes2.push(newComment.trim());
+
+  var nouvelleLigne = lignes2.length ? '[' + dateStr + ' - ' + poseurActuel + '] ' + lignes2.join(' | ') : '';
+  var commentaireFinal = histoText ? histoText + (nouvelleLigne ? '\n' + nouvelleLigne : '') : nouvelleLigne;
+
+  var champs = {};
+  if (statutSel) champs[13] = statutSel;
+  champs[16] = pvVal;
+  if (commentaireFinal) champs[colPoseur] = commentaireFinal;
+
+  try {
+    var r = await fetch(WEBAPP, {
+      method:'POST', headers:{'Content-Type':'text/plain'},
+      body: JSON.stringify({action:'modifier', ligne:ligne, champs:champs}),
+      redirect:'follow'
+    });
+    var d = await r.json();
+    if (!d.ok) throw new Error(d.error);
+    if (histo) histo.textContent = commentaireFinal;
+    var cmtEl = document.getElementById('comment-' + ligne);
+    if (cmtEl) cmtEl.value = '';
+    showToast('✅ Avancement enregistre !');
+    showSyncBar();
+  } catch(e) {
+    showToast('❌ Erreur : ' + e.message);
+  }
+
+  if (btn) { btn.disabled=false; btn.textContent='💾 Enregistrer mon avancement'; }
+}
+
+// ── PV ────────────────────────────────────────────────────
+function ouvrirPV(c) {
+  chantierActuel = c;
+  document.getElementById('pv-client').value = c.client || '';
+  document.getElementById('pv-contrat').value = c.devis || '';
+  document.getElementById('pv-date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('pv-adresse').value = '';
+  document.getElementById('pv-poseur').value = poseurActuel;
+  document.getElementById('pv-commentaires').value = c.commentaire || '';
+  document.getElementById('pv-reglement').value = '';
+  document.getElementById('pv-lieu').value = 'Viroflay';
+  document.getElementById('rb-sans').className = 'radio-btn';
+  document.getElementById('rb-avec').className = 'radio-btn';
+  selReception('sans');
+  document.getElementById('btn-mail').style.display = 'none';
+  showScreen('screen-pv');
+  setTimeout(initSignature, 100);
+}
+
+function h(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function showToast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},3000); }
+function showSyncBar(){ var b=document.getElementById('sync-bar'); b.classList.add('show'); setTimeout(function(){b.classList.remove('show');},3000); }
+function envoyerMail() {
+  var d = window.pvMailData || {};
+  var sujet = encodeURIComponent('PV reception - ' + (d.client||'') + ' - ' + (d.date||''));
+  var corps = encodeURIComponent('Madame, Monsieur ' + (d.client||'') + ',\n\nVeuillez trouver ci-joint le PV de reception.\n\nCordialement,\n' + poseurActuel + "\nD'ECO OUEST");
+  window.location.href = 'mailto:?subject=' + sujet + '&body=' + corps;
+  showToast('📧 Outlook ouvert');
+}
 
 
 var WEBAPP = 'https://script.google.com/macros/s/AKfycbxk1zFKVsCDoiN5J4RAZYF-9nEYqGMIypS2lqBooqZWkxwMUGo8JVq5-iS9ZvZUGasa/exec';
@@ -595,26 +631,6 @@ function endDraw(e)    { e.preventDefault(); sigDrawing=false; }
 function clearSignature(){ if(sigCtx) sigCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height); sigHasSig=false; }
 
 // ── GÉNÉRATION PDF ────────────────────────────────────────
-
-function envoyerMail() {
-  var d = window.pvMailData || {};
-  var sujet = encodeURIComponent("PV de réception des travaux - " + (d.client||'') + " - " + (d.date||''));
-  var corps = encodeURIComponent(
-    "Madame, Monsieur " + (d.client||'') + ",\n\n" +
-    "Veuillez trouver ci-joint le Constat de Réception des Travaux effectués à :\n" +
-    (d.adresse||'') + "\n\n" +
-    "Réception prononcée : " + (d.recVal==='sans' ? 'SANS RÉSERVE' : 'AVEC RÉSERVE') + "\n\n" +
-    "Cordialement,\n" +
-    poseurActuel + "\n" +
-    "D'ECO OUEST SOLABAIE\n" +
-    "153, avenue du Général Leclerc · 78220 VIROFLAY\n" +
-    "Tél. 01 39 24 26 26"
-  );
-  // Ouvrir Outlook avec mailto
-  window.location.href = "mailto:?subject=" + sujet + "&body=" + corps;
-  showToast('📧 Outlook ouvert — attachez le PDF téléchargé');
-}
-
 async function genererPDF() {
   var client    = document.getElementById('pv-client').value.trim();
   var contrat   = document.getElementById('pv-contrat').value.trim();
@@ -784,17 +800,7 @@ async function genererPDF() {
     }
 
     showToast('✅ PV généré et téléchargé !');
-    // Afficher le bouton mail
-    document.getElementById('btn-mail').style.display = 'flex';
-    // Stocker infos pour le mail
-    window.pvMailData = {
-      client: client,
-      date: date ? new Date(date).toLocaleDateString('fr-FR') : '',
-      adresse: adresse,
-      fileName: fileName,
-      recVal: recVal
-    };
-    setTimeout(function(){ goBackPV(); }, 2000);
+    setTimeout(function(){ goBackFromPV(); }, 2000);
 
   } catch(e) {
     showToast('❌ Erreur : ' + e.message);
@@ -808,92 +814,6 @@ async function genererPDF() {
 function h(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function showToast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},3000); }
 
-
-function h(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-function showToast(msg) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(function(){ t.classList.remove('show'); }, 3000);
-}
-
-function showSyncBar() {
-  var b = document.getElementById('sync-bar');
-  b.classList.add('show');
-  setTimeout(function(){ b.classList.remove('show'); }, 3000);
-}
 </script>
-
-<!-- ÉCRAN PV -->
-<div class="screen" id="screen-pv">
-  <div class="pv-form">
-    <div class="pv-title">Constat de Réception des Travaux</div>
-    <div class="pv-subtitle">D'ECO OUEST · 153 av. du Général Leclerc · 78220 VIROFLAY</div>
-    <div class="form-group">
-      <label>Je soussigné(e) — Nom du client *</label>
-      <input type="text" id="pv-client" placeholder="Nom et prénom du client">
-    </div>
-    <div class="form-group">
-      <label>Au titre du contrat / Référence</label>
-      <input type="text" id="pv-contrat">
-    </div>
-    <div class="form-group">
-      <label>À la date du</label>
-      <input type="date" id="pv-date">
-    </div>
-    <div class="form-group">
-      <label>Adresse du chantier</label>
-      <input type="text" id="pv-adresse" placeholder="Adresse complète">
-    </div>
-    <div class="form-group">
-      <label>En présence de (poseur)</label>
-      <input type="text" id="pv-poseur" readonly style="background:var(--bg);">
-    </div>
-    <div class="section-divider">RÉCEPTION</div>
-    <div class="form-group">
-      <label>La réception est prononcée</label>
-      <div class="radio-group">
-        <div class="radio-btn" id="rb-sans" onclick="selReception('sans')">
-          <input type="radio" name="reception" value="sans"> Sans réserve ✅
-        </div>
-        <div class="radio-btn" id="rb-avec" onclick="selReception('avec')">
-          <input type="radio" name="reception" value="avec"> Avec réserve ⚠️
-        </div>
-      </div>
-    </div>
-    <div class="section-divider">COMMENTAIRES</div>
-    <div class="form-group">
-      <label>Commentaires / Réserves</label>
-      <textarea id="pv-commentaires" placeholder="Détail des réserves éventuelles..."></textarea>
-    </div>
-    <div class="section-divider">RÈGLEMENT</div>
-    <div class="form-group">
-      <label>Modalités de règlement</label>
-      <textarea id="pv-reglement" placeholder="Ex: Solde réglé, chèque remis..."></textarea>
-    </div>
-    <div class="section-divider">SIGNATURE DU CLIENT</div>
-    <div class="form-group">
-      <label>Fait à</label>
-      <input type="text" id="pv-lieu" placeholder="Ville">
-    </div>
-    <div class="form-group">
-      <label>Signature du Maître de l'ouvrage</label>
-      <div class="signature-zone">
-        <canvas id="sig-canvas" height="160"></canvas>
-      </div>
-      <div class="sig-toolbar">
-        <button class="btn-clear" onclick="clearSignature()">🗑 Effacer</button>
-        <span style="font-size:11px;color:var(--texte2);padding-top:8px;">Signez avec votre doigt</span>
-      </div>
-    </div>
-    <button class="btn-generate" id="btn-generate" onclick="genererPDF()">
-      📄 Générer et télécharger le PV
-    </button>
-    <button class="btn-generate" id="btn-mail" onclick="envoyerMail()" style="background:#0078D4;margin-top:10px;display:none;">
-      📧 Envoyer par Outlook
-    </button>
-  </div>
-</div>
 </body>
 </html>
