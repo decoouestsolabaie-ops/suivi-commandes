@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>ECO OUEST — ANTONIO</title>
+<title>ECO OUEST — ANATOLE</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 
@@ -43,14 +43,14 @@
   .week-input:focus{border-color:var(--bleu);}
   .btn-week{background:var(--bleu);color:#fff;border:none;border-radius:7px;padding:7px 14px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;}
 
-  .chantier-card{background:#fff;border-radius:12px;border:1px solid var(--bordure);padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .chantier-card{background:#fff;border-radius:12px;border:1px solid var(--bordure);padding:14px 16px;margin-bottom:10px;display:flex;flex-direction:column;gap:10px;}
   .chantier-info{flex:1;}
   .chantier-client{font-size:14px;font-weight:700;margin-bottom:3px;}
   .chantier-meta{font-size:11px;color:var(--texte2);}
-  .pv-status{display:flex;flex-direction:column;align-items:stretch;gap:6px;min-width:130px;}
+  .pv-status{display:flex;flex-direction:row;gap:8px;flex-wrap:wrap;}
   .badge-pv-ok{background:var(--vert-bg);color:var(--vert);padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;}
   .badge-pv-non{background:var(--rouge-bg);color:var(--rouge);padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;}
-  .btn-pv{background:var(--bleu);color:#fff;border:none;border-radius:8px;padding:10px 14px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;width:100%;text-align:center;}
+  .btn-pv{background:var(--bleu);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;flex:1;text-align:center;}
   .btn-pv:hover{background:#1976D2;}
   .empty{text-align:center;padding:40px 20px;color:var(--texte2);}
   .empty .icon{font-size:40px;margin-bottom:10px;}
@@ -117,11 +117,11 @@
   <div style="display:flex;align-items:center;gap:8px;">
     <button class="btn-back" id="btn-back" onclick="goBack()" style="display:none">←</button>
     <div>
-      <h1>ECO OUEST — ANTONIO</h1>
+      <h1>ECO OUEST — ANATOLE</h1>
       <small id="header-sub">Mes chantiers du jour</small>
     </div>
   </div>
-  <div class="poseur-badge" style="display:block;background:#E65100">ANTONIO</div>
+  <div class="poseur-badge" style="display:block;background:#1565C0">ANATOLE</div>
 </div>
 
 <div class="sync-bar" id="sync-bar">✅ Enregistré !</div>
@@ -180,8 +180,8 @@
 
 <script>
 var WEBAPP = 'https://script.google.com/macros/s/AKfycbxk1zFKVsCDoiN5J4RAZYF-9nEYqGMIypS2lqBooqZWkxwMUGo8JVq5-iS9ZvZUGasa/exec';
-var poseurActuel = 'ANTONIO';
-var colPoseur = 19;
+var poseurActuel = 'ANATOLE';
+var colPoseur = 17;
 var allChantiers = [];
 var chantierActuel = null;
 var sigCanvas, sigCtx, sigDrawing = false, sigHasSig = false;
