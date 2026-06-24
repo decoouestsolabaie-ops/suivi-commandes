@@ -168,7 +168,6 @@
     <div class="nav-item active" id="nav-suivi" onclick="showView('suivi')"><span class="icon">📋</span><span>Commandes</span></div>
     <div class="nav-item" id="nav-alertes" onclick="showView('alertes')"><span class="icon">🔔</span><span>Alertes</span></div>
     <div class="nav-item" id="nav-dashboard" onclick="showView('dashboard')"><span class="icon">📊</span><span>Dashboard</span></div>
-    <div class="nav-item" id="nav-poseurs" onclick="showView('poseurs')"><span class="icon">👷</span><span>Poseurs</span></div>
     <div class="nav-item" id="nav-suivipose" onclick="showView('suivipose')"><span class="icon">🔨</span><span>Suivi Pose</span></div>
   </nav>
   <div class="sidebar-footer">v8 · ECO OUEST</div>
@@ -229,7 +228,6 @@
 
     <div id="view-alertes" class="view"><div id="alertes-content"></div></div>
     <div id="view-dashboard" class="view"><div class="dash-grid" id="dash-content"></div></div>
-    <div id="view-poseurs" class="view"><div id="poseurs-content"></div></div>
     <div id="view-suivipose" class="view"><div id="suivipose-content"></div></div>
   </div>
 </div>
@@ -801,7 +799,18 @@ function renderSuiviPose() {
       html += '<div class="suivipose-poseur-avatar" style="background:'+p.couleur+'">'+p.nom.slice(0,2)+'</div>';
       html += '<span class="suivipose-poseur-label">'+p.nom+'</span></div>';
       if (c[p.key] && c[p.key].trim()) {
-        html += '<div class="suivipose-comment">'+h(c[p.key])+'</div>';
+        var lignes = c[p.key].split('\n');
+        html += '<div class="suivipose-comment" id="cmt-'+c.ligne+'-'+p.key+'">';
+        lignes.forEach(function(l, li) {
+          if (!l.trim()) return;
+          html += '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--bordure);">';
+          html += '<span style="flex:1;font-size:12px;">'+h(l)+'</span>';
+          html += '<div style="display:flex;gap:4px;flex-shrink:0;">';
+          html += '<button data-ligne="'+c.ligne+'" data-key="'+p.key+'" data-idx="'+li+'" class="btn-cmt-edit" style="background:var(--bleu-bg);color:var(--bleu);border:none;border-radius:5px;padding:3px 8px;font-size:11px;cursor:pointer;">✏️</button>';
+          html += '<button data-ligne="'+c.ligne+'" data-key="'+p.key+'" data-idx="'+li+'" class="btn-cmt-del" style="background:#FFEBEE;color:var(--rouge);border:none;border-radius:5px;padding:3px 8px;font-size:11px;cursor:pointer;">🗑</button>';
+          html += '</div></div>';
+        });
+        html += '</div>';
       } else {
         html += '<div class="suivipose-empty">Aucun suivi poseur.</div>';
       }
@@ -810,6 +819,17 @@ function renderSuiviPose() {
     html += '</div></div>';
   });
   document.getElementById('suivipose-content').innerHTML = html;
+  // Attacher les boutons modifier/supprimer
+  document.querySelectorAll('.btn-cmt-edit').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      modifierCommentaire(parseInt(btn.getAttribute('data-ligne')), btn.getAttribute('data-key'), parseInt(btn.getAttribute('data-idx')));
+    });
+  });
+  document.querySelectorAll('.btn-cmt-del').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      supprimerCommentaire(parseInt(btn.getAttribute('data-ligne')), btn.getAttribute('data-key'), parseInt(btn.getAttribute('data-idx')));
+    });
+  });
 }
 
 
@@ -834,6 +854,45 @@ function fillFournisseur() {
     o.value = f; o.textContent = f;
     sel.appendChild(o);
   });
+}
+
+
+function modifierCommentaire(ligne, key, idx) {
+  var c = commandes.find(function(x){return x.ligne===ligne;});
+  if (!c) return;
+  var lignes = (c[key]||'').split('\n').filter(function(l){return l.trim();});
+  var ancien = lignes[idx] || '';
+  var nouveau = prompt('Modifier ce commentaire :', ancien);
+  if (nouveau === null) return; // annulé
+  lignes[idx] = nouveau.trim();
+  var final = lignes.filter(function(l){return l.trim();}).join('\n');
+  sauvegarderCommentairePoseur(ligne, key, final, c);
+}
+
+async function supprimerCommentaire(ligne, key, idx) {
+  if (!confirm('Supprimer ce commentaire ?')) return;
+  var c = commandes.find(function(x){return x.ligne===ligne;});
+  if (!c) return;
+  var lignes = (c[key]||'').split('\n').filter(function(l){return l.trim();});
+  lignes.splice(idx, 1);
+  var final = lignes.join('\n');
+  sauvegarderCommentairePoseur(ligne, key, final, c);
+}
+
+async function sauvegarderCommentairePoseur(ligne, key, final, c) {
+  var colMap = {'poseur_ANATOLE':17,'poseur_ARTIOM':18,'poseur_ANTONIO':19};
+  var col = colMap[key];
+  if (!col) return;
+  try {
+    var champs = {};
+    champs[col] = final;
+    var r = await apiPost({action:'modifier', ligne:ligne, champs:champs});
+    if (!r.ok) throw new Error(r.error);
+    c[key] = final;
+    renderSuiviPose();
+  } catch(e) {
+    alert('Erreur : ' + e.message);
+  }
 }
 
 function renderAll(){renderKPI();renderTable();}
