@@ -289,7 +289,8 @@ function filtrerSemaine() {
     return;
   }
 
-  document.getElementById('chantiers-list').innerHTML = filtered.slice().reverse().map(function(c) {
+  var filteredData = filtered.slice().reverse();
+  document.getElementById('chantiers-list').innerHTML = filteredData.map(function(c) {
     var pvFait = (c.pvChantier||'').toUpperCase() === 'OUI';
     return '<div class="chantier-card">' +
       '<div class="chantier-info">' +
@@ -298,10 +299,17 @@ function filtrerSemaine() {
       '</div>' +
       '<div class="pv-status">' +
       (pvFait ? '<span class="badge-pv-ok">✓ PV fait</span>' : '<span class="badge-pv-non">✗ PV manquant</span>') +
-      '<button class="btn-pv" style="background:#2E7D32;" onclick="ouvrirAvancement(' + JSON.stringify(c).replace(/"/g, "&quot;") + ')">✏️ Avancement</button>' +
-      '<button class="btn-pv" onclick="ouvrirPV(' + JSON.stringify(c).replace(/"/g, "&quot;") + ')">📋 Faire PV</button>' +
+      '<button class="btn-pv" style="background:#2E7D32;margin-bottom:6px;" id="btn-av-' + c.ligne + '">✏️ Avancement</button>' +
+      '<button class="btn-pv" id="btn-pv-' + c.ligne + '">📋 Faire PV</button>' +
       '</div></div>';
   }).join('');
+  // Attacher les événements après le rendu
+  filteredData.forEach(function(c) {
+    var btnAv = document.getElementById('btn-av-' + c.ligne);
+    var btnPv = document.getElementById('btn-pv-' + c.ligne);
+    if (btnAv) btnAv.onclick = function() { ouvrirAvancement(c); };
+    if (btnPv) btnPv.onclick = function() { ouvrirPV(c); };
+  });
 }
 
 // ── AVANCEMENT ────────────────────────────────────────────
