@@ -1,0 +1,22 @@
+var CACHE = 'eco-ouest-v1';
+var FILES = [
+'/suivi-commandes/',
+'/suivi-commandes/index.html',
+'/suivi-commandes/anatole.html',
+'/suivi-commandes/artiom.html',
+'/suivi-commandes/antonio.html'
+];
+
+self.addEventListener('install', function(e) {
+e.waitUntil(
+caches.open(CACHE).then(function(c) { return c.addAll(FILES); })
+);
+});
+
+self.addEventListener('fetch', function(e) {
+e.respondWith(
+caches.match(e.request).then(function(r) {
+return r || fetch(e.request);
+})
+);
+});
