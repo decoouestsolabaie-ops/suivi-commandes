@@ -3,6 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<link rel="manifest" href="manifest-antonio.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ANTONIO">
+<meta name="theme-color" content="#E65100">
 <title>ECO OUEST — ANTONIO</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -459,6 +465,12 @@ function sendMail() {
   var b=encodeURIComponent('Madame, Monsieur '+(d.client||'')+',\n\nVeuillez trouver ci-joint le PV de reception.\n\nCordialement,\n'+NOM+'\nD ECO OUEST');
   window.location.href='mailto:?subject='+s+'&body='+b;
   toast('Outlook ouvert - attachez le PDF');
+}
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/suivi-commandes/sw.js');
 }
 </script>
 </body>
