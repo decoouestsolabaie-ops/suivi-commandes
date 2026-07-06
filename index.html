@@ -1042,11 +1042,7 @@ charger();
 setInterval(function(){charger();}, 5*60*1000);
 </script>
 
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js');
-}
-</script>
+
 <div class="photo-modal" id="photo-modal" onclick="closePhotoModal()">
   <button class="photo-modal-close" onclick="closePhotoModal()">✕</button>
   <img id="photo-modal-img" src="" alt="Photo chantier">
