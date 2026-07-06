@@ -238,25 +238,19 @@ function filtrer() {
     return false;
   });
   if (!f.length) {
-    f = allData.filter(function(c) {
-      return TERMINES.indexOf((c.statutLivraison||'').trim()) === -1
-          && TERMINES.indexOf((c.statutPose||'').trim()) === -1;
-    });
-  }
-  if (!f.length) {
-    document.getElementById('list-content').innerHTML = '<div class="empty"><p>Aucun chantier en cours</p></div>';
+    document.getElementById('list-content').innerHTML = '<div class="empty"><p>Aucun chantier pour la semaine S' + sem + '</p></div>';
     return;
   }
   var rev = f.slice().reverse();
   var html = rev.map(function(c, i) {
     var pv = (c.pvChantier||'').toUpperCase() === 'OUI';
     return '<div class="card">' +
-      (pv ? '<span class="badge-pv-ok">PV fait</span>' : '<span class="badge-pv-non">PV manquant</span>') +
+      (pv ? '<span class="badge-pv-ok">✓ PV fait</span>' : '<span class="badge-pv-non">✗ PV manquant</span>') +
       '<div class="card-client">' + h(c.client) + '</div>' +
-      '<div class="card-meta">' + h(c.fournisseur||'') + (c.datePose ? ' - S' + c.datePose : '') + '</div>' +
+      '<div class="card-meta">' + h(c.fournisseur||'') + (c.datePose ? ' - 📅 ' + c.datePose : '') + '</div>' +
       '<div class="card-btns">' +
-      '<button class="btn-av" data-idx="' + i + '">Avancement</button>' +
-      '<button class="btn-pv-card" data-idx="' + i + '">Faire PV</button>' +
+      '<button class="btn-av" data-idx="' + i + '">✏️ Avancement</button>' +
+      '<button class="btn-pv-card" data-idx="' + i + '">📋 Faire PV</button>' +
       '</div></div>';
   }).join('');
   document.getElementById('list-content').innerHTML = html;
