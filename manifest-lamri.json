@@ -1,11 +1,11 @@
 {
-  "name": "ECO OUEST Suivi Commandes",
-  "short_name": "ECO OUEST",
-  "description": "Suivi des commandes ECO OUEST",
-  "start_url": "/suivi-commandes/",
+  "name": "ECO OUEST \u2014 LAMRI",
+  "short_name": "LAMRI",
+  "description": "App poseur LAMRI",
+  "start_url": "/suivi-commandes/lamri.html",
   "display": "standalone",
-  "background_color": "#1565C0",
-  "theme_color": "#1565C0",
+  "background_color": "#00695C",
+  "theme_color": "#00695C",
   "orientation": "portrait",
   "icons": [
     {

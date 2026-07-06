@@ -1,11 +1,11 @@
 {
-  "name": "ECO OUEST Suivi Commandes",
-  "short_name": "ECO OUEST",
-  "description": "Suivi des commandes ECO OUEST",
-  "start_url": "/suivi-commandes/",
+  "name": "ECO OUEST \u2014 VINCENT",
+  "short_name": "VINCENT",
+  "description": "App poseur VINCENT",
+  "start_url": "/suivi-commandes/vincent.html",
   "display": "standalone",
-  "background_color": "#1565C0",
-  "theme_color": "#1565C0",
+  "background_color": "#6A1B9A",
+  "theme_color": "#6A1B9A",
   "orientation": "portrait",
   "icons": [
     {

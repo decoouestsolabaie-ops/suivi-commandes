@@ -1,5 +1,5 @@
 {
-  "name": "ECO OUEST — ANTONIO",
+  "name": "ECO OUEST \u2014 ANTONIO",
   "short_name": "ANTONIO",
   "description": "App poseur ANTONIO",
   "start_url": "/suivi-commandes/antonio.html",
@@ -8,7 +8,15 @@
   "theme_color": "#E65100",
   "orientation": "portrait",
   "icons": [
-    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
-    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"}
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
   ]
 }
