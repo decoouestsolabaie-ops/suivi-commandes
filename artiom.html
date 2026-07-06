@@ -297,7 +297,7 @@ function ouvrirAv(c) {
   html += '<div class="section-label">Фото объекта</div>';
   html += '<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">';
   html += '<input type="file" id="photo-input-av" accept="image/*" style="display:none" onchange="previewФотоAv(event)">';
-  html += '<button type="button" onclick="document.getElementById('photo-input-av').click()" style="padding:10px 16px;background:#F5F7FA;border:1.5px solid #E0E7EF;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:Arial,sans-serif;">📷 Фото</button>';
+  html += '<button type="button" id="btn-photo-av" style="padding:10px 16px;background:#F5F7FA;border:1.5px solid #E0E7EF;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">📷 Photo</button>';
   html += '<div id="photo-preview-av">'+(currentC&&currentC.photo?'<img src="'+currentC.photo+'" style="width:60px;height:60px;object-fit:cover;border-radius:6px;border:2px solid #1565C0;">':'')+'</div>';
   html += '</div>';
   html += '<button class="btn-save" id="btn-enreg">Сохранить</button>';
@@ -324,6 +324,8 @@ function ouvrirAv(c) {
   });
   // Сохранить
   document.getElementById('btn-enreg').addEventListener('click', function() { enreg(); });
+  var btnPhoto = document.getElementById('btn-photo-av');
+  if (btnPhoto) btnPhoto.addEventListener('click', function() { document.getElementById('photo-input-av').click(); });
   // PV
   document.getElementById('btn-open-pv').addEventListener('click', function() { ouvrirPV(currentC); });
 }
@@ -373,39 +375,6 @@ async function enreg() {
   } catch(e) { toast('Ошибка: ' + e.message); }
   if (btn) { btn.disabled = false; btn.textContent = 'Сохранить'; }
 }
-
-
-
-
-document.getElementById('rb-avec').addEventListener('click', function() {
-  document.getElementById('rb-avec').className = 'radio-btn rb-orange';
-  
-
-
-
-
-
-
-
 </script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/suivi-commandes/sw.js');
-}
-</script>
-
-<div class="screen" id="s-config">
-  <div style="padding:16px;">
-    <h3 style="font-size:16px;font-weight:700;margin-bottom:14px;">⚙️ Настройки</h3>
-    <div style="margin-bottom:12px;">
-      <div style="font-size:11px;font-weight:700;color:#546E7A;margin-bottom:6px;">URL веб-приложения</div>
-      <input type="text" id="cfg-url" style="width:100%;border:1.5px solid #E0E7EF;border-radius:8px;padding:10px;font-size:13px;outline:none;" placeholder="https://script.google.com/...">
-    </div>
-    <button onclick="saveCfg()" style="width:100%;padding:14px;background:#1565C0;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">💾 Сохранить</button>
-    <div id="cfg-status" style="margin-top:10px;text-align:center;font-size:13px;"></div>
-    <button onclick="show('s-list')" style="width:100%;padding:12px;background:#F5F7FA;color:#546E7A;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-top:10px;font-family:Arial,sans-serif;">← Назад</button>
-  </div>
-</div>
 </body>
 </html>
