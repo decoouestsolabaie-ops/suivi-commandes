@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
-<link rel="manifest" href="manifest-anatole.json">
+<link rel="manifest" href="manifest-lamri.json">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ANATOLE">
-<meta name="theme-color" content="#1565C0">
-<title>ECO OUEST — ANATOLE</title>
+<meta name="theme-color" content="#00695C">
+<title>ECO OUEST — LAMRI</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:Arial,sans-serif;background:#F0F4F8;color:#1A1A2E;min-height:100vh;}
-.header{background:#1565C0;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.header{background:#00695C;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
 .header h1{font-size:15px;font-weight:700;color:#fff;}
 .header small{font-size:10px;color:rgba(255,255,255,.7);display:block;}
 .badge{background:rgba(255,255,255,.25);color:#fff;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;}
@@ -24,19 +24,19 @@ body{font-family:Arial,sans-serif;background:#F0F4F8;color:#1A1A2E;min-height:10
 .week-bar{background:#fff;border-radius:10px;border:1px solid #E0E7EF;padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;}
 .week-bar label{font-size:12px;font-weight:600;color:#546E7A;white-space:nowrap;}
 .week-bar input{flex:1;border:1.5px solid #E0E7EF;border-radius:7px;padding:8px;font-size:15px;font-weight:700;text-align:center;outline:none;}
-.week-bar button{background:#1565C0;color:#fff;border:none;border-radius:7px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;}
+.week-bar button{background:#00695C;color:#fff;border:none;border-radius:7px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;}
 .card{background:#fff;border-radius:12px;border:1px solid #E0E7EF;padding:14px;margin-bottom:10px;}
 .card-client{font-size:15px;font-weight:700;margin-bottom:3px;}
 .card-meta{font-size:12px;color:#546E7A;margin-bottom:10px;}
 .card-btns{display:flex;gap:8px;}
 .card-btns button{flex:1;padding:12px;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;}
 .btn-av{background:#2E7D32;color:#fff;}
-.btn-pv-card{background:#1565C0;color:#fff;}
+.btn-pv-card{background:#00695C;color:#fff;}
 .badge-pv-ok{display:inline-block;background:#E8F5E9;color:#2E7D32;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;margin-bottom:8px;}
 .badge-pv-non{display:inline-block;background:#FFEBEE;color:#D32F2F;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;margin-bottom:8px;}
 .empty{text-align:center;padding:48px 20px;color:#546E7A;}
 .loader{text-align:center;padding:40px;color:#546E7A;}
-.spinner{width:32px;height:32px;border:3px solid #E3F2FD;border-top-color:#1565C0;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;}
+.spinner{width:32px;height:32px;border:3px solid #E3F2FD;border-top-color:#00695C;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;}
 @keyframes spin{to{transform:rotate(360deg)}}
 .section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#546E7A;margin:14px 0 6px;}
 .input-f{width:100%;border:1.5px solid #E0E7EF;border-radius:8px;padding:10px 12px;font-size:14px;font-family:Arial,sans-serif;outline:none;color:#1A1A2E;}
@@ -55,10 +55,10 @@ textarea.input-f{resize:vertical;min-height:70px;margin-bottom:0;}
 .pv-check{padding:12px;background:#E8F5E9;border-radius:10px;border:1.5px solid #2E7D32;margin:12px 0;display:flex;align-items:center;gap:10px;cursor:pointer;}
 .pv-check span{font-size:14px;font-weight:700;color:#2E7D32;}
 .pv-check input{width:20px;height:20px;accent-color:#2E7D32;cursor:pointer;}
-.btn-save{width:100%;padding:14px;background:#1565C0;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-top:10px;font-family:Arial,sans-serif;}
-.btn-pv-open{width:100%;padding:14px;background:#1565C0;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;font-family:Arial,sans-serif;}
+.btn-save{width:100%;padding:14px;background:#00695C;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-top:10px;font-family:Arial,sans-serif;}
+.btn-pv-open{width:100%;padding:14px;background:#00695C;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;font-family:Arial,sans-serif;}
 .pv-form{background:#fff;border-radius:12px;border:1px solid #E0E7EF;padding:18px;}
-.pv-title{font-size:16px;font-weight:700;color:#1565C0;margin-bottom:4px;}
+.pv-title{font-size:16px;font-weight:700;color:#00695C;margin-bottom:4px;}
 .pv-sub{font-size:12px;color:#546E7A;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #E0E7EF;}
 .radio-group{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
 .radio-btn{display:flex;align-items:center;gap:8px;padding:12px;border:2px solid #E0E7EF;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;}
@@ -68,11 +68,11 @@ textarea.input-f{resize:vertical;min-height:70px;margin-bottom:0;}
 .sig-zone canvas{display:block;width:100%;touch-action:none;}
 .sig-toolbar{display:flex;gap:8px;margin-top:8px;}
 .btn-clear{background:#FFEBEE;color:#D32F2F;border:none;border-radius:7px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:Arial,sans-serif;}
-.btn-gen{width:100%;padding:16px;background:#1565C0;color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;margin-top:16px;font-family:Arial,sans-serif;}
+.btn-gen{width:100%;padding:16px;background:#00695C;color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;margin-top:16px;font-family:Arial,sans-serif;}
 .btn-mail{width:100%;padding:14px;background:#0078D4;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;font-family:Arial,sans-serif;display:none;}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1A1A2E;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:999;display:none;}
 .toast.on{display:block;}
-.divider{background:#1565C0;color:#fff;text-align:center;padding:8px;font-size:11px;font-weight:700;letter-spacing:2px;border-radius:6px;margin:14px 0 10px;}
+.divider{background:#00695C;color:#fff;text-align:center;padding:8px;font-size:11px;font-weight:700;letter-spacing:2px;border-radius:6px;margin:14px 0 10px;}
 </style>
 </head>
 <body>
@@ -82,7 +82,7 @@ textarea.input-f{resize:vertical;min-height:70px;margin-bottom:0;}
     <button class="btn-back" id="btn-back" onclick="goBack()" style="display:none">&#8592;</button>
     <div><h1>ECO OUEST &#8212; ANATOLE</h1><small id="sub">Mes chantiers</small></div>
   </div>
-  <div style="display:flex;align-items:center;gap:8px;"><button onclick="ouvrirConfig()" style="background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer;">⚙️</button><div class="badge">ANATOLE</div></div>
+  <div style="display:flex;align-items:center;gap:8px;"><button onclick="ouvrirConfig()" style="background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer;">⚙️</button><div class="badge">LAMRI</div></div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -138,11 +138,11 @@ textarea.input-f{resize:vertical;min-height:70px;margin-bottom:0;}
 <script>
 var WEBAPP_DEFAULT = 'https://script.google.com/macros/s/AKfycbxsIkJgrgM9J--PZ-zQ-HgATdb6cjbKVdwSQ3Ctbro2Bydahen48aJ9Csp988zAiACu/exec';
 var WEBAPP = localStorage.getItem('eco-webapp-url') || WEBAPP_DEFAULT;
-var NOM = 'ANATOLE';
-var COL = 17;
+var NOM = 'LAMRI';
+var COL = 22;
 var TERMINES = ["Livr\u00e9", "Termin\u00e9", "Pos\u00e9", "LIVRE", "TERMINE", "POSE", "Livre", "Termine"];
 var STATUTS = [{"label": "Termine", "cls": "vert", "val": "Termine"}, {"label": "En cours", "cls": "orange", "val": "En cours"}, {"label": "A planifier", "cls": "jaune", "val": "A planifier"}, {"label": "SAV", "cls": "rouge", "val": "SAV"}];
-var TYPES = ["Fenetre", "Porte", "Volet", "Porte-fenetre", "Baie vitree", "Portail", "Store", "Garde corps", "Pergola", "Veranda", "Porte de garage", "Autre"];
+var TYPES = ["Fenetre", "Porte", "Volet", "Porte-fenetre", "Baie vitree", "Portail", "Store", "Garde corps", "Pergola", "Veranda", "Porte de garage", "Autre"]; var _UNUSED = ["Fenetre", "Porte", "Volet", "Porte-fenetre", "Baie vitree", "Portail", "Store", "Garde corps", "Pergola", "Veranda", "Porte de garage", "Autre"];
 var allData = [];
 var currentC = null;
 var currentLigne = null;
@@ -213,7 +213,7 @@ function charger() {
   var to = setTimeout(function() {
     document.getElementById('list-content').innerHTML = '<div class="empty"><p>Erreur de connexion</p></div>';
   }, 15000);
-  window['_cbAnatole'] = function(d) {
+  window['_cbLamri'] = function(d) {
     clearTimeout(to);
     if (!d.ok) { document.getElementById('list-content').innerHTML = '<div class="empty"><p>Erreur</p></div>'; return; }
     allData = d.data.filter(function(c) { return (c.commentaireARC||'').toUpperCase() !== 'ANNULER'; });
@@ -221,7 +221,7 @@ function charger() {
   };
   var sc = document.createElement('script');
   sc.id = 'jsonp-sc';
-  sc.src = WEBAPP + '?callback=_cbAnatole&t=' + Date.now();
+  sc.src = WEBAPP + '?callback=_cbLamri&t=' + Date.now();
   sc.onerror = function() { clearTimeout(to); document.getElementById('list-content').innerHTML = '<div class="empty"><p>Erreur connexion</p></div>'; };
   document.head.appendChild(sc);
 }

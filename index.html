@@ -152,6 +152,12 @@
   .poseur-card-date{font-size:11px;color:var(--texte2);}
   .poseur-card-comment{font-size:13px;color:var(--texte);line-height:1.6;white-space:pre-wrap;margin-top:6px;padding:10px 12px;background:var(--gris-bg);border-radius:8px;border-left:3px solid var(--bleu);}
   .poseur-empty{text-align:center;padding:24px;color:var(--texte2);font-size:13px;font-style:italic;}
+  .photo-thumb{width:48px;height:48px;object-fit:cover;border-radius:6px;cursor:pointer;border:2px solid var(--bordure);}
+  .photo-thumb:hover{border-color:var(--bleu);}
+  .photo-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;align-items:center;justify-content:center;}
+  .photo-modal.open{display:flex;}
+  .photo-modal img{max-width:90vw;max-height:90vh;border-radius:10px;}
+  .photo-modal-close{position:fixed;top:20px;right:20px;background:#fff;border:none;border-radius:50%;width:36px;height:36px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
   @media(max-width:900px){
     .sidebar{width:56px;}
     .sidebar .nav-item span,.sidebar-logo span,.sidebar-logo small,.sidebar-footer{display:none;}
@@ -175,6 +181,7 @@
     <div class="nav-item" id="nav-alertes" onclick="showView('alertes')"><span class="icon">🔔</span><span>Alertes</span></div>
     <div class="nav-item" id="nav-dashboard" onclick="showView('dashboard')"><span class="icon">📊</span><span>Dashboard</span></div>
     <div class="nav-item" id="nav-suivipose" onclick="showView('suivipose')"><span class="icon">🔨</span><span>Suivi Pose</span></div>
+    <div class="nav-item" id="nav-config" onclick="showView('config')"><span class="icon">⚙️</span><span>Config</span></div>
   </nav>
   <div class="sidebar-footer">v8 · ECO OUEST</div>
 </aside>
@@ -222,6 +229,7 @@
             <th>Statut pose</th>
             <th>Date pose</th>
             <th>PV Chantier</th>
+            <th>Photo</th>
             <th>Commentaire</th>
             <th>Alerte</th>
             <th></th>
@@ -234,7 +242,38 @@
 
     <div id="view-alertes" class="view"><div id="alertes-content"></div></div>
     <div id="view-dashboard" class="view"><div class="dash-grid" id="dash-content"></div></div>
-    <div id="view-suivipose" class="view"><div id="suivipose-content"></div></div>
+    <div id="view-suivipose" class="view"><div style="text-align:right;margin-bottom:10px;">
+      <button onclick="traduireCommentairesPoseurs()" style="background:var(--bleu-bg);color:var(--bleu);border:1px solid var(--bleu);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;">🇫🇷 Traduire les commentaires</button>
+    </div>
+    <div id="suivipose-content"></div></div>
+    <div id="view-config" class="view">
+      <div style="max-width:540px;">
+        <div style="background:#fff;border-radius:12px;border:1px solid var(--bordure);padding:24px;">
+          <h3 style="font-size:16px;font-weight:700;margin-bottom:6px;">⚙️ Configuration</h3>
+          <p style="font-size:13px;color:var(--texte2);margin-bottom:20px;">Changez l URL de la Web App si vous utilisez un autre Google Sheets.</p>
+          <div style="margin-bottom:14px;">
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--texte2);display:block;margin-bottom:6px;">URL Web App Google Apps Script</label>
+            <input type="text" id="config-url-input" style="width:100%;border:1.5px solid var(--bordure);border-radius:8px;padding:10px 12px;font-size:13px;font-family:inherit;outline:none;" placeholder="https://script.google.com/macros/s/.../exec">
+          </div>
+          <button onclick="sauvegarderConfig()" class="btn btn-primary" style="width:100%;">💾 Enregistrer et reconnecter</button>
+          <div id="config-status" style="margin-top:12px;font-size:12px;text-align:center;"></div>
+          <div style="margin-top:20px;padding:14px;background:var(--gris-bg);border-radius:8px;">
+            <p style="font-size:12px;color:var(--texte2);font-weight:600;margin-bottom:6px;">URL actuelle :</p>
+            <p id="config-url-current" style="font-size:11px;color:var(--texte2);word-break:break-all;font-family:monospace;"></p>
+          </div>
+          <div style="margin-top:16px;padding:14px;background:#FFF3E0;border-radius:8px;border:1px solid #FFE0B2;">
+            <p style="font-size:12px;color:var(--orange);font-weight:700;margin-bottom:6px;">📋 Comment obtenir l URL :</p>
+            <ol style="font-size:12px;color:var(--texte2);line-height:2;padding-left:16px;">
+              <li>Ouvrir le nouveau Sheets</li>
+              <li>Extensions → Apps Script</li>
+              <li>Coller Code.gs et WebApp.gs</li>
+              <li>Déployer → App Web → Copier l URL</li>
+              <li>Coller ici et Enregistrer</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -283,6 +322,14 @@
             <span style="font-size:13px;font-weight:600;">PV effectue</span>
           </label>
         </div>
+        <div class="form-group full">
+          <label>Photo du chantier</label>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <input type="file" id="f-photo-input" accept="image/*" style="display:none" onchange="previewPhoto(event)">
+            <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('f-photo-input').click()">📷 Choisir une photo</button>
+            <div id="f-photo-preview"></div>
+          </div>
+        </div>
         <div class="form-group full"><label>Historique des commentaires / remarques</label>
           <textarea id="f-commentaire-historique" readonly style="background:#F5F7FA;color:var(--texte2);font-style:italic;min-height:90px;" placeholder="Aucun commentaire pour le moment."></textarea>
         </div>
@@ -304,7 +351,8 @@
 
 <script>
 var _jsonpCallback = null;
-var WEBAPP = 'https://script.google.com/macros/s/AKfycbxk1zFKVsCDoiN5J4RAZYF-9nEYqGMIypS2lqBooqZWkxwMUGo8JVq5-iS9ZvZUGasa/exec';
+var WEBAPP_DEFAULT = 'https://script.google.com/macros/s/AKfycbxsIkJgrgM9J--PZ-zQ-HgATdb6cjbKVdwSQ3Ctbro2Bydahen48aJ9Csp988zAiACu/exec';
+var WEBAPP = localStorage.getItem('eco-webapp-url') || WEBAPP_DEFAULT;
 var FOU_COLORS = {'ATLANTEM':'#1565C0','ATULAM':'#6A1B9A','LALLEMANT':'#2E7D32','SOKO':'#00695C','ALUGLASS':'#E65100','FILTERSUN':'#C62828','DC PROD':'#37474F','KE FRANCE':'#0277BD','SKYLUX':'#558B2F','BVL SERRULAC':'#4527A0','LEROY MERLIN':'#1B5E20','FOUSSIER':'#6D4C41','STOCK':'#546E7A'};
 var TERMINES = ['LIVRE','LIVRÉ','TERMINE','TERMINÉ','POSE','POSÉ','Livré','Terminé','Posé','Livre','Termine'];
 var commandes = [];
@@ -503,6 +551,9 @@ function openModal(idx) {
   if (pvEl) pvEl.checked = (c.pvChantier||'').toUpperCase() === 'OUI';
   var dpEl = document.getElementById('f-datePose');
   if (dpEl) dpEl.value = c.datePose || '';
+  window._photoBase64 = c.photo || null;
+  var prev = document.getElementById('f-photo-preview');
+  if (prev) prev.innerHTML = c.photo ? '<img src="'+c.photo+'" style="width:60px;height:60px;object-fit:cover;border-radius:6px;border:2px solid var(--bleu);">' : '';
   document.getElementById('f-commentaire-historique').value = c.commentaire || '';
   document.getElementById('f-commentaire-nouveau').value = '';
   document.getElementById('overlay').classList.add('open');
@@ -517,6 +568,7 @@ async function sauvegarder() {
   });
   var pvEl = document.getElementById('f-pvChantier');
   c.pvChantier = pvEl && pvEl.checked ? 'OUI' : 'NON';
+  if (window._photoBase64) c.photo = window._photoBase64;
   var dpEl2 = document.getElementById('f-datePose');
   c.datePose = dpEl2 ? dpEl2.value.trim() : '';
   if(!c.client){alert('Client obligatoire.');return;}
@@ -536,7 +588,7 @@ async function sauvegarder() {
   try {
     var res;
     if(editLigne>0){
-      res=await apiPost({action:'modifier',ligne:editLigne,champs:{1:c.client,3:c.devis,4:c.devisTTC,5:c.fournisseur,6:c.commande,7:c.arc,9:c.commentaireARC,10:c.prevLivraison,12:c.statutLivraison,13:c.statutPose,14:c.commentaire,16:c.pvChantier,20:c.datePose}});
+      res=await apiPost({action:'modifier',ligne:editLigne,champs:{1:c.client,3:c.devis,4:c.devisTTC,5:c.fournisseur,6:c.commande,7:c.arc,9:c.commentaireARC,10:c.prevLivraison,12:c.statutLivraison,13:c.statutPose,14:c.commentaire,16:c.pvChantier,20:c.datePose,23:c.photo||''}});
     } else {
       res=await apiPost({action:'ajouter',commande:c});
     }
@@ -695,12 +747,17 @@ function showView(v) {
   document.getElementById('view-'+v).classList.add('active');
   var navEl = document.getElementById('nav-' + v);
   if (navEl) navEl.classList.add('active');
-  var titles = {suivi:'Suivi des commandes', alertes:'Alertes actives', dashboard:'Tableau de bord', poseurs:'Commentaires Poseurs', suivipose:'Suivi de Pose'};
+  var titles = {suivi:'Suivi des commandes', alertes:'Alertes actives', dashboard:'Tableau de bord', poseurs:'Commentaires Poseurs', suivipose:'Suivi de Pose', config:'Configuration'};
   document.getElementById('topbar-title').textContent = titles[v] || v;
+  if (v === 'config') {
+    document.getElementById('config-url-input').value = WEBAPP;
+    document.getElementById('config-url-current').textContent = WEBAPP;
+    document.getElementById('config-status').innerHTML = '';
+  }
   if (v === 'alertes')    renderAlertes();
   if (v === 'dashboard')  renderDashboard();
   if (v === 'poseurs')    renderPoseurs();
-  if (v === 'suivipose')  renderSuiviPose();
+  if (v === 'suivipose')  { renderSuiviPose(); setTimeout(traduireCommentairesPoseurs, 500); }
 }
 
 // ── POSEURS ───────────────────────────────────────────────
@@ -850,6 +907,84 @@ function cleanDate(s) {
   return s.trim();
 }
 
+
+function openPhotoModal(e, src) {
+  e.stopPropagation();
+  document.getElementById('photo-modal-img').src = src;
+  document.getElementById('photo-modal').classList.add('open');
+}
+function closePhotoModal() {
+  document.getElementById('photo-modal').classList.remove('open');
+}
+
+function previewPhoto(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var base64 = e.target.result;
+    // Compresser l'image
+    var img = new Image();
+    img.onload = function() {
+      var canvas = document.createElement('canvas');
+      var max = 800;
+      var w = img.width, h = img.height;
+      if (w > max) { h = h * max / w; w = max; }
+      if (h > max) { w = w * max / h; h = max; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      var compressed = canvas.toDataURL('image/jpeg', 0.7);
+      window._photoBase64 = compressed;
+      var prev = document.getElementById('f-photo-preview');
+      prev.innerHTML = '<img src="'+compressed+'" style="width:60px;height:60px;object-fit:cover;border-radius:6px;border:2px solid var(--bleu);">';
+    };
+    img.src = base64;
+  };
+  reader.readAsDataURL(file);
+}
+
+
+function sauvegarderConfig() {
+  var url = document.getElementById('config-url-input').value.trim();
+  if (!url || !url.startsWith('https://')) {
+    document.getElementById('config-status').innerHTML = '<span style="color:var(--rouge);">❌ URL invalide</span>';
+    return;
+  }
+  localStorage.setItem('eco-webapp-url', url);
+  WEBAPP = url;
+  document.getElementById('config-status').innerHTML = '<span style="color:var(--vert);">✅ Enregistré ! Rechargement...</span>';
+  setTimeout(function() { charger(); showView('suivi'); }, 1500);
+}
+
+
+// Traduction automatique des commentaires russes
+async function traduireTexte(texte) {
+  if (!texte || !texte.trim()) return texte;
+  // Détecter si le texte contient du cyrillique
+  if (!/[\u0400-\u04FF]/.test(texte)) return texte;
+  try {
+    var url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=ru&tl=fr&dt=t&q=' + encodeURIComponent(texte);
+    var r = await fetch(url);
+    var d = await r.json();
+    var traduit = d[0].map(function(x){return x[0];}).join('');
+    return traduit + ' <span style="font-size:10px;color:#90CAF9;font-style:italic;">[trad. auto]</span>';
+  } catch(e) {
+    return texte;
+  }
+}
+
+async function traduireCommentairesPoseurs() {
+  var elements = document.querySelectorAll('.suivipose-comment, .poseur-card-comment');
+  for (var i = 0; i < elements.length; i++) {
+    var el = elements[i];
+    var texte = el.textContent.trim();
+    if (/[\u0400-\u04FF]/.test(texte)) {
+      var traduit = await traduireTexte(texte);
+      el.innerHTML = el.innerHTML + '<div style="background:#E3F2FD;border-radius:6px;padding:6px 10px;margin-top:6px;font-size:11px;color:#1565C0;">🇫🇷 ' + traduit + '</div>';
+    }
+  }
+}
+
 function fillFournisseur() {
   var sel = document.getElementById('filter-fournisseur');
   sel.innerHTML = '<option value="">Tous fournisseurs</option>';
@@ -912,5 +1047,9 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/suivi-commandes/sw.js');
 }
 </script>
+<div class="photo-modal" id="photo-modal" onclick="closePhotoModal()">
+  <button class="photo-modal-close" onclick="closePhotoModal()">✕</button>
+  <img id="photo-modal-img" src="" alt="Photo chantier">
+</div>
 </body>
 </html>
