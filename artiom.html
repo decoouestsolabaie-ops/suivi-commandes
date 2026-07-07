@@ -231,13 +231,19 @@ function previewФотоAv(event) {
     var img = new Image();
     img.onload = function() {
       var canvas = document.createElement('canvas');
-      var max = 800;
+      var max = 400;
       var w = img.width, h = img.height;
       if (w > max) { h = Math.round(h * max / w); w = max; }
       if (h > max) { w = Math.round(w * max / h); h = max; }
       canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      var compressed = canvas.toDataURL('image/jpeg', 0.7);
+      var compressed = canvas.toDataURL('image/jpeg', 0.4);
+      // Vérifier taille < 40000 chars
+      if (compressed.length > 40000) {
+        canvas.width = Math.round(w * 0.7); canvas.height = Math.round(h * 0.7);
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        compressed = canvas.toDataURL('image/jpeg', 0.3);
+      }
       window._photoAv = compressed;
       var prev = document.getElementById('photo-preview-av');
       if (prev) prev.innerHTML = '<img src="'+compressed+'" style="width:60px;height:60px;object-fit:cover;border-radius:6px;border:2px solid #1565C0;">';
