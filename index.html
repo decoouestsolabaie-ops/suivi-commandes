@@ -209,7 +209,7 @@
         </select>
         <select class="select-filter" id="filter-statut" onchange="renderTable()">
           <option value="">Tous statuts</option>
-          <option>A planifier</option><option>Livré</option><option>En cours</option><option>SAV</option><option>Terminé</option><option>Posé</option>
+          <option>A planifier</option><option>A PLANIFIER</option><option>Livré</option><option>En cours</option><option>EN COURS</option><option>SAV</option><option>Terminé</option><option>Posé</option><option>Annulé</option><option>En attente</option><option>Bloqué</option>
         </select>
         <span class="filter-badge all active" id="fb-all" onclick="setFilter('all')">Toutes</span>
         <span class="filter-badge urgent" id="fb-urgent" onclick="setFilter('urgent')">🔴 Urgentes</span>
@@ -306,10 +306,10 @@
         </div>
         <div class="form-group"><label>Prevision livraison</label><input id="f-prevLivraison" type="text"></div>
         <div class="form-group"><label>Statut livraison</label>
-          <select id="f-statutLivraison"><option value="">—</option><option>En cours</option><option>Livré</option><option>En attente</option><option>Bloqué</option></select>
+          <select id="f-statutLivraison"><option value="">—</option><option>En cours</option><option>Livré</option><option>Terminé</option><option>En attente</option><option>Bloqué</option><option>Annulé</option><option>A PLANIFIER</option></select>
         </div>
         <div class="form-group"><label>Statut pose</label>
-          <select id="f-statutPose"><option value="">—</option><option>A PLANIFIER</option><option>En cours</option><option>Pose</option><option>Termine</option><option>SAV</option></select>
+          <select id="f-statutPose"><option value="">—</option><option>A PLANIFIER</option><option>En cours</option><option>Posé</option><option>Terminé</option><option>SAV</option><option>Annulé</option><option>EN COURS</option></select>
         </div>
         <div class="form-group">
           <label>Date de pose (col. T)</label>
