@@ -831,11 +831,13 @@ function renderSuiviPose() {
     return false;
   }
 
+  var POSES_FINIES = ['Terminé','Termine','Posé','Pose','TERMINE','POSE'];
   var items = commandes.filter(function(c){
     if ((c.commentaireARC||'').toUpperCase() === 'ANNULER') return false;
-    // Afficher si date de pose = semaine en cours OU remarques poseurs cette semaine
-    return datePoseEnSemaine(c.datePose, semActuelle)
-        || c.poseur_ANATOLE || c.poseur_ARTIOM || c.poseur_ANTONIO;
+    // Exclure si pose terminée
+    if (POSES_FINIES.indexOf((c.statutPose||'').trim()) !== -1) return false;
+    // Afficher uniquement si date de pose = semaine en cours
+    return datePoseEnSemaine(c.datePose, semActuelle);
   }).slice().sort(function(a,b){
     return (b.datePose||'').localeCompare(a.datePose||'');
   });
