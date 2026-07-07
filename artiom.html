@@ -155,14 +155,14 @@ function h(s) {
 }
 
 function getWeek(d) {
-  d = new Дата(Дата.UTC(d.getFullYear(), d.getMonth(), d.getДата()));
-  d.setUTCДата(d.getUTCДата() + 4 - (d.getUTCDay()||7));
-  var y = new Дата(Дата.UTC(d.getUTCFullYear(), 0, 1));
+  d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+  var y = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
   return Math.ceil((((d - y) / 86400000) + 1) / 7);
 }
 
 window.addEventListener('load', function() {
-  var sem = getWeek(new Дата());
+  var sem = getWeek(new Date());
   document.getElementById('week-inp').value = sem;
   charger();
 });
@@ -182,7 +182,7 @@ function charger() {
   };
   var sc = document.createElement('script');
   sc.id = 'jsonp-sc';
-  sc.src = WEBAPP + '?callback=_cbArtiom&t=' + Дата.now();
+  sc.src = WEBAPP + '?callback=_cbArtiom&t=' + Date.now();
   sc.onerror = function() { clearTimeout(to); document.getElementById('list-content').innerHTML = '<div class="empty"><p>Erreur connexion</p></div>'; };
   document.head.appendChild(sc);
 }
@@ -194,18 +194,12 @@ function filtrer() {
     if (!dp) return false;
     var m = dp.match(/S\s*0*(\d{1,2})/i);
     if (m) return parseInt(m[1], 10) === sem;
-    var d = new Дата(dp);
+    var d = new Date(dp);
     if (!isNaN(d)) return getWeek(d) === sem;
     return false;
   });
   if (!f.length) {
-    f = allData.filter(function(c) {
-      return TERMINES.indexOf((c.statutLivraison||'').trim()) === -1
-          && TERMINES.indexOf((c.statutPose||'').trim()) === -1;
-    });
-  }
-  if (!f.length) {
-    document.getElementById('list-content').innerHTML = '<div class="empty"><p>Нет активных объектов</p></div>';
+    document.getElementById('list-content').innerHTML = '<div class="empty"><p>Нет объектов для недели S' + sem + '</p></div>';
     return;
   }
   var rev = f.slice().reverse();
@@ -214,20 +208,14 @@ function filtrer() {
     return '<div class="card">' +
       (pv ? '<span class="badge-pv-ok">ПВ сделан</span>' : '<span class="badge-pv-non">ПВ отсутствует</span>') +
       '<div class="card-client">' + h(c.client) + '</div>' +
-      '<div class="card-meta">' + h(c.fournisseur||'') + (c.datePose ? ' - S' + c.datePose : '') + '</div>' +
-      '<div class="card-btns">' +
-      '<button class="btn-av" data-idx="' + i + '">Прогресс</button>' +
-      ''
-      '</div></div>';
+      '<div class="card-meta">' + h(c.fournisseur||'') + (c.datePose ? ' - ' + c.datePose : '') + '</div>' +
+      '<div class="card-btns"><button class="btn-av" data-idx="' + i + '">✏️ Прогресс</button></div>' +
+      '</div>';
   }).join('');
   document.getElementById('list-content').innerHTML = html;
   document.getElementById('list-content').querySelectorAll('.btn-av').forEach(function(btn) {
     var idx = parseInt(btn.getAttribute('data-idx'), 10);
     btn.addEventListener('click', function() { ouvrirAv(rev[idx]); });
-  });
-  document.getElementById('list-content').querySelectorAll('.btn-pv-card').forEach(function(btn) {
-    var idx = parseInt(btn.getAttribute('data-idx'), 10);
-    btn.addEventListener('click', function() { ouvrirPV(rev[idx]); });
   });
 }
 
@@ -349,8 +337,8 @@ async function enreg() {
   var pvVal = pvCb && pvCb.checked ? 'OUI' : 'NON';
   var histo = document.getElementById('hi-av');
   var histoTxt = histo ? histo.textContent : '';
-  var now = new Дата();
-  var ds = now.toLocaleДатаString('fr-FR', {day:'2-digit',month:'2-digit',year:'numeric'}) + ' ' + now.toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'});
+  var now = new Date();
+  var ds = now.toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit',year:'numeric'}) + ' ' + now.toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'});
   var parts = [];
   if (sS) parts.push('Статус: ' + sS);
   if (types.length) parts.push('Pose: ' + types.join(', '));
