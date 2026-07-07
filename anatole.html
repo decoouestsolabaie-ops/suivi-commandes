@@ -228,7 +228,10 @@ function charger() {
 
 function filtrer() {
   var sem = parseInt(document.getElementById('week-inp').value, 10);
+  var POSES_OK = ['Terminé','Termine','Posé','Pose','TERMINE','POSE'];
   var f = allData.filter(function(c) {
+    // Exclure si pose terminée
+    if (POSES_OK.indexOf((c.statutPose||'').trim()) !== -1) return false;
     var dp = (c.datePose||'').trim();
     if (!dp) return false;
     var m = dp.match(/S\s*0*(\d{1,2})/i);
