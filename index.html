@@ -327,6 +327,7 @@
           <div style="display:flex;align-items:center;gap:12px;">
             <input type="file" id="f-photo-input" accept="image/*" style="display:none" onchange="previewPhoto(event)">
             <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('f-photo-input').click()">📷 Choisir une photo</button>
+            <button type="button" onclick="supprimerPhoto()" style="background:#FFEBEE;color:#D32F2F;border:1px solid #FFCDD2;border-radius:8px;padding:8px 14px;font-size:13px;cursor:pointer;">🗑 Supprimer photo</button>
             <div id="f-photo-preview"></div>
           </div>
         </div>
@@ -929,6 +930,13 @@ function openPhotoModal(e, src) {
 }
 function closePhotoModal() {
   document.getElementById('photo-modal').classList.remove('open');
+}
+
+function supprimerPhoto() {
+  if (!confirm('Supprimer la photo ?')) return;
+  window._photoBase64 = '';
+  var prev = document.getElementById('f-photo-preview');
+  if (prev) prev.innerHTML = '<span style="color:#D32F2F;font-size:12px;">Photo supprimée</span>';
 }
 
 function previewPhoto(event) {
