@@ -330,6 +330,10 @@
             <div id="f-photo-preview"></div>
           </div>
         </div>
+        <div class="form-group full">
+          <label>Nouveau commentaire (ajouté au fil)</label>
+          <textarea id="f-commentaire-new" placeholder="Tapez un nouveau commentaire..." style="width:100%;border:1.5px solid var(--bordure);border-radius:8px;padding:9px 12px;font-family:inherit;font-size:14px;outline:none;resize:vertical;min-height:60px;"></textarea>
+        </div>
         <div class="form-group full"><label>Historique des commentaires / remarques</label>
           <textarea id="f-commentaire-historique" readonly style="background:#F5F7FA;color:var(--texte2);font-style:italic;min-height:90px;" placeholder="Aucun commentaire pour le moment."></textarea>
         </div>
@@ -571,6 +575,14 @@ async function sauvegarder() {
   if (window._photoBase64) c.photo = window._photoBase64;
   var dpEl2 = document.getElementById('f-datePose');
   c.datePose = dpEl2 ? dpEl2.value.trim() : '';
+  // Ajouter nouveau commentaire en fil avec horodatage
+  var newCmt = document.getElementById('f-commentaire-new') ? document.getElementById('f-commentaire-new').value.trim() : '';
+  if (newCmt) {
+    var now = new Date();
+    var ds = now.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'}) + ' ' + now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+    var ancien = c.commentaire || '';
+    c.commentaire = ancien ? ancien + '\n[' + ds + '] ' + newCmt : '[' + ds + '] ' + newCmt;
+  }
   if(!c.client){alert('Client obligatoire.');return;}
 
   // Gestion historique commentaire : on ajoute le nouveau texte saisi a la suite de l'existant
@@ -883,12 +895,12 @@ function renderSuiviPose() {
   });
   document.getElementById('suivipose-content').innerHTML = html;
   // Attacher les boutons modifier/supprimer
-  document.querySelectorAll('.btn-cmt-edit').forEach(function(btn) {
+  document.getElementById('suivipose-content').querySelectorAll('.btn-cmt-edit').forEach(function(btn) {
     btn.addEventListener('click', function() {
       modifierCommentaire(parseInt(btn.getAttribute('data-ligne')), btn.getAttribute('data-key'), parseInt(btn.getAttribute('data-idx')));
     });
   });
-  document.querySelectorAll('.btn-cmt-del').forEach(function(btn) {
+  document.getElementById('suivipose-content').querySelectorAll('.btn-cmt-del').forEach(function(btn) {
     btn.addEventListener('click', function() {
       supprimerCommentaire(parseInt(btn.getAttribute('data-ligne')), btn.getAttribute('data-key'), parseInt(btn.getAttribute('data-idx')));
     });
@@ -1004,8 +1016,12 @@ function modifierCommentaire(ligne, key, idx) {
   var lignes = (c[key]||'').split('\n').filter(function(l){return l.trim();});
   var ancien = lignes[idx] || '';
   var nouveau = prompt('Modifier ce commentaire :', ancien);
-  if (nouveau === null) return; // annulé
-  lignes[idx] = nouveau.trim();
+  if (nouveau === null) return;
+  if (nouveau.trim()) {
+    lignes[idx] = nouveau.trim();
+  } else {
+    lignes.splice(idx, 1);
+  }
   var final = lignes.filter(function(l){return l.trim();}).join('\n');
   sauvegarderCommentairePoseur(ligne, key, final, c);
 }
