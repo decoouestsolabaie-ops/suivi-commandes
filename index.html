@@ -530,7 +530,7 @@ function renderTable() {
       '<td>'+semaineBadge(c.prevLivraison)+'</td>'+
       '<td>'+sL+'</td><td>'+sP+'</td>'+
       '<td style="font-size:12px;font-weight:600;color:var(--bleu);">'+h(c.datePose||'—')+'</td>'+
-      '<td>'+pvBadge(c.pvChantier, c.ligne)+'</td>'+
+      '<td>'+pvBadge(c.pvChantier, c.ligne)+'</td>'+photoCell(c.photo)+
       '<td class="col-comment" title="'+h(c.commentaire)+'">'+h(c.commentaire||'')+'</td>'+
       '<td><span class="alerte-text '+aClass(a.n)+'">'+(a.n===0?'OK':'⚠ '+h(a.t.split(' | ')[0]))+'</span>'+extra+'</td>'+
       '<td><button class="action-btn" onclick="openModal('+c._i+')">✏️</button></td>'+
@@ -997,6 +997,12 @@ async function traduireCommentairesPoseurs() {
       el.innerHTML = el.innerHTML + '<div style="background:#E3F2FD;border-radius:6px;padding:6px 10px;margin-top:6px;font-size:11px;color:#1565C0;">🇫🇷 ' + traduit + '</div>';
     }
   }
+}
+
+
+function photoCell(photo) {
+  if (!photo || !photo.startsWith('data:')) return '<td style="color:#ccc;text-align:center;">—</td>';
+  return '<td><img src="' + photo + '" style="width:48px;height:48px;object-fit:cover;border-radius:5px;cursor:pointer;" onclick="openPhotoModal(event,this.src)"></td>';
 }
 
 function fillFournisseur() {
